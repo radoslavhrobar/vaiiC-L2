@@ -5,7 +5,6 @@
 
 <div class="row">
     <div class="col-6">
-        <!-- komponent carousel prevziaty z bootstrapu -->
         <div id="carouselExample" class="carousel slide hlavny-carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -27,34 +26,31 @@
     </div>
 
     <div class="col-6">
-        <table class="registracia-info">
-            <tr>
-                <th>
-                    <a href="#">
+        <div class="card registracia-info">
+            <div class="card-body">
+                <h3 class="card-title mb-4">
+                    <a href="#" class="text-decoration-none">
                         <i class="bi bi-exclamation-circle-fill"></i>
                         Registruj sa na C&L!
                     </a>
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <i class="bi bi-film"></i>
-                    Prehľad oblasti kinematografie a literatúry
-                    <i class="bi bi-book-half"></i>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <i class="bi bi-megaphone"></i>
-                    Pridávaj recenzie k dielam, ktoré ťa zaujali
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <i class="bi bi-person"></i>
-                    Spoj sa s ľuďmi, ktorí zdieľajú tvoju vášeň pre diela
-                </td>
-            </tr>
-        </table>
+                </h3>
+
+                <ul class="list-unstyled mb-4">
+                    <li class="mb-2">
+                        <i class="bi-film me-2"></i>
+                        Prehľad oblasti kinematografie a literatúry
+                        <i class="bi bi-book-half ms-2"></i>
+                    </li>
+                    <li class="mb-2">
+                        <i class= "bi-megaphone me-2"></i>
+                        Pridávaj recenzie k dielam, ktoré ťa zaujali
+                    </li>
+                    <li >
+                        <i class="bi-person me-2"></i>
+                        Spoj sa s ľuďmi, ktorí zdieľajú tvoju vášeň pre diela
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
