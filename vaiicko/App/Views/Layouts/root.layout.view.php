@@ -16,7 +16,7 @@
 <body>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-xl-2 pozadie-vlavo d-none d-xl-block"></div>
+        <div class="col-xl-2 background-left d-none d-xl-block"></div>
         <div class="col-xl-8">
             <nav class="navbar navbar-expand-md bg-body-tertiary">
                 <a class="navbar-brand" href="<?= $link->url("home.index") ?>">C&L</a>
@@ -32,7 +32,7 @@
                             <a class="nav-link" aria-current="page" href="#">Literatúra</a>
                         </li>
                     </ul>
-                    <div class="nav-item dropdown moj-ucet me-2 mb-2 mb-md-0">
+                    <div class="nav-item dropdown me-2 mb-2 mb-md-0">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Môj účet
                         </a>
@@ -40,8 +40,8 @@
                             <?php if ($auth->isLogged()) { ?>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.logout") ?>">Odhlásenie</a></li>
                             <?php } else { ?>
-                                <li><a class="dropdown-item" href="<?= $link->url("auth.login") ?>">Prihlásenie</a></li>
-                                <li><a class="dropdown-item" href="<?= $link->url("auth.index") ?>">Registrácia</a></li>
+                                <li><a class="dropdown-item" href="<?= $link->url("auth.index") ?>">Prihlásenie</a></li>
+                                <li><a class="dropdown-item" href="<?= $link->url("auth.register") ?>">Registrácia</a></li>
                                 <li><a class="dropdown-item" href="#">Zabudnuté heslo</a></li>
                             <?php } ?>
                         </ul>
@@ -59,7 +59,7 @@
                 <?= $contentHTML ?>
             </div>
         </div>
-        <div class="col-xl-2 pozadie-vpravo d-none d-xl-block"></div>
+        <div class="col-xl-2 background-right d-none d-xl-block"></div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"

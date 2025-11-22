@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="col-6">
-        <div id="carouselExample" class="carousel slide hlavny-carousel">
+        <div id="carouselExample" class="carousel slide main-carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <img src="<?= $link->asset('images/kinoALiteratura1.jpg') ?>" class="d-block w-100" alt="">
@@ -26,14 +26,14 @@
     </div>
 
     <div class="col-6">
-        <div class="card registracia-info">
+        <div class="card registration-info">
             <div class="card-body">
-                <h3 class="card-title mb-4">
+                <h4 class="card-title mb-4">
                     <a href="#" class="text-decoration-none">
                         <i class="bi bi-exclamation-circle-fill"></i>
                         Registruj sa na C&L!
                     </a>
-                </h3>
+                </h4>
 
                 <ul class="list-unstyled mb-4">
                     <li class="mb-2">
