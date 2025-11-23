@@ -9,7 +9,7 @@
         <label class="col-sm-3" for="email">Email:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="text" name="email" id="email" value="<?= $_POST['email'] ?? '' ?>" autofocus>
+        <input class="col-sm-6" type="email" name="email" id="email" value="<?= $_POST['email'] ?? '' ?>" autofocus>
         <span id="emailMessage"><?= !empty($data['warnings']['email']) ? $data['warnings']['email'] : "" ?></span>
     </div>
     <div class="row">
@@ -27,17 +27,17 @@
         <span id="passwordMessage"><?= !empty($data['warnings']['password']) ? $data['warnings']['password'] : "" ?></span>
     </div>
     <div class="row">
-        <label class="col-sm-3" for="checkPassword">Overenie hesla:
+        <label class="col-sm-3" for="verifyPassword">Overenie hesla:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="password" name="checkPassword" id="checkPassword" value="<?= $_POST['checkPassword'] ?? '' ?>">
-        <span id="checkPasswordMessage"><?= !empty($data['warnings']['checkPassword']) ? $data['warnings']['checkPassword'] : "" ?></span>
+        <input class="col-sm-6" type="password" name="verifyPassword" id="verifyPassword" value="<?= $_POST['verifyPassword'] ?? '' ?>">
+        <span id="verifyPasswordMessage"><?= !empty($data['warnings']['verifyPassword']) ? $data['warnings']['verifyPassword'] : "" ?></span>
     </div>
     <h5 class="auth-name extra">Dodatočné informácie:</h5>
     <div class="row">
         <label class="col-sm-3" for="name">Meno:</label>
         <input class="col-sm-6" type="text" name="name" id="name" value="<?= $_POST['name'] ?? '' ?>">
-        <span id="menoMessage"><?= !empty($data['warnings']['name']) ? $data['warnings']['name'] : "" ?></span>
+        <span id="nameMessage"><?= !empty($data['warnings']['name']) ? $data['warnings']['name'] : "" ?></span>
     </div>
     <div class="row">
         <label class="col-sm-3" for="surname">Priezvisko:</label>
@@ -48,7 +48,7 @@
         <label class="col-sm-3" for="gender">Pohlavie:</label>
         <div class="col-sm-6">
             <input type="radio" name="gender" id="gender" value="man" <?= isset($_POST['gender']) && $_POST['gender'] == 'man' ? 'checked' : '' ?>>muž
-            <input type="radio" name="gender" id="gender" value="woman"  <?= isset($_POST['gender']) && $_POST['gender'] == 'woman' ? 'checked' : '' ?>>žena
+            <input type="radio" name="gender" id="gender" value="female"  <?= isset($_POST['gender']) && $_POST['gender'] == 'female' ? 'checked' : '' ?>>žena
             <input type="radio" name="gender" id="gender" value="other"  <?= isset($_POST['gender']) && $_POST['gender'] == 'other' ? 'checked' : '' ?>>iné
         </div>
         <span><?= !empty($data['warnings']['gender']) ? $data['warnings']['gender'] : "" ?></span>
