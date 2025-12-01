@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Configuration;
+use App\Helpers\Gender;
+use App\Models\User;
 use Exception;
 use Framework\Core\BaseController;
 use Framework\Http\Request;
@@ -71,8 +73,104 @@ class AuthController extends BaseController
         return $this->html();
     }
 
-    public function register(Request $request): Response
+    public function registration(Request $request): Response
     {
         return $this->html();
+    }
+
+    public function register(Request $request): Response
+    {
+        $d = $request->post();
+        if ($this->checkRegistration($d)) {
+            $user = new User();
+            $user->setEmail($d['email']);
+            $user->setUsername($d['username']);
+            $user->setPassword($d['password']);
+            if (!empty($d['name'])) {
+                $user->setName($d['name']);
+            }
+            if (!empty($d['surname'])) {
+                $user->setSurname($d['surname']);
+            }
+            if (!empty($d['gender'])) {
+                $user->setGender($d['gender']);
+            }
+            $user->save();
+            return $this->redirect($this->url('home.index'));
+        }
+        $message = 'Formulárové údaje obsahujú chyby.';
+        return $this->html(compact('message'), 'registration');
+    }
+
+    public function checkRegistration($data): bool
+    {
+        $check = true;
+        if (!$this->checkRegistrationEmail($data['email']) || !$this->checkRegistrationUsername($data['username']) ||
+            !$this->checkRegistrationPassword($data['password']) || !$this->checkRegistrationVerifyPassword($data['verifyPassword'], $data['password']) ||
+            !$this->checkRegistrationPersonal($data['name']) ||  !$this->checkRegistrationPersonal($data['surname']) || !$this->checkRegistrationGender($data['gender'])) {
+            $check = false;
+        }
+        return $check;
+    }
+
+    public function checkRegistrationEmail(string $email): bool
+    {
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL) || User::getAll(whereClause: '`email` = ?', whereParams: [$email])) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkRegistrationUsername(string $username): bool
+    {
+        if (empty($username) || (strlen($username) < 3 || strlen($username) > 30)) {
+            return false;
+        }
+        if (is_numeric($username[0]) || !ctype_alnum($username) || User::getAll(whereClause: '`username` = ?', whereParams: [$username])) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkRegistrationPassword(string $password): bool
+    {
+        if (empty($password) || strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password)) {
+            return false;
+        }
+        if (!preg_match('/[0-9]/', $password) || !preg_match('/[!@#$%^&*]/', $password)) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkRegistrationVerifyPassword(string $verifyPassword, string $password): bool
+    {
+        if (empty($verifyPassword) || $verifyPassword !== $password) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkRegistrationPersonal(string $personal): bool
+    {
+        if (empty($personal)) {
+            return true;
+        }
+        if (strlen($personal) > 80 || !preg_match('/^[a-zA-ZáäčďéëíĺľňóöôřšťúüýžÁÄČĎÉËÍĹĽŇÓÖÔŘŠŤÚÜÝŽ]+$/u', $personal) || !ctype_upper($personal[0])) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkRegistrationGender(string $gender): bool
+    {
+        if (empty($gender)) {
+            return true;
+        }
+        $genders = array_map(fn($g) => $g->name, Gender::cases());
+        if (!in_array($gender, $genders)) {
+            return false;
+        }
+        return true;
     }
 }

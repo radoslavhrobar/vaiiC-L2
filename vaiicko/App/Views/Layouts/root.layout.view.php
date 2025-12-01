@@ -41,7 +41,7 @@
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.logout") ?>">Odhlásenie</a></li>
                             <?php } else { ?>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.index") ?>">Prihlásenie</a></li>
-                                <li><a class="dropdown-item" href="<?= $link->url("auth.register") ?>">Registrácia</a></li>
+                                <li><a class="dropdown-item" href="<?= $link->url("auth.registration") ?>">Registrácia</a></li>
                                 <li><a class="dropdown-item" href="#">Zabudnuté heslo</a></li>
                             <?php } ?>
                         </ul>

@@ -17,7 +17,7 @@ body {
 
 .navbar {
     background: conic-gradient(burlywood, blanchedalmond, peru, tan);
-    margin: 5px -8px 0;
+     margin: 5px -8px 0;
     padding: 5px 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
@@ -74,4 +74,12 @@ div span {
     text-align: center;
     font-size: 15px;
     color: red;
+}
+
+.btn--brown {
+    background-color: #5b3a29;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 600;
 }
