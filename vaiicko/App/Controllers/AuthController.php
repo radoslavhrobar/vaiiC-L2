@@ -51,11 +51,11 @@ class AuthController extends BaseController
         if ($request->hasValue('submit')) {
             $logged = $this->app->getAuth()->login($request->value('username'), $request->value('password'));
             if ($logged) {
-                return $this->redirect($this->url("admin.index"));
+                return $this->redirect($this->url("home.index"));
             }
         }
 
-        $message = $logged === false ? 'Bad username or password' : null;
+        $message = $logged === false ? 'Nesprávne používateľské meno alebo heslo.' : null;
         return $this->html(compact("message"));
     }
 
@@ -100,6 +100,11 @@ class AuthController extends BaseController
         }
         $message = 'Formulárové údaje obsahujú chyby.';
         return $this->html(compact('message'), 'registration');
+    }
+
+    public function edit(Request $request): Response
+    {
+        return $this->html();
     }
 
     public function checkRegistration($data): bool
