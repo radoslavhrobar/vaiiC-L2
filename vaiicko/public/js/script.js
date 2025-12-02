@@ -21,9 +21,10 @@ function checkUsername(username) {
         return ["lightgreen", ""]
     }
 }
-function checkPassword(password) {
+
+function checkPassword(password, passwordOptional) {
     if (password.value === "") {
-        return ["red", additionalTexts.get(idElements[2])]
+        return passwordOptional ? ["gray", ""] : ["red", additionalTexts.get(idElements[2])]
     } else if (password.value.length < 8) {
         return ["red", "Heslo musí byť minimálne 8 znakov dlhé!"]
     } else if (!/[A-Z]/.test(password.value)) {
@@ -38,9 +39,9 @@ function checkPassword(password) {
         return ["lightgreen", ""]
     }
 }
-function checkVerifyPassword(verifyPassword, password) {
+function checkVerifyPassword(verifyPassword, password, passwordOptional) {
     if (verifyPassword.value === "") {
-        return ["red", additionalTexts.get(idElements[3])]
+        return passwordOptional && password.value === "" ? ["gray", ""] : ["red", additionalTexts.get(idElements[3])]
     } else if (verifyPassword.value !== password.value) {
         return ["red", "Heslá sa musia zhodovať!"]
     } else {
@@ -64,17 +65,39 @@ function checkPersonal(personal) {
 
 function checkForm() {
     let valid = true;
-    let resultEmail = checkEmail(document.getElementById(idElements[0]));
-    let resultUsername = checkUsername(document.getElementById(idElements[1]));
-    let resultPassword = checkPassword(document.getElementById(idElements[2]));
-    let resultVerifyPassword = checkVerifyPassword(document.getElementById(idElements[3]), document.getElementById(idElements[2]));
-    let resultName = checkPersonal(document.getElementById(idElements[4]));
-    let resultSurname = checkPersonal(document.getElementById(idElements[5]));
 
-    let resultElements = [resultEmail, resultUsername, resultPassword, resultVerifyPassword, resultName, resultSurname]
+    const form = document.getElementById('registration') || document.getElementById('user-edit');
+    const isEdit = form.id === 'user-edit';
+
+    const emailEl = document.getElementById(idElements[0]);
+    const usernameEl = document.getElementById(idElements[1]);
+    const passwordEl = document.getElementById(idElements[2]);
+    const verifyEl = document.getElementById(idElements[3]);
+    const nameEl = document.getElementById(idElements[4]);
+    const surnameEl = document.getElementById(idElements[5]);
+    const currentPasswordEl = document.getElementById(idElements[6]);
+
+    const resultEmail = checkEmail(emailEl);
+    const resultUsername = checkUsername(usernameEl);
+    const resultPassword = checkPassword(passwordEl, isEdit);
+    const resultVerifyPassword = checkVerifyPassword(verifyEl, passwordEl, isEdit);
+
+    if (isEdit && passwordEl.value !== '') {
+        if (currentPasswordEl.value === '') {
+            const resultCurrentPassword = ["red", "Zadaj aktuálne heslo pre potvrdenie zmeny hesla."];
+            valid = false;
+            const curMsgEl = document.getElementById(idMessages[6]);
+            updateOutput(currentPasswordEl, curMsgEl, resultCurrentPassword[0], resultCurrentPassword[1]);
+        }
+    }
+
+    const resultName = checkPersonal(nameEl);
+    const resultSurname = checkPersonal(surnameEl);
+
+    const resultElements = [resultEmail, resultUsername, resultPassword, resultVerifyPassword, resultName, resultSurname]
     resultElements.forEach(function(result, i) {
-        let element = document.getElementById(idElements[i]);
-        let elementMessage = document.getElementById(idMessages[i]);
+        const element = document.getElementById(idElements[i]);
+        const elementMessage = document.getElementById(idMessages[i]);
         updateOutput(element, elementMessage, result[0], result[1])
 
         if (result[0] === "red") {
@@ -85,46 +108,68 @@ function checkForm() {
 }
 
 function apply(idElement, idMessage, controlFunction, input, focusout) {
-    let element = document.getElementById(idElement)
-    let elementMessage = document.getElementById(idMessage);
+    const element = document.getElementById(idElement);
+    const elementMessage = document.getElementById(idMessage);
+
+    function computeAttributes() {
+        const passwordOptional = document.getElementById('user-edit') !== null;
+        if (idElement === idElements[2]) {
+            return controlFunction(element, passwordOptional);
+        } else if (idElement === idElements[3]) {
+            const pwdEl = document.getElementById(idElements[2]);
+            return controlFunction(element, pwdEl, passwordOptional);
+        } else if (idElement === idElements[6]) {
+            const password = document.getElementById(idElements[2]);
+            if (element.value === "" && password.value !== "") {
+                return ["red", "Zadaj aktuálne heslo pre potvrdenie zmeny hesla."];
+            } else {
+                return ["gray", ""];
+            }
+        } else {
+            return controlFunction(element);
+        }
+    }
 
     if (input) {
         element.addEventListener("input", function() {
-            let attributes = idElement !== idElements[3] ? controlFunction(element) : controlFunction(element, document.getElementById(idElements[2]))
-            updateOutput(element, elementMessage, attributes[0], attributes[1])
-        })
+            const attributes = computeAttributes();
+            updateOutput(element, elementMessage, attributes[0], attributes[1]);
+        });
     }
 
     if (focusout) {
         element.addEventListener("focusout", function() {
-            if (element.value === "") {
-                updateOutput(element, elementMessage, "red", additionalTexts.get(idElement))
+            const attributes = computeAttributes();
+            updateOutput(element, elementMessage, attributes[0], attributes[1]);
+        });
+    }
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    const sending = document.getElementById('registration') || document.getElementById('user-edit');
+    if (sending) {
+        sending.addEventListener('submit', function(event) {
+            if (!checkForm()) {
+                event.preventDefault();
+                alert('Formulár obsahuje chyby. Skontroluj prosím všetky údaje.')
             }
         })
     }
-}
 
-let sending = document.getElementById("registration")
-sending.addEventListener("submit", function(event) {
-    if (!checkForm()) {
-        event.preventDefault();
-        alert("Formulár obsahuje chyby. Skontrolujte prosím všetky údaje.")
-    }
-})
+    apply(idElements[0], idMessages[0], checkEmail, true,true);
+    apply(idElements[1], idMessages[1], checkUsername, true, true);
+    apply(idElements[2], idMessages[2], checkPassword, true, true);
+    apply(idElements[3], idMessages[3], checkVerifyPassword, true, true);
+    apply(idElements[4], idMessages[4], checkPersonal, true, false);
+    apply(idElements[5], idMessages[5], checkPersonal, true, false);
+    apply(idElements[6], idMessages[6], checkPersonal, true, true);
+});
 
 function updateOutput(element, elementMessage, color, message) {
-    element.style.borderColor = color;
-    elementMessage.textContent = message;
+    if (element) element.style.borderColor = color;
+    if (elementMessage) elementMessage.textContent = message;
 }
 
-const idElements = ["email", "username", "password", "verifyPassword", "name", "surname"];
-const idMessages = ["emailMessage", "usernameMessage", "passwordMessage", "verifyPasswordMessage", "nameMessage", "surnameMessage"];
+const idElements = ["email", "username", "password", "verifyPassword", "name", "surname", "currentPassword"];
+const idMessages = ["emailMessage", "usernameMessage", "passwordMessage", "verifyPasswordMessage", "nameMessage", "surnameMessage", "currentPasswordMessage"];
 const additionalTexts = new Map([[idElements[0], "Zadaj email."], [idElements[1],"Zadaj používateľské meno."], [idElements[2], "Zadaj heslo."], [idElements[3], "Zadaj kontrolu hesla."]])
-
-
-apply(idElements[0], idMessages[0], checkEmail, true,true);
-apply(idElements[1], idMessages[1], checkUsername, true, true);
-apply(idElements[2], idMessages[2], checkPassword, true, true);
-apply(idElements[3], idMessages[3], checkVerifyPassword, true, true);
-apply(idElements[4], idMessages[4], checkPersonal, true, false);
-apply(idElements[5], idMessages[5], checkPersonal, true, false);

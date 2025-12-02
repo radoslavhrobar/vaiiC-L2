@@ -47,9 +47,9 @@
         <label class="col-sm-3" for="gender">Pohlavie:</label>
         <div class="col-sm-6">
             <input type="hidden" name="gender" value="">
-            <input type="radio" name="gender" id="gender_male" value="Male" <?= isset($_POST['gender']) && $_POST['gender'] == 'Male' ? 'checked'  : '' ?>>muž
-            <input type="radio" name="gender" id="gender_female" value="Female"  <?= isset($_POST['gender']) && $_POST['gender'] == 'Female' ? 'checked' : '' ?>>žena
-            <input type="radio" name="gender" id="gender_other" value="Other"  <?= isset($_POST['gender']) && $_POST['gender'] == 'Other' ? 'checked' : '' ?>>iné
+            <input type="radio" name="gender" id="gender" value="Male" <?= isset($_POST['gender']) && $_POST['gender'] == 'Male' ? 'checked'  : '' ?>>muž
+            <input type="radio" name="gender" id="gender" value="Female"  <?= isset($_POST['gender']) && $_POST['gender'] == 'Female' ? 'checked' : '' ?>>žena
+            <input type="radio" name="gender" id="gender" value="Other"  <?= isset($_POST['gender']) && $_POST['gender'] == 'Other' ? 'checked' : '' ?>>iné
         </div>
         <span><?= $message ?? '' ?></span>
     </div>

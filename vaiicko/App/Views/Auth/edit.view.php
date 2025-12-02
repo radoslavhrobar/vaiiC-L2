@@ -8,14 +8,14 @@
         <label class="col-sm-3" for="email">Email:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="text" name="email" id="email" value="<?= $_POST['email'] ?? '' ?>" required>
+        <input class="col-sm-6" type="text" name="email" id="email" value="<?= $_POST['email'] ?? '' ?>" autofocus>
         <span id="emailMessage"></span>
     </div>
     <div class="row">
         <label class="col-sm-3" for="username">Používateľské meno:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="text" name="username" id="username" value="<?= $_POST['username'] ?? '' ?>" required>
+        <input class="col-sm-6" type="text" name="username" id="username" value="<?= $_POST['username'] ?? '' ?>">
         <span id="usernameMessage"></span>
     </div>
     <h5 class="auth-name extra">Zmena hesla</h5>
@@ -49,9 +49,9 @@
         <label class="col-sm-3" for="gender">Pohlavie:</label>
         <div class="col-sm-6">
             <input type="hidden" name="gender" value="">
-            <input type="radio" name="gender" id="gender_male" value="Male" <?=  isset($_POST['gender']) && $_POST['gender'] == 'Male' ? 'checked'  : ''  ?>> muž
-            <input type="radio" name="gender" id="gender_female" value="Female" <?= isset($_POST['gender']) && $_POST['gender'] == 'Female' ? 'checked' : '' ?>> žena
-            <input type="radio" name="gender" id="gender_other" value="Other" <?= isset($_POST['gender']) && $_POST['gender'] == 'Other' ? 'checked' : '' ?>> iné
+            <input type="radio" name="gender" id="gender" value="Male" <?=  isset($_POST['gender']) && $_POST['gender'] == 'Male' ? 'checked'  : ''  ?>> muž
+            <input type="radio" name="gender" id="gender" value="Female" <?= isset($_POST['gender']) && $_POST['gender'] == 'Female' ? 'checked' : '' ?>> žena
+            <input type="radio" name="gender" id="gender" value="Other" <?= isset($_POST['gender']) && $_POST['gender'] == 'Other' ? 'checked' : '' ?>> iné
         </div>
         <span><?= $message ?? '' ?></span>
     </div>
