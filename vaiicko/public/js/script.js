@@ -65,9 +65,7 @@ function checkPersonal(personal) {
 
 function checkForm() {
     let valid = true;
-
-    const form = document.getElementById('registration') || document.getElementById('user-edit');
-    const isEdit = form.id === 'user-edit';
+    const isEdit = document.getElementById('user-edit') !== null;
 
     const emailEl = document.getElementById(idElements[0]);
     const usernameEl = document.getElementById(idElements[1]);
@@ -160,8 +158,8 @@ window.addEventListener('DOMContentLoaded', function() {
     apply(idElements[1], idMessages[1], checkUsername, true, true);
     apply(idElements[2], idMessages[2], checkPassword, true, true);
     apply(idElements[3], idMessages[3], checkVerifyPassword, true, true);
-    apply(idElements[4], idMessages[4], checkPersonal, true, false);
-    apply(idElements[5], idMessages[5], checkPersonal, true, false);
+    apply(idElements[4], idMessages[4], checkPersonal, true, true);
+    apply(idElements[5], idMessages[5], checkPersonal, true, true);
     apply(idElements[6], idMessages[6], checkPersonal, true, true);
 });
 

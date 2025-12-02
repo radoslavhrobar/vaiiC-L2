@@ -81,7 +81,7 @@ class AuthController extends BaseController
     public function register(Request $request): Response
     {
         $d = $request->post();
-        if ($this->checkRegistration($d)) {
+        if ($this->checkRegistration($d, false)) {
             $user = new User();
             $user->setEmail($d['email']);
             $user->setUsername($d['username']);
@@ -104,42 +104,97 @@ class AuthController extends BaseController
 
     public function edit(Request $request): Response
     {
-        return $this->html();
+        $user = $this->app->getAuth()->getUser();
+        return $this->html(compact('user'));
     }
 
-    public function checkRegistration($data): bool
+    public function update(Request $request): Response
+    {
+        $id = $request->value('id');
+        $user = User::getOne($id);
+        $d = $request->post();
+        $message = 'Údaje boli úspešne aktualizované.';
+
+        if ($this->checkRegistration($d, true)) {
+            $user->setEmail($d['email']);
+            $user->setUsername($d['username']);
+            if (!empty($d['password'])) {
+                $user->setPassword($d['password']);
+            }
+            if (!empty($d['name'])) {
+                $user->setName($d['name']);
+            }
+            if (!empty($d['surname'])) {
+                $user->setSurname($d['surname']);
+            }
+            if (!empty($d['gender'])) {
+                $user->setGender($d['gender']);
+            }
+            $user->save();
+        } else {
+            $message = 'Formulárové údaje obsahujú chyby.';
+        }
+        return $this->html(compact( 'message'), 'edit');
+    }
+
+    public function checkRegistration($data, $optional): bool
     {
         $check = true;
-        if (!$this->checkRegistrationEmail($data['email']) || !$this->checkRegistrationUsername($data['username']) ||
-            !$this->checkRegistrationPassword($data['password']) || !$this->checkRegistrationVerifyPassword($data['verifyPassword'], $data['password']) ||
+        if (!$this->checkRegistrationEmail($data['email'], $data['id'] ?? null) || !$this->checkRegistrationUsername($data['username'], $data['id'] ?? null) ||
+            !$this->checkRegistrationPassword($data['password'], $optional) || !$this->checkRegistrationVerifyPassword($data['verifyPassword'], $data['password'], $optional) ||
             !$this->checkRegistrationPersonal($data['name']) ||  !$this->checkRegistrationPersonal($data['surname']) || !$this->checkRegistrationGender($data['gender'])) {
             $check = false;
+        }
+        if (isset($data['currentPassword'])) {
+            $user = User::getAll(whereClause: '`password` = ?', whereParams: [$data['currentPassword']]);
+            if ($optional && !empty($data['password']) && empty($user)) {
+                $check = false;
+            }
         }
         return $check;
     }
 
-    public function checkRegistrationEmail(string $email): bool
+
+    public function checkRegistrationEmail(string $email, ?int $currentUserId): bool
     {
-        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL) || User::getAll(whereClause: '`email` = ?', whereParams: [$email])) {
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return false;
+        }
+        $existing = User::getAll(whereClause: '`email` = ?', whereParams: [$email]);
+        if (!empty($existing)) {
+            if ($currentUserId === null || $existing[0]->getId() !== $currentUserId) {
+                return false;
+            }
         }
         return true;
     }
 
-    public function checkRegistrationUsername(string $username): bool
+    public function checkRegistrationUsername(string $username, ?int $currentUserId): bool
     {
         if (empty($username) || (strlen($username) < 3 || strlen($username) > 30)) {
             return false;
         }
-        if (is_numeric($username[0]) || !ctype_alnum($username) || User::getAll(whereClause: '`username` = ?', whereParams: [$username])) {
+        if (is_numeric($username[0]) || !ctype_alnum($username)) {
             return false;
+        }
+        $existing = User::getAll(whereClause: '`username` = ?', whereParams: [$username]);
+        if (!empty($existing)) {
+            if ($currentUserId === null || $existing[0]->getId() !== $currentUserId) {
+                return false;
+            }
         }
         return true;
     }
 
-    public function checkRegistrationPassword(string $password): bool
+    public function checkRegistrationPassword(string $password, bool $optional): bool
     {
-        if (empty($password) || strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password)) {
+        if (empty($password)) {
+            if (!$optional) {
+                return false;
+            }
+            return true;
+        }
+        if (strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password)) {
             return false;
         }
         if (!preg_match('/[0-9]/', $password) || !preg_match('/[!@#$%^&*]/', $password)) {
@@ -148,9 +203,15 @@ class AuthController extends BaseController
         return true;
     }
 
-    public function checkRegistrationVerifyPassword(string $verifyPassword, string $password): bool
+    public function checkRegistrationVerifyPassword(string $verifyPassword, string $password, bool $optional): bool
     {
-        if (empty($verifyPassword) || $verifyPassword !== $password) {
+        if (empty($verifyPassword)) {
+            if ($optional && $password === "") {
+                return true;
+            }
+            return false;
+        }
+        if ($verifyPassword !== $password) {
             return false;
         }
         return true;

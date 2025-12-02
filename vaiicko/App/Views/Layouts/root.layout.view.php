@@ -31,6 +31,9 @@
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="#">Literatúra</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="#">Používatelia</a>
+                        </li>
                     </ul>
                     <div class="nav-item dropdown me-2 mb-2 mb-md-0">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

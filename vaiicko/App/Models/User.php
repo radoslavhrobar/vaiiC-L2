@@ -36,7 +36,7 @@ class User extends Model implements IIdentity
         $this->id = $id;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
@@ -46,7 +46,7 @@ class User extends Model implements IIdentity
         $this->email = $email;
     }
 
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->username;
     }
@@ -56,7 +56,7 @@ class User extends Model implements IIdentity
         $this->username = $username;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -66,7 +66,7 @@ class User extends Model implements IIdentity
         $this->password = $password;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -76,7 +76,7 @@ class User extends Model implements IIdentity
         $this->name = $name;
     }
 
-    public function getSurname(): string
+    public function getSurname(): ?string
     {
         return $this->surname;
     }
