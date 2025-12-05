@@ -39,7 +39,7 @@
     <h5 class="auth-name extra">Dodatočné informácie:</h5>
     <div class="row">
         <label class="col-sm-3" for="name">Meno:</label>
-        <input class="col-sm-6" type="text" name="name" id="name" value="<?= isset($user) ? $user->getName() : $_POST['name']?>">
+        <input class="col-sm-6" type="text" name="name" id="name" value="<?= isset($user) ? $user->getName() : $_POST['name'] ?>">
         <span id="nameMessage"></span>
     </div>
     <div class="row">

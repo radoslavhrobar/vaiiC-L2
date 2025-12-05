@@ -137,6 +137,22 @@ class AuthController extends BaseController
         return $this->html(compact( 'message'), 'edit');
     }
 
+    public function delete(Request $request): Response
+    {
+        $user = $this->app->getAuth()->getUser();
+        if ($user) {
+            $user->delete();
+            $this->app->getAuth()->logout();
+            return $this->redirect($this->url("home.index"));
+        }
+        throw new Exception("Používateľ nenájdený.");
+    }
+
+    public function print(Request $request): Response
+    {
+        return $this->html();
+    }
+
     public function checkRegistration($data, $optional): bool
     {
         $check = true;

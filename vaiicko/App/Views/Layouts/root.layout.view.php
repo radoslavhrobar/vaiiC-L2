@@ -32,7 +32,7 @@
                             <a class="nav-link" aria-current="page" href="#">Literatúra</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">Používatelia</a>
+                            <a class="nav-link" aria-current="page" href="<?= $link->url("auth.print") ?>">Používatelia</a>
                         </li>
                     </ul>
                     <div class="nav-item dropdown me-2 mb-2 mb-md-0">
@@ -43,9 +43,10 @@
                             <?php if ($auth->isLogged()) { ?>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.logout") ?>">Odhlásenie</a></li>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.edit") ?>">Zmeniť údaje</a></li>
+                                <li><a class="dropdown-item" href="<?= $link->url("auth.delete") ?>">Zmazať účet</a></li>
                             <?php } else { ?>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.index") ?>">Prihlásenie</a></li>
-                                <li><a class="dropdown-item" href="<?= $link->url("auth.registration") ?>">Registrácia</a></li>
+                                <li><a class="dropdown-item" href="<?= $link->url("auth.registration") ?>">Darček pre mimku</a></li>
                             <?php } ?>
                         </ul>
                     </div>
