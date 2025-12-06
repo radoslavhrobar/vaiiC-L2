@@ -4,7 +4,7 @@
 ?>
 
 <div class="row">
-    <div class="col-6">
+    <div class="col-md-6">
         <div id="carouselExample" class="carousel slide main-carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <div class="col-6">
+    <div class="col-md-6">
         <div class="card registration-info">
             <div class="card-body">
                 <h4 class="card-title mb-4">
