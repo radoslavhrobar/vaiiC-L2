@@ -1,69 +1,112 @@
-function checkEmail(email) {
+async function checkEmail(email) {
     let format = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (email.value === "") {
         return ["red", additionalTexts.get(idElements[0])]
-    } else if (!format.test(email.value)) {
-        return ["red", "Email musí byť v správnom formáte!"]
-    } else {
-        return ["lightgreen", ""]
     }
+    if (!format.test(email.value)) {
+        return ["red", "Email musí byť v správnom formáte!"]
+    }
+    const exists = await serverCheckEmail(email.value);
+    if (exists) {
+        return ["red", "Tento email je už obsadený!"];
+    }
+    return ["lightgreen", ""];
 }
-function checkUsername(username) {
+async function checkUsername(username) {
     if (username.value === "") {
         return ["red", additionalTexts.get(idElements[1])]
-    } else if (username.value.length < 3 || username.value.length > 30) {
-        return ["red", "Používateľské meno musí byť dlhé v rozmedzí od 3 do 30 znakov!"]
-    } else if (!isNaN(username.value.charAt(0))) {
-        return ["red", "Prvý znak v používateľskom mene niesme byť číslica!"]
-    } else if (/[^a-zA-Z0-9]/.test(username.value)) {
-        return ["red", "Používateľské meno môže obsahovať len alfanumerické znaky a musí byť bez medzier!"]
-    } else {
-        return ["lightgreen", ""]
     }
+    if (username.value.length < 3 || username.value.length > 30) {
+        return ["red", "Používateľské meno musí byť dlhé v rozmedzí od 3 do 30 znakov!"]
+    }
+    if (!isNaN(username.value.charAt(0))) {
+        return ["red", "Prvý znak v používateľskom mene niesme byť číslica!"]
+    }
+    if (/[^a-zA-Z0-9]/.test(username.value)) {
+        return ["red", "Používateľské meno môže obsahovať len alfanumerické znaky a musí byť bez medzier!"]
+    }
+    const exists = await serverCheckUsername(username.value);
+    if (exists) {
+        return ["red", "Toto používateľské meno je už obsadené!"];
+    }
+    return ["lightgreen", ""];
 }
 
 function checkPassword(password, passwordOptional) {
     if (password.value === "") {
         return passwordOptional ? ["gray", ""] : ["red", additionalTexts.get(idElements[2])]
-    } else if (password.value.length < 8) {
-        return ["red", "Heslo musí byť minimálne 8 znakov dlhé!"]
-    } else if (!/[A-Z]/.test(password.value)) {
-        return ["red", "Heslo musí obsahovať aspoň jedno veľké písmeno!"]
-    } else if (!/[a-z]/.test(password.value)) {
-        return ["red", "Heslo musí obsahovať aspoň jedno malé písmeno!"]
-    } else if (!/[0-9]/.test(password.value)) {
-        return ["red", "Heslo musí obsahovať aspoň jednu číslicu!"]
-    } else if (!/[!@#$%^&*]/.test(password.value)) {
-        return ["red", "Heslo musí obsahovať aspoň jeden zo špeciálnych znakov na výber! [!@#$%^&*]"]
-    } else {
-        return ["lightgreen", ""]
     }
+    if (password.value.length < 8) {
+        return ["red", "Heslo musí byť minimálne 8 znakov dlhé!"]
+    }
+    if (!/[A-Z]/.test(password.value)) {
+        return ["red", "Heslo musí obsahovať aspoň jedno veľké písmeno!"]
+    }
+    if (!/[a-z]/.test(password.value)) {
+        return ["red", "Heslo musí obsahovať aspoň jedno malé písmeno!"]
+    }
+    if (!/[0-9]/.test(password.value)) {
+        return ["red", "Heslo musí obsahovať aspoň jednu číslicu!"]
+    }
+    if (!/[!@#$%^&*]/.test(password.value)) {
+        return ["red", "Heslo musí obsahovať aspoň jeden zo špeciálnych znakov na výber! [!@#$%^&*]"]
+    }
+    return ["lightgreen", ""]
 }
 function checkVerifyPassword(verifyPassword, password, passwordOptional) {
     if (verifyPassword.value === "") {
         return passwordOptional && password.value === "" ? ["gray", ""] : ["red", additionalTexts.get(idElements[3])]
-    } else if (verifyPassword.value !== password.value) {
-        return ["red", "Heslá sa musia zhodovať!"]
-    } else {
-        return ["lightgreen", ""]
     }
+    if (verifyPassword.value !== password.value) {
+        return ["red", "Heslá sa musia zhodovať!"]
+    }
+    return ["lightgreen", ""]
 }
 function checkPersonal(personal) {
     let format = /^[a-zA-ZáäčďéëíĺľňóöôřšťúüýžÁÄČĎÉËÍĹĽŇÓÖÔŘŠŤÚÜÝŽ]+$/u
     if (personal.value === "") {
         return ["gray", ""]
-    } else if (personal.value.length > 30) {
-        return ["red", (personal.id === idElements[4] ? "Meno" : "Priezvisko") + " nesmie prekročiť dĺžku 30 znakov!"]
-    } else if (!format.test(personal.value)) {
-        return ["red", (personal.id === idElements[4] ? "Meno" : "Priezvisko") + " môže obsahovať iba písmená!"]
-    } else if (personal.value.charAt(0) !== personal.value.charAt(0).toUpperCase()) {
-        return ["red", (personal.id === idElements[4] ? "Meno" : "Priezvisko") + " musí začínať veľkým písmenom!"]
-    } else {
-        return ["lightgreen", ""]
     }
+    if (personal.value.length > 30) {
+        return ["red", (personal.id === idElements[4] ? "Meno" : "Priezvisko") + " nesmie prekročiť dĺžku 30 znakov!"]
+    }
+    if (!format.test(personal.value)) {
+        return ["red", (personal.id === idElements[4] ? "Meno" : "Priezvisko") + " môže obsahovať iba písmená!"]
+    }
+    if (personal.value.charAt(0) !== personal.value.charAt(0).toUpperCase()) {
+        return ["red", (personal.id === idElements[4] ? "Meno" : "Priezvisko") + " musí začínať veľkým písmenom!"]
+    }
+    return ["lightgreen", ""]
+}
+async function serverCheckEmail(email) {
+    const id = document.getElementById('user-id') ? document.getElementById('user-id').value : null;
+    const params = new URLSearchParams({email});
+
+    if (id) {
+        params.append("id", id);
+    }
+
+    const res = await fetch('/?c=auth&a=ajaxCheckEmail&' + params.toString());
+    const json = await res.json();
+
+    return json.exists;
 }
 
-function checkForm() {
+async function serverCheckUsername(username) {
+    const id = document.getElementById('user-id') ? document.getElementById('user-id').value : null;
+    const params = new URLSearchParams({username});
+
+    if (id) {
+        params.append("id", id);
+    }
+
+    const res = await fetch('/?c=auth&a=ajaxCheckUsername&' + params.toString());
+    const json = await res.json();
+
+    return json.exists;
+}
+
+async function checkForm() {
     let valid = true;
     const isEdit = document.getElementById('user-edit') !== null;
 
@@ -75,18 +118,22 @@ function checkForm() {
     const surnameEl = document.getElementById(idElements[5]);
     const currentPasswordEl = document.getElementById(idElements[6]);
 
-    const resultEmail = checkEmail(emailEl);
-    const resultUsername = checkUsername(usernameEl);
+    const resultEmail = await checkEmail(emailEl);
+    const resultUsername = await checkUsername(usernameEl);
     const resultPassword = checkPassword(passwordEl, isEdit);
     const resultVerifyPassword = checkVerifyPassword(verifyEl, passwordEl, isEdit);
 
-    if (isEdit && passwordEl.value !== '') {
-        if (currentPasswordEl.value === '') {
-            const resultCurrentPassword = ["red", "Zadaj aktuálne heslo pre potvrdenie zmeny hesla."];
+    let resultCurrentPassword;
+    if (isEdit) {
+        if (passwordEl.value !== '' && currentPasswordEl.value === '') {
+            resultCurrentPassword = ["red", "Zadaj aktuálne heslo pre potvrdenie zmeny hesla."];
             valid = false;
-            const curMsgEl = document.getElementById(idMessages[6]);
-            updateOutput(currentPasswordEl, curMsgEl, resultCurrentPassword[0], resultCurrentPassword[1]);
+        } else {
+            resultCurrentPassword = ["gray", ""];
+            valid = true;
         }
+        const curMsgEl = document.getElementById(idMessages[6]);
+        updateOutput(currentPasswordEl, curMsgEl, resultCurrentPassword[0], resultCurrentPassword[1]);
     }
 
     const resultName = checkPersonal(nameEl);
@@ -109,49 +156,45 @@ function apply(idElement, idMessage, controlFunction, input, focusout) {
     const element = document.getElementById(idElement);
     const elementMessage = document.getElementById(idMessage);
 
-    function computeAttributes() {
+    async function runValidation() {
+        let attributes;
         const passwordOptional = document.getElementById('user-edit') !== null;
-        if (idElement === idElements[2]) {
-            return controlFunction(element, passwordOptional);
+        if (idElement === idElements[0] || idElement === idElements[1]) {
+            attributes = await controlFunction(element);
+        } else if (idElement === idElements[2]) {
+            attributes = controlFunction(element, passwordOptional);
         } else if (idElement === idElements[3]) {
             const pwdEl = document.getElementById(idElements[2]);
-            return controlFunction(element, pwdEl, passwordOptional);
+            attributes = controlFunction(element, pwdEl, passwordOptional);
         } else if (idElement === idElements[6]) {
             const password = document.getElementById(idElements[2]);
             if (element.value === "" && password.value !== "") {
-                return ["red", "Zadaj aktuálne heslo pre potvrdenie zmeny hesla."];
+                attributes = ["red", "Zadaj aktuálne heslo pre potvrdenie zmeny hesla."];
             } else {
-                return ["gray", ""];
+                attributes = ["gray", ""];
             }
         } else {
-            return controlFunction(element);
+            attributes = controlFunction(element);
         }
+        updateOutput(element, elementMessage, attributes[0], attributes[1]);
     }
 
-    if (input) {
-        element.addEventListener("input", function() {
-            const attributes = computeAttributes();
-            updateOutput(element, elementMessage, attributes[0], attributes[1]);
-        });
-    }
-
-    if (focusout) {
-        element.addEventListener("focusout", function() {
-            const attributes = computeAttributes();
-            updateOutput(element, elementMessage, attributes[0], attributes[1]);
-        });
-    }
+    if (input) element.addEventListener("input", runValidation);
+    if (focusout) element.addEventListener("focusout", runValidation);
 }
 
 window.addEventListener('DOMContentLoaded', function() {
     const sending = document.getElementById('registration') || document.getElementById('user-edit');
     if (sending) {
-        sending.addEventListener('submit', function(event) {
-            if (!checkForm()) {
-                event.preventDefault();
+        sending.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const valid = await checkForm();
+            if (!valid) {
                 alert('Formulár obsahuje chyby. Skontroluj prosím všetky údaje.')
+            } else {
+                sending.submit();
             }
-        })
+        });
     }
 
     apply(idElements[0], idMessages[0], checkEmail, true,true);

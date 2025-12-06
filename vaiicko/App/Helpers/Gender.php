@@ -2,19 +2,19 @@
 
 namespace App\Helpers;
 
-enum Gender
+enum Gender : string
 {
-    case Male;
-    case Female;
-    case Other;
+    case Male = 'muž';
+    case Female = 'žena';
+    case Other = 'iné';
 
-    public static function from(string $gender): ?Gender
+    public static function valueFrom(string $gender): ?string
     {
         return match ($gender) {
-            'male' => self::Male,
-            'female' => self::Female,
-            'other' => self::Other,
-            default => null,
+            'Male' => self::Male->value,
+            'Female' => self::Female->value,
+            'Other' => self::Other->value,
+            default => null
         };
     }
 }

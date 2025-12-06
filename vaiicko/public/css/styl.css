@@ -76,10 +76,12 @@ div span {
     color: red;
 }
 
-.btn--brown {
+.btn-brown {
     background-color: #5b3a29;
     color: white;
     padding: 10px 18px;
     border-radius: 6px;
     font-weight: 600;
 }
+
+

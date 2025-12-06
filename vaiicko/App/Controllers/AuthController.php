@@ -4,10 +4,12 @@ namespace App\Controllers;
 
 use App\Configuration;
 use App\Helpers\Gender;
+use App\Helpers\Role;
 use App\Models\User;
 use Exception;
 use Framework\Core\BaseController;
 use Framework\Http\Request;
+use Framework\Http\Responses\JsonResponse;
 use Framework\Http\Responses\Response;
 use Framework\Http\Responses\ViewResponse;
 
@@ -54,7 +56,6 @@ class AuthController extends BaseController
                 return $this->redirect($this->url("home.index"));
             }
         }
-
         $message = $logged === false ? 'Nesprávne používateľské meno alebo heslo.' : null;
         return $this->html(compact("message"));
     }
@@ -81,7 +82,7 @@ class AuthController extends BaseController
     public function register(Request $request): Response
     {
         $d = $request->post();
-        if ($this->checkRegistration($d, false)) {
+        if ($this->check($d, false)) {
             $user = new User();
             $user->setEmail($d['email']);
             $user->setUsername($d['username']);
@@ -105,17 +106,23 @@ class AuthController extends BaseController
     public function edit(Request $request): Response
     {
         $user = $this->app->getAuth()->getUser();
+        if (!$user) {
+            throw new Exception("Používateľ nenájdený.");
+        }
         return $this->html(compact('user'));
     }
 
     public function update(Request $request): Response
     {
-        $id = $request->value('id');
+        $id = (int)$request->value('id');
         $user = User::getOne($id);
+        if (!$user) {
+            throw new Exception("Používateľ nenájdený.");
+        }
         $d = $request->post();
         $message = 'Údaje boli úspešne aktualizované.';
 
-        if ($this->checkRegistration($d, true)) {
+        if ($this->check($d, true)) {
             $user->setEmail($d['email']);
             $user->setUsername($d['username']);
             if (!empty($d['password'])) {
@@ -140,25 +147,49 @@ class AuthController extends BaseController
     public function delete(Request $request): Response
     {
         $user = $this->app->getAuth()->getUser();
-        if ($user) {
-            $user->delete();
-            $this->app->getAuth()->logout();
-            return $this->redirect($this->url("home.index"));
+        if (!$user) {
+            throw new Exception("Používateľ nenájdený.");
         }
-        throw new Exception("Používateľ nenájdený.");
+
+        $id = (int)$request->value('id');
+        if (!empty($id)) {
+            $target = User::getOne($id);
+            if (!$target) {
+                throw new Exception("Cieľový používateľ nenájdený.");
+            }
+            $target->delete();
+            $users = User::getAll();
+            $isAdmin = $this->checkAdmin();
+            return $this->html(compact('users', 'isAdmin'), 'print');
+        }
+
+        $user->delete();
+        $this->app->getAuth()->logout();
+        return $this->redirect($this->url("home.index"));
     }
 
     public function print(Request $request): Response
     {
-        return $this->html();
+        $users = User::getAll();
+        $isAdmin = $this->checkAdmin();
+        return $this->html(compact('users', 'isAdmin'));
     }
 
-    public function checkRegistration($data, $optional): bool
+    public function checkAdmin(): bool
+    {
+        $authUser = $this->app->getAuth()->getUser();
+        if ($authUser && $authUser->getRole() === Role::Admin->name) {
+            return true;
+        }
+        return false;
+    }
+
+    public function check($data, $optional): bool
     {
         $check = true;
-        if (!$this->checkRegistrationEmail($data['email'], $data['id'] ?? null) || !$this->checkRegistrationUsername($data['username'], $data['id'] ?? null) ||
-            !$this->checkRegistrationPassword($data['password'], $optional) || !$this->checkRegistrationVerifyPassword($data['verifyPassword'], $data['password'], $optional) ||
-            !$this->checkRegistrationPersonal($data['name']) ||  !$this->checkRegistrationPersonal($data['surname']) || !$this->checkRegistrationGender($data['gender'])) {
+        if (!$this->checkEmail($data['email'], $data['id'] ?? null) || !$this->checkUsername($data['username'], $data['id'] ?? null) ||
+            !$this->checkPassword($data['password'], $optional) || !$this->checkVerifyPassword($data['verifyPassword'], $data['password'], $optional) ||
+            !$this->checkPersonal($data['name']) ||  !$this->checkPersonal($data['surname']) || !$this->checkGender($data['gender'])) {
             $check = false;
         }
         if (isset($data['currentPassword'])) {
@@ -171,7 +202,7 @@ class AuthController extends BaseController
     }
 
 
-    public function checkRegistrationEmail(string $email, ?int $currentUserId): bool
+    public function checkEmail(string $email, ?int $currentUserId): bool
     {
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return false;
@@ -185,7 +216,7 @@ class AuthController extends BaseController
         return true;
     }
 
-    public function checkRegistrationUsername(string $username, ?int $currentUserId): bool
+    public function checkUsername(string $username, ?int $currentUserId): bool
     {
         if (empty($username) || (strlen($username) < 3 || strlen($username) > 30)) {
             return false;
@@ -202,7 +233,7 @@ class AuthController extends BaseController
         return true;
     }
 
-    public function checkRegistrationPassword(string $password, bool $optional): bool
+    public function checkPassword(string $password, bool $optional): bool
     {
         if (empty($password)) {
             if (!$optional) {
@@ -219,7 +250,7 @@ class AuthController extends BaseController
         return true;
     }
 
-    public function checkRegistrationVerifyPassword(string $verifyPassword, string $password, bool $optional): bool
+    public function checkVerifyPassword(string $verifyPassword, string $password, bool $optional): bool
     {
         if (empty($verifyPassword)) {
             if ($optional && $password === "") {
@@ -233,7 +264,7 @@ class AuthController extends BaseController
         return true;
     }
 
-    public function checkRegistrationPersonal(string $personal): bool
+    public function checkPersonal(string $personal): bool
     {
         if (empty($personal)) {
             return true;
@@ -244,7 +275,7 @@ class AuthController extends BaseController
         return true;
     }
 
-    public function checkRegistrationGender(string $gender): bool
+    public function checkGender(string $gender): bool
     {
         if (empty($gender)) {
             return true;
@@ -254,5 +285,29 @@ class AuthController extends BaseController
             return false;
         }
         return true;
+    }
+
+    public function ajaxCheckEmail(Request $request): Response
+    {
+        $email = $request->value('email');
+        $id = (int)$request->value('id');
+        $exists = false;
+        $existing = User::getAll(whereClause: '`email` = ?', whereParams: [$email]);
+        if (!empty($existing) && ($existing[0]->getId() !== $id)) {
+            $exists = true;
+        }
+        return $this->json(['exists' => $exists]);
+    }
+
+    public function ajaxCheckUsername(Request $request): Response
+    {
+        $username = $request->value('username');
+        $id = (int)$request->value('id');
+        $exists = false;
+        $existing = User::getAll(whereClause: '`username` = ?', whereParams: [$username]);
+        if (!empty($existing) && ($existing[0]->getId() !== $id)) {
+            $exists = true;
+        }
+        return $this->json(['exists' => $exists]);
     }
 }

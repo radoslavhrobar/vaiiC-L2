@@ -54,7 +54,7 @@
         <span><?= $message ?? '' ?></span>
     </div>
     <div class="text-center">
-        <input class="btn--brown" type="submit" value="Zaregistrovať">
+        <input class="btn-brown" type="submit" value="Zaregistrovať">
     </div>
 </form>
 

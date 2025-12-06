@@ -4,7 +4,7 @@
 ?>
 
 <form id="user-edit" class="forms" action="<?= $link->url('auth.update') ?>" method="post" autocomplete="on">
-    <input type="hidden" name="id" id="userId" value="<?= isset($user) ? $user->getId() : $_POST['id'] ?>">
+    <input type="hidden" name="id" id="user-id" value="<?= isset($user) ? $user->getId() : $_POST['id'] ?>">
     <h4 class="auth-name">Upravenie profilu</h4>
     <div class="row">
         <label class="col-sm-3" for="email">Email:

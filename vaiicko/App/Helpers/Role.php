@@ -2,8 +2,8 @@
 
 namespace App\Helpers;
 
-enum Role
+enum Role : string
 {
-    case User;
-    case Admin;
+    case User = 'Používateľ';
+    case Admin = 'Administrátor';
 }
