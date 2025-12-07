@@ -128,13 +128,19 @@ class AuthController extends BaseController
             if (!empty($d['password'])) {
                 $user->setPassword($d['password']);
             }
-            if (!empty($d['name'])) {
+            if (empty($d['name'])) {
+                $user->setName(null);
+            } else {
                 $user->setName($d['name']);
             }
-            if (!empty($d['surname'])) {
+            if (empty($d['surname'])) {
+                $user->setSurname(null);
+            } else {
                 $user->setSurname($d['surname']);
             }
-            if (!empty($d['gender'])) {
+            if (empty($d['gender'])) {
+                $user->setGender(null);
+            } else {
                 $user->setGender($d['gender']);
             }
             $user->save();

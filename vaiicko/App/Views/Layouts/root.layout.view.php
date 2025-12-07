@@ -26,10 +26,10 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="">Kino</a>
+                            <a class="nav-link" aria-current="page" href="#">Kino</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="">Literatúra</a>
+                            <a class="nav-link" aria-current="page" href="#">Literatúra</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="<?= $link->url("auth.print") ?>">Používatelia</a>
