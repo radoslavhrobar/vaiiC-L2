@@ -36,9 +36,6 @@ function checkPassword(password, passwordOptional) {
     if (password.value === "") {
         return passwordOptional ? ["gray", ""] : ["red", additionalTexts.get(idElements[2])]
     }
-    if (password.value.length < 8) {
-        return ["red", "Heslo musí byť minimálne 8 znakov dlhé!"]
-    }
     if (!/[A-Z]/.test(password.value)) {
         return ["red", "Heslo musí obsahovať aspoň jedno veľké písmeno!"]
     }
@@ -51,6 +48,9 @@ function checkPassword(password, passwordOptional) {
     if (!/[!@#$%^&*]/.test(password.value)) {
         return ["red", "Heslo musí obsahovať aspoň jeden zo špeciálnych znakov na výber! [!@#$%^&*]"]
     }
+    if (password.value.length < 8) {
+        return ["red", "Heslo musí byť minimálne 8 znakov dlhé!"]
+    }
     return ["lightgreen", ""]
 }
 function checkVerifyPassword(verifyPassword, password, passwordOptional) {
@@ -62,6 +62,21 @@ function checkVerifyPassword(verifyPassword, password, passwordOptional) {
     }
     return ["lightgreen", ""]
 }
+
+async function checkCurrentPassword(currentPassword, password) {
+    if (currentPassword.value === "" && password.value !== "") {
+        return ["red", "Zadaj aktuálne heslo pre potvrdenie zmeny hesla!"];
+    }
+    if (password.value !== "")  {
+        const exists = await serverCheckCurrentPassword(currentPassword.value);
+        if (!exists) {
+            return ["red", "Aktuálne heslo nie je správne!"];
+        }
+        return ["lightgreen", ""];
+    }
+    return ["gray", ""];
+}
+
 function checkPersonal(personal) {
     let format = /^[a-zA-ZáäčďéëíĺľňóöôřšťúüýžÁÄČĎÉËÍĹĽŇÓÖÔŘŠŤÚÜÝŽ]+$/u
     if (personal.value === "") {
@@ -106,6 +121,20 @@ async function serverCheckUsername(username) {
     return json.exists;
 }
 
+async function serverCheckCurrentPassword(currentPassword) {
+    const id = document.getElementById('user-id').value;
+    const params = new URLSearchParams({currentPassword});
+
+    if (id) {
+        params.append("id", id);
+    }
+
+    const res = await fetch('/?c=auth&a=ajaxCheckCurrentPassword&' + params.toString());
+    const json = await res.json();
+
+    return json.exists;
+}
+
 async function checkForm() {
     let valid = true;
     const isEdit = document.getElementById('user-edit') !== null;
@@ -122,24 +151,17 @@ async function checkForm() {
     const resultUsername = await checkUsername(usernameEl);
     const resultPassword = checkPassword(passwordEl, isEdit);
     const resultVerifyPassword = checkVerifyPassword(verifyEl, passwordEl, isEdit);
-
     let resultCurrentPassword;
     if (isEdit) {
-        if (passwordEl.value !== '' && currentPasswordEl.value === '') {
-            resultCurrentPassword = ["red", "Zadaj aktuálne heslo pre potvrdenie zmeny hesla."];
-            valid = false;
-        } else {
-            resultCurrentPassword = ["gray", ""];
-            valid = true;
-        }
-        const curMsgEl = document.getElementById(idMessages[6]);
-        updateOutput(currentPasswordEl, curMsgEl, resultCurrentPassword[0], resultCurrentPassword[1]);
+        resultCurrentPassword = await checkCurrentPassword(currentPasswordEl, passwordEl);
     }
-
     const resultName = checkPersonal(nameEl);
     const resultSurname = checkPersonal(surnameEl);
 
-    const resultElements = [resultEmail, resultUsername, resultPassword, resultVerifyPassword, resultName, resultSurname]
+    const resultElements = [resultEmail, resultUsername, resultPassword, resultVerifyPassword, resultName, resultSurname];
+    if (isEdit) {
+        resultElements.push(resultCurrentPassword);
+    }
     resultElements.forEach(function(result, i) {
         const element = document.getElementById(idElements[i]);
         const elementMessage = document.getElementById(idMessages[i]);
@@ -168,11 +190,7 @@ function apply(idElement, idMessage, controlFunction, input, focusout) {
             attributes = controlFunction(element, pwdEl, passwordOptional);
         } else if (idElement === idElements[6]) {
             const password = document.getElementById(idElements[2]);
-            if (element.value === "" && password.value !== "") {
-                attributes = ["red", "Zadaj aktuálne heslo pre potvrdenie zmeny hesla."];
-            } else {
-                attributes = ["gray", ""];
-            }
+            attributes = await controlFunction(element, password);
         } else {
             attributes = controlFunction(element);
         }
@@ -203,7 +221,7 @@ window.addEventListener('DOMContentLoaded', function() {
     apply(idElements[3], idMessages[3], checkVerifyPassword, true, true);
     apply(idElements[4], idMessages[4], checkPersonal, true, true);
     apply(idElements[5], idMessages[5], checkPersonal, true, true);
-    apply(idElements[6], idMessages[6], checkPersonal, true, true);
+    apply(idElements[6], idMessages[6], checkCurrentPassword, true, true);
 });
 
 function updateOutput(element, elementMessage, color, message) {

@@ -192,14 +192,23 @@ class AuthController extends BaseController
             $check = false;
         }
         if (isset($data['currentPassword'])) {
-            $user = User::getAll(whereClause: '`password` = ?', whereParams: [$data['currentPassword']]);
-            if ($optional && !empty($data['password']) && empty($user)) {
+            $users = User::getAll(whereClause: '`password` = ?', whereParams: [$data['currentPassword']]);
+            if (!empty($data['password']) && (empty($users) || !$this->checkForId($users, $data['id']))) {
                 $check = false;
             }
         }
         return $check;
     }
 
+    public function checkForId($users, int $id): bool
+    {
+        foreach ($users as $user) {
+            if ($user->getId() === $id) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public function checkEmail(string $email, ?int $currentUserId): bool
     {
@@ -240,10 +249,10 @@ class AuthController extends BaseController
             }
             return true;
         }
-        if (strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password)) {
+        if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password)) {
             return false;
         }
-        if (!preg_match('/[0-9]/', $password) || !preg_match('/[!@#$%^&*]/', $password)) {
+        if (!preg_match('/[0-9]/', $password) || !preg_match('/[!@#$%^&*]/', $password) || strlen($password) < 8) {
             return false;
         }
         return true;
@@ -305,6 +314,17 @@ class AuthController extends BaseController
         $exists = false;
         $existing = User::getAll(whereClause: '`username` = ?', whereParams: [$username]);
         if (!empty($existing) && ($existing[0]->getId() !== $id)) {
+            $exists = true;
+        }
+        return $this->json(['exists' => $exists]);
+    }
+    public function ajaxCheckCurrentPassword(Request $request): Response
+    {
+        $currentPassword = $request->value('currentPassword');
+        $id = (int)$request->value('id');
+        $exists = false;
+        $existing = User::getAll(whereClause: '`password` = ?', whereParams: [$currentPassword]);
+        if (!empty($existing) && $this->checkForId($existing, $id)) {
             $exists = true;
         }
         return $this->json(['exists' => $exists]);
