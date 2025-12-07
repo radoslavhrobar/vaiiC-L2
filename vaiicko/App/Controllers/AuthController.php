@@ -162,7 +162,6 @@ class AuthController extends BaseController
             $isAdmin = $this->checkAdmin();
             return $this->html(compact('users', 'isAdmin'), 'print');
         }
-
         $user->delete();
         $this->app->getAuth()->logout();
         return $this->redirect($this->url("home.index"));

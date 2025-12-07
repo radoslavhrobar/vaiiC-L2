@@ -1,5 +1,6 @@
 <?php
 
+/** @var \Framework\Core\IAuthenticator $auth */
 /** @var \Framework\Support\LinkGenerator $link */
 ?>
 
@@ -8,10 +9,10 @@
         <div id="carouselExample" class="carousel slide main-carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="<?= $link->asset('images/kinoALiteratura1.jpg') ?>" class="d-block w-100" alt="">
+                    <img src="<?= $link->asset('images/to.jpg') ?>" class="d-block w-100" alt="">
                 </div>
                 <div class="carousel-item">
-                    <img src="<?= $link->asset('images/kinoALiteratura2.png') ?>" class="d-block w-100" alt="">
+                    <img src="<?= $link->asset('images/untilDawn.png') ?>" class="d-block w-100" alt="">
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -29,10 +30,15 @@
         <div class="card registration-info">
             <div class="card-body">
                 <h4 class="card-title mb-4">
-                    <a href="#" class="text-decoration-none">
-                        <i class="bi bi-exclamation-circle-fill"></i>
-                        Registruj sa na C&L!
-                    </a>
+                        <?php if ($auth->isLogged()) : ?>
+                            <i class="bi bi-arrow-right-square"></i>
+                            <span class="logged-in-info">Prihlásený ako: <?= $auth->getUser()->getUsername() ?></span>
+                        <?php else : ?>
+                            <a href="<?= $link->url("auth.registration") ?>" class="text-decoration-none">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                                Registruj sa na C&L!
+                            </a>
+                        <?php endif; ?>
                 </h4>
 
                 <ul class="list-unstyled mb-4">
