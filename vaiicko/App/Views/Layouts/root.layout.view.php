@@ -7,6 +7,7 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= App\Configuration::APP_NAME ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -26,10 +27,13 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">Kino</a>
+                            <a class="nav-link" aria-current="page" href="<?= $link->url("work.index") ?>">Novinky</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">Literatúra</a>
+                            <a class="nav-link" aria-current="page" href="#">Rebríčky</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="#">Zaujímavosti</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="<?= $link->url("auth.print") ?>">Používatelia</a>
