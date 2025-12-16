@@ -30,7 +30,7 @@
                             <a class="nav-link" aria-current="page" href="<?= $link->url("work.index") ?>">Novinky</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">Rebríčky</a>
+                            <a class="nav-link" aria-current="page" href="<?= $link->url("work.rankings") ?>">Rebríčky</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="#">Zaujímavosti</a>
