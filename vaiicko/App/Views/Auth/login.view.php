@@ -12,7 +12,7 @@
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
             <div class="card card-signin my-5">
                 <div class="card-body">
-                    <h5 class="auth-name mt-0">Prihlásenie</h5>
+                    <h5 class="titleName mt-0">Prihlásenie</h5>
                     <div class="text-center text-danger mb-3">
                         <?= @$message ?>
                     </div>

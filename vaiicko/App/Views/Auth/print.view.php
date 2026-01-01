@@ -8,7 +8,7 @@ use App\Helpers\Role;
 
 ?>
 
-<h3 class="auth-name">Zoznam používateľov</h3>
+<h3 class="titleName">Zoznam používateľov</h3>
 <div class="user-list">
 <?php foreach ($users as $user): ?>
     <div class="card user-card">

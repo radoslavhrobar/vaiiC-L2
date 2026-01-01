@@ -5,7 +5,7 @@
 
 <form id="user-edit" class="forms" action="<?= $link->url('auth.update') ?>" method="post" autocomplete="on">
     <input type="hidden" name="id" id="user-id" value="<?= isset($user) ? $user->getId() : $_POST['id'] ?>">
-    <h4 class="auth-name">Upravenie profilu</h4>
+    <h4 class="titleName">Upravenie profilu</h4>
     <div class="row">
         <label class="col-sm-3" for="email">Email:
             <span class="imp">*</span>
@@ -20,7 +20,7 @@
         <input class="col-sm-6" type="text" name="username" id="username" value="<?= isset($user) ? $user->getUsername() : $_POST['username'] ?>">
         <span id="usernameMessage"></span>
     </div>
-    <h5 class="auth-name extra">Zmena hesla</h5>
+    <h5 class="titleName extra">Zmena hesla</h5>
     <div class="row">
         <label class="col-sm-3" for="currentPassword">Aktuálne heslo:</label>
         <input class="col-sm-6" type="password" name="currentPassword" id="currentPassword" value="<?= $_POST['currentPassword'] ?? '' ?>">
@@ -36,7 +36,7 @@
         <input class="col-sm-6" type="password" name="verifyPassword" id="verifyPassword" value="<?= $_POST['verifyPassword'] ?? '' ?>">
         <span id="verifyPasswordMessage"></span>
     </div>
-    <h5 class="auth-name extra">Dodatočné informácie:</h5>
+    <h5 class="titleName extra">Dodatočné informácie:</h5>
     <div class="row">
         <label class="col-sm-3" for="name">Meno:</label>
         <input class="col-sm-6" type="text" name="name" id="name" value="<?= isset($user) ? $user->getName() : $_POST['name'] ?>">

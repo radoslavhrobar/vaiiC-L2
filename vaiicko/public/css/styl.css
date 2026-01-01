@@ -68,7 +68,7 @@ body {
     background-color: blanchedalmond;
 }
 
-.auth-name {
+.titleName {
     text-align: center;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -119,5 +119,15 @@ div span {
     outline: none !important;
     border-color: #ced4da !important
 }
+
+.filterLabel {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+
+
+
+
 
 

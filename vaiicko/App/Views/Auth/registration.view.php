@@ -3,7 +3,7 @@
 ?>
 
 <form id="registration" class="forms" action="<?= $link->url("auth.register") ?>" method="post" autocomplete="on">
-    <h4 class="auth-name">Registrácia</h4>
+    <h4 class="titleName">Registrácia</h4>
     <div class="row">
         <label class="col-sm-3" for="email">Email:
             <span class="imp">*</span>
@@ -32,7 +32,7 @@
         <input class="col-sm-6" type="password" name="verifyPassword" id="verifyPassword" value="<?= $_POST['verifyPassword'] ?? '' ?>">
         <span id="verifyPasswordMessage"></span>
     </div>
-    <h5 class="auth-name extra">Dodatočné informácie:</h5>
+    <h5 class="titleName extra">Dodatočné informácie:</h5>
     <div class="row">
         <label class="col-sm-3" for="name">Meno:</label>
         <input class="col-sm-6" type="text" name="name" id="name" value="<?= $_POST['name'] ?? '' ?>">
