@@ -85,8 +85,7 @@ body {
 .imp {
     color: red;
 }
-
-div span {
+ .forms span {
     text-align: center;
     font-size: 15px;
     color: red;
@@ -123,6 +122,10 @@ div span {
 .filterLabel {
     font-weight: bold;
     margin-right: 10px;
+}
+
+.options span {
+
 }
 
 

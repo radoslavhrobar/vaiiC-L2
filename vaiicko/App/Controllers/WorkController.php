@@ -18,4 +18,9 @@ class WorkController extends BaseController
     {
         return $this->html();
     }
+
+    public function adding(Request $request): Response
+    {
+        return $this->html();
+    }
 }

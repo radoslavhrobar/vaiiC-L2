@@ -21,7 +21,6 @@
                             <label for="username" class="form-label">Používateľské meno:</label>
                             <input name="username" type="text" id="username" class="form-control" required autofocus>
                         </div>
-
                         <div class="form-label-group mb-3">
                             <label for="password" class="form-label">Heslo:</label>
                             <input name="password" type="password" id="password" class="form-control" required>
