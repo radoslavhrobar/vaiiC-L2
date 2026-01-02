@@ -1,5 +1,6 @@
 <?php
 /** @var \App\Models\Country[] $countries */
+/** @var \App\Models\Genre[] $genres */
 ?>
 
 <div class="row">
@@ -14,9 +15,11 @@
         <span class="imp">*</span>
     </label>
     <select class="col-sm-6" name="genre" id="genre">
-        <option value="film">film</option>
-        <option value="series">seriál</option>
-        <option value="book">kniha</option>
+        <?php foreach ($genres as $genre): ?>
+            <option value="<?= $genre->getName() ?>">
+                <?= $genre->getName() ?>
+            </option>
+        <?php endforeach; ?>
     </select>
     <span id="genreMessage"></span>
 </div>
