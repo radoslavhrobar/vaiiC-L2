@@ -10,7 +10,6 @@ class Work extends Model
         protected ?int $id = null,
         protected ?string $name = null,
         protected ?string $type = null,
-        protected ?string $creator = null,
         protected ?string $genre = null,
         protected ?\DateTime $dateOfIssue = null,
         protected  ?string $placeOfIssue = null,
@@ -48,16 +47,6 @@ class Work extends Model
     public function setType(?string $type): void
     {
         $this->type = $type;
-    }
-
-    public function getCreator(): ?string
-    {
-        return $this->creator;
-    }
-
-    public function setCreator(?string $creator): void
-    {
-        $this->creator = $creator;
     }
 
     public function getGenre(): ?string
