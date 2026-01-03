@@ -51,9 +51,9 @@
     <span id="descriptionMessage"></span>
 </div>
 <div class="row">
-    <label class="col-sm-3" for="image">Obrázok:
+    <label class="col-sm-3" for="workImage">Náhľad:
         <span class="imp">*</span>
     </label>
-    <input class="col-sm-6" type="file" name="image" id="image" value="<?= $_POST['image'] ?? '' ?>">
-    <span id="imageMessage"></span>
+    <input class="col-sm-6" type="file" name="workImage" id="workImage">
+    <span id="workImageMessage"></span>
 </div>

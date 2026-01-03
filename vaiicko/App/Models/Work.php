@@ -14,7 +14,7 @@ class Work extends Model
         protected ?\DateTime $dateOfIssue = null,
         protected  ?string $placeOfIssue = null,
         protected ?string $description = null,
-        protected ?string $picture = null
+        protected ?string $image = null
     )
     {
     }
@@ -89,13 +89,13 @@ class Work extends Model
         $this->description = $description;
     }
 
-    public function getPicture(): ?string
+    public function getImage(): ?string
     {
-        return $this->picture;
+        return $this->image;
     }
 
-    public function setPicture(?string $picture): void
+    public function setImage(?string $image): void
     {
-        $this->picture = $picture;
+        $this->image = $image;
     }
 }
