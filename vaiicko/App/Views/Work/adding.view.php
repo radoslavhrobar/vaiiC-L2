@@ -7,10 +7,10 @@
         <input class="btn-brown" type="button" value="Film" onclick="window.location.href='<?= $link->url("work.movieForm") ?>'">
     </span>
     <span class="col-lg-4 text-center mb-lg-0 mb-2">
-        <input class="btn-brown" type="submit" value="Seriál" onclick="window.location.href='<?= $link->url("work.seriesForm") ?>'">
+        <input class="btn-brown" type="button" value="Seriál" onclick="window.location.href='<?= $link->url("work.seriesForm") ?>'">
     </span>
     <span class="col-lg-4 text-lg-start text-center mb-lg-0 mb-2">
-        <input class="btn-brown" type="submit" value="Kniha">
+        <input class="btn-brown" type="button" value="Kniha" onclick="window.location.href='<?= $link->url("work.bookForm") ?>'">
     </span>
 </div>
 

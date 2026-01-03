@@ -9,7 +9,8 @@ class BookDetail extends Model
     public function __construct(
         protected ?int $workId = null,
         protected int $numOfPages = 0,
-        protected string $publisher = '',
+        protected  string $author = '',
+        protected string $publishers = '',
     ){
     }
 
@@ -33,12 +34,20 @@ class BookDetail extends Model
     {
         $this->numOfPages = $numOfPages;
     }
-    public function getPublisher(): string
+    public function getAuthor(): string
     {
-        return $this->publisher;
+        return $this->author;
     }
-    public function setPublisher(string $publisher): void
+    public function setAuthor(string $author): void
     {
-        $this->publisher = $publisher;
+        $this->author = $author;
+    }
+    public function getPublishers(): string
+    {
+        return $this->publishers;
+    }
+    public function setPublishers(string $publishers): void
+    {
+        $this->publishers = $publishers;
     }
 }

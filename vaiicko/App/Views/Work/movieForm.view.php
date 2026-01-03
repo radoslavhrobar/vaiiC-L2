@@ -25,7 +25,7 @@
             <span class="imp">*</span>
         </label>
         <input class="col-sm-6" type="text" name="director" id="director">
-        <span id="director"></span>
+        <span id="directorMessage"></span>
     </div>
     <div class="text-center">
         <input class="btn-brown" type="submit" value="Pridať film">

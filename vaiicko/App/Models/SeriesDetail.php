@@ -10,8 +10,8 @@ class SeriesDetail extends Model
         protected ?int $workId = null,
         protected int $numOfSeasons = 0,
         protected int $numOfEpisodes = 0,
-        protected string $director = '',
-        protected string $prodCompany = ''
+        protected string $prodCompany = '',
+        protected string $director = ''
     ){
     }
 
