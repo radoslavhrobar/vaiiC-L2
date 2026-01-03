@@ -29,7 +29,7 @@ class WorkController extends BaseController
     public function movieForm(Request $request): Response
     {
         $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '`type` = ?', whereParams: ['Cinema']);
+        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Cinema', 'Both']);
         return $this->html(compact('countries', 'genres'));
     }
 
@@ -41,7 +41,7 @@ class WorkController extends BaseController
     public function seriesForm(Request $request): Response
     {
         $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '`type` = ?', whereParams: ['Cinema']);
+        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Cinema', 'Both']);
         return $this->html(compact('countries', 'genres'));
     }
 
@@ -53,12 +53,33 @@ class WorkController extends BaseController
     public function bookForm(Request $request): Response
     {
         $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '`type` = ?', whereParams: ['Book']);
+        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Book', 'Both']);
         return $this->html(compact('countries', 'genres'));
     }
 
     public function addBook(Request $request): Response
     {
         return $this->html();
+    }
+
+    public function checkWorkName(string $workName): bool
+    {
+        $workName = trim($workName);
+        if (empty($workName) || (mb_strlen($workName) < 2 || mb_strlen($workName) > 255)) {
+            return false;
+        }
+        if (!preg_match('/^[a-zA-ZáäčďéëíĺľňóöôřšťúüýžÁÄČĎÉËÍĹĽŇÓÖÔŘŠŤÚÜÝŽ0-9 :,.\'-]+$/u', $workName)) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkGenre(string $genre): bool
+    {
+        $genres = Genre::getAll(whereClause: '`name` = ?', whereParams: [$genre]);
+        if (empty($genre) || empty($genres)) {
+            return false;
+        }
+        return true;
     }
 }

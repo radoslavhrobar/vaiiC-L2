@@ -7,7 +7,7 @@
     <label class="col-sm-3" for="workName">Názov:
         <span class="imp">*</span>
     </label>
-    <input class="col-sm-6" type="text" name="workName" id="workName" value="<?= $_POST['workName'] ?? '' ?>" autofocus>
+    <input class="col-sm-6" type="text" name="workName" id="workName" autofocus>
     <span id="workNameMessage"></span>
 </div>
 <div class="row">

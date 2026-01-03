@@ -82,8 +82,8 @@ function checkPersonal(personal) {
     if (personal.value === "") {
         return ["gray", ""]
     }
-    if (personal.value.length > 30) {
-        return ["red", (personal.id === idElements[4] ? "Meno" : "Priezvisko") + " nesmie prekročiť dĺžku 30 znakov!"]
+    if (personal.value.length > 80) {
+        return ["red", (personal.id === idElements[4] ? "Meno" : "Priezvisko") + " nesmie prekročiť dĺžku 80 znakov!"]
     }
     if (!format.test(personal.value)) {
         return ["red", (personal.id === idElements[4] ? "Meno" : "Priezvisko") + " môže obsahovať iba písmená!"]
