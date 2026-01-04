@@ -32,12 +32,12 @@ class MovieDetailController extends WorkController
         }
         $message = 'Film bol úspešne pridaný.';
         if ($this->check($d)) {
-            $work = parent::workAdd($d);
+            $work = parent::workAdd($d, Types::Movie->name);
             $movieDetail = new MovieDetail();
             $movieDetail->setWorkId($work->getId());
             $movieDetail->setLength((int)$d['movieLength']);
-            $movieDetail->setProdCompany($d['prodCompany']);
-            $movieDetail->setDirector($d['director']);
+            $movieDetail->setProdCompany(trim($d['prodCompany']));
+            $movieDetail->setDirector(trim($d['director']));
             $movieDetail->save();
         } else {
             $message = 'Formulárové údaje obsahujú chyby.';
@@ -76,6 +76,7 @@ class MovieDetailController extends WorkController
 
     public function checkDirector(string $director) : bool
     {
+        $director = trim($director);
         if (empty($director) || mb_strlen($director) > 100 || !preg_match('/^[\p{L} \'\-]+$/u', $director)) {
             return false;
         }

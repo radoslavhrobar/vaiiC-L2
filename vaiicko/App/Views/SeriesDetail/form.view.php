@@ -33,6 +33,7 @@
         </label>
         <input class="col-sm-6" type="text" name="director" id="director">
         <span id="directorMessage"></span>
+        <span><?= $message ?? '' ?></span>
     </div>
     <div class="text-center">
         <input class="btn-brown" type="submit" value="Pridať seriál">

@@ -14,18 +14,19 @@
         <span id="lengthMessage"></span>
     </div>
     <div class="row">
-        <label class="col-sm-3" for="author">Autor:
-            <span class="imp">*</span>
-        </label>
-        <input class="col-sm-6" type="text" name="author" id="author">
-        <span id="authorMessage"></span>
-    </div>
-    <div class="row">
         <label class="col-sm-3" for="publishers">Vydavateľstvo:
             <span class="imp">*</span>
         </label>
         <input class="col-sm-6" type="text" name="publishers" id="publishers">
         <span id="publishersMessage"></span>
+    </div>
+    <div class="row">
+        <label class="col-sm-3" for="author">Autor:
+            <span class="imp">*</span>
+        </label>
+        <input class="col-sm-6" type="text" name="author" id="author">
+        <span id="authorMessage"></span>
+        <span><?= $message ?? '' ?></span>
     </div>
     <div class="text-center">
         <input class="btn-brown" type="submit" value="Pridať knihu">

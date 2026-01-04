@@ -28,16 +28,16 @@ class WorkController extends BaseController
         return $this->html();
     }
 
-    public function workAdd($d): ?Work
+    public function workAdd($d, string $type): Work
     {
         $work = new Work();
-        $work->setName($d['workName']);
-        $work->setType(Types::Movie->name);
+        $work->setName(trim($d['workName']));
+        $work->setType($type);
         $genres = Genre::getAll(whereClause: '`name` = ?', whereParams: [$d['genre']]);
         $work->setGenre($genres[0]->getId());
         $work->setDateOfIssue($d['dateOfIssue']);
         $work->setPlaceOfIssue($d['placeOfIssue']);
-        $work->setDescription($d['description']);
+        $work->setDescription(trim($d['description']));
         $work->save();
         return $work;
     }
