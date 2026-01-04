@@ -7,8 +7,8 @@ use Framework\Core\Model;
 class BookDetail extends Model
 {
     public function __construct(
-        protected ?int $workId = null,
-        protected int $numOfPages = 0,
+        protected ?int $work_id = null,
+        protected int $num_of_pages = 0,
         protected  string $author = '',
         protected string $publishers = '',
     ){
@@ -16,23 +16,23 @@ class BookDetail extends Model
 
     public static function getPkColumnName() : string
     {
-        return 'workId';
+        return 'work_id';
     }
     public function getWorkId(): ?int
     {
-        return $this->workId;
+        return $this->work_id;
     }
     public function setWorkId(?int $workId): void
     {
-        $this->workId = $workId;
+        $this->work_id = $workId;
     }
     public function getNumOfPages(): int
     {
-        return $this->numOfPages;
+        return $this->num_of_pages;
     }
     public function setNumOfPages(int $numOfPages): void
     {
-        $this->numOfPages = $numOfPages;
+        $this->num_of_pages = $numOfPages;
     }
     public function getAuthor(): string
     {

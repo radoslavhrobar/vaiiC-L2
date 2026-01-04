@@ -7,42 +7,51 @@ use Framework\Core\Model;
 class SeriesDetail extends Model
 {
     public function __construct(
-        protected ?int $workId = null,
-        protected int $numOfSeasons = 0,
-        protected int $numOfEpisodes = 0,
-        protected string $prodCompany = '',
+        protected ?int $work_id = null,
+        protected int $num_of_seasons = 0,
+        protected int $num_of_episodes = 0,
+        protected string $prod_company = '',
         protected string $director = ''
     ){
     }
 
     public static function getPkColumnName() : string
     {
-        return 'workId';
+        return 'work_id';
     }
 
     public function getWorkId(): ?int
     {
-        return $this->workId;
+        return $this->work_id;
     }
     public function setWorkId(?int $workId): void
     {
-        $this->workId = $workId;
+        $this->work_id = $workId;
     }
     public function getNumOfSeasons(): int
     {
-        return $this->numOfSeasons;
+        return $this->num_of_seasons;
     }
     public function setNumOfSeasons(int $numOfSeasons): void
     {
-        $this->numOfSeasons = $numOfSeasons;
+        $this->num_of_seasons = $numOfSeasons;
     }
     public function getNumOfEpisodes(): int
     {
-        return $this->numOfEpisodes;
+        return $this->num_of_episodes;
     }
     public function setNumOfEpisodes(int $numOfEpisodes): void
     {
-        $this->numOfEpisodes = $numOfEpisodes;
+        $this->num_of_episodes = $numOfEpisodes;
+    }
+
+    public function getProdCompany(): string
+    {
+        return $this->prod_company;
+    }
+    public function setProdCompany(string $prodCompany): void
+    {
+        $this->prod_company = $prodCompany;
     }
     public function getDirector(): string
     {
@@ -51,13 +60,5 @@ class SeriesDetail extends Model
     public function setDirector(string $director): void
     {
         $this->director = $director;
-    }
-    public function getProdCompany(): string
-    {
-        return $this->prodCompany;
-    }
-    public function setProdCompany(string $prodCompany): void
-    {
-        $this->prodCompany = $prodCompany;
     }
 }

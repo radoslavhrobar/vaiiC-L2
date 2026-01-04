@@ -36,7 +36,7 @@
     </label>
     <select class="col-sm-6" name="placeOfIssue" id="placeOfIssue">
         <?php foreach ($countries as $country): ?>
-            <option value="<?= $country->getCode() ?>">
+            <option value="<?= $country->getName() ?>">
                 <?= $country->getName() ?>
             </option>
         <?php endforeach; ?>

@@ -2,10 +2,10 @@
 /** @var \Framework\Support\LinkGenerator $link*/
 ?>
 
-<form id="workForm" class="forms" action="<?= $link->url("work.addBook") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
-    <?php require 'adding.view.php' ?>
+<form id="workForm" class="forms" action="<?= $link->url("bookDetail.add") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
+    <?php require __DIR__ . '/../Work/adding.view.php' ?>
     <h4 class="titleName mt-4">Pridanie knihy</h4>
-    <?php require 'workTemplate.view.php' ?>
+    <?php require __DIR__ . '/../Work/workTemplate.view.php' ?>
     <div class="row">
         <label class="col-sm-3" for="numOfPages">Počet strán:
             <span class="imp">*</span>

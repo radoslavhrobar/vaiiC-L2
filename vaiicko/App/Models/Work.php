@@ -8,13 +8,13 @@ class Work extends Model
 {
     public function __construct(
         protected ?int $id = null,
-        protected ?string $name = null,
-        protected ?string $type = null,
-        protected ?string $genre = null,
-        protected ?\DateTime $dateOfIssue = null,
-        protected  ?string $placeOfIssue = null,
-        protected ?string $description = null,
-        protected ?string $image = null
+        protected string $name = '',
+        protected string $type = '',
+        protected ?int $genre_id = null,
+        protected string $date_of_issue = '',
+        protected string $place_of_issue = '',
+        protected string $description = '',
+        protected string $image = ''
     )
     {
     }
@@ -51,32 +51,32 @@ class Work extends Model
 
     public function getGenre(): ?string
     {
-        return $this->genre;
+        return $this->genre_id;
     }
 
-    public function setGenre(?string $genre): void
+    public function setGenre(?int $genre): void
     {
-        $this->genre = $genre;
+        $this->genre_id = $genre;
     }
 
-    public function getDateOfIssue(): ?\DateTime
+    public function getDateOfIssue(): string
     {
-        return $this->dateOfIssue;
+        return $this->date_of_issue;
     }
 
-    public function setDateOfIssue(?\DateTime $dateOfIssue): void
+    public function setDateOfIssue(string $dateOfIssue): void
     {
-        $this->dateOfIssue = $dateOfIssue;
+        $this->date_of_issue = $dateOfIssue;
     }
 
     public function getPlaceOfIssue(): ?string
     {
-        return $this->placeOfIssue;
+        return $this->place_of_issue;
     }
 
     public function setPlaceOfIssue(?string $placeOfIssue): void
     {
-        $this->placeOfIssue = $placeOfIssue;
+        $this->place_of_issue = $placeOfIssue;
     }
 
     public function getDescription(): ?string

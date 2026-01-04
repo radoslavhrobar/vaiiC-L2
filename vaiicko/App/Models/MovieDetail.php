@@ -7,41 +7,41 @@ use Framework\Core\Model;
 class MovieDetail extends Model
 {
     public function __construct(
-        protected ?int $workId = null,
-        protected int $lengthMin = 0,
-        protected string $prodCompany = '',
+        protected ?int $work_id = null,
+        protected int $length = 0,
+        protected string $prod_company = '',
         protected string $director = ''
     ){
     }
 
     protected static function getPkColumnName(): string
     {
-        return 'workId';
+        return 'work_id';
     }
 
     public function getWorkId(): ?int
     {
-        return $this->workId;
+        return $this->work_id;
     }
     public function setWorkId(?int $workId): void
     {
-        $this->workId = $workId;
+        $this->work_id = $workId;
     }
-    public function getLengthMin(): int
+    public function getLength(): int
     {
-        return $this->lengthMin;
+        return $this->length;
     }
-    public function setLengthMin(int $lengthMin): void
+    public function setLength(int $length): void
     {
-        $this->lengthMin = $lengthMin;
+        $this->length = $length;
     }
     public function getProdCompany(): string
     {
-        return $this->prodCompany;
+        return $this->prod_company;
     }
     public function setProdCompany(string $prodCompany): void
     {
-        $this->prodCompany = $prodCompany;
+        $this->prod_company = $prodCompany;
     }
 
     public function getDirector(): string

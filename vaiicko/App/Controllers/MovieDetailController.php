@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Helpers\Types;
+use App\Models\Country;
+use App\Models\Genre;
+use App\Models\MovieDetail;
+use App\Models\Work;
+use DateTime;
+use Framework\Http\Request;
+use Framework\Http\Responses\Response;
+
+class MovieDetailController extends WorkController
+{
+    public function index(Request $request): Response
+    {
+        return $this->html();
+    }
+    public function form(Request $request): Response
+    {
+        $countries = Country::getAll();
+        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Cinema', 'Both']);
+        return $this->html(compact('countries', 'genres'));
+    }
+
+    public function add(Request $request): Response
+    {
+        $d = $request->post();
+        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $d['movieLength'], $d['prodCompany'], $d['director'])) {
+            throw new \Exception('Nedostatočné údaje pre pridanie filmu.');
+        }
+        $message = 'Film bol úspešne pridaný.';
+        if ($this->check($d)) {
+            $work = parent::workAdd($d);
+            $movieDetail = new MovieDetail();
+            $movieDetail->setWorkId($work->getId());
+            $movieDetail->setLength((int)$d['movieLength']);
+            $movieDetail->setProdCompany($d['prodCompany']);
+            $movieDetail->setDirector($d['director']);
+            $movieDetail->save();
+        } else {
+            $message = 'Formulárové údaje obsahujú chyby.';
+        }
+        $countries = Country::getAll();
+        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Cinema', 'Both']);
+        return $this->html(compact('countries', 'genres', 'message'), 'form');
+    }
+
+    public function check($data) : bool
+    {
+        if (!parent::check($data) || !$this->checkLength($data['movieLength']) || !parent::checkDateOfIssue($data['dateOfIssue'], '1888') ||
+            !$this->checkProdCompany($data['prodCompany']) || !$this->checkDirector($data['director'])) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkLength(string $length) : bool
+    {
+        $length = filter_var($length, FILTER_VALIDATE_INT);
+        if ($length === false || $length < 1 || $length > 600) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkProdCompany(string $prodCompany) : bool
+    {
+        $prodCompany = trim($prodCompany);
+        if (empty($prodCompany) || mb_strlen($prodCompany) > 255 || !preg_match('/^[\p{L}0-9 .,&\'\-]+$/u', $prodCompany)) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkDirector(string $director) : bool
+    {
+        if (empty($director) || mb_strlen($director) > 100 || !preg_match('/^[\p{L} \'\-]+$/u', $director)) {
+            return false;
+        }
+        return true;
+    }
+}
