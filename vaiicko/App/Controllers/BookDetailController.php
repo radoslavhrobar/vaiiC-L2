@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\WorkController;
-use App\Helpers\Types;
+use App\Helpers\TypesOfWork;
 use App\Models\BookDetail;
 use App\Models\Country;
 use App\Models\Genre;
@@ -31,7 +31,7 @@ class BookDetailController extends WorkController
         }
         $message = 'Kniha bola úspešne pridaná.';
         if ($this->check($d)) {
-            $work = parent::workAdd($d, Types::Book->name);
+            $work = parent::workAdd($d, TypesOfWork::Kniha->name);
             $bookDetail = new BookDetail();
             $bookDetail->setWorkId($work->getId());
             $bookDetail->setNumOfPages((int)$d['numOfPages']);
@@ -48,7 +48,7 @@ class BookDetailController extends WorkController
 
     public function check($data): bool
     {
-        if (!parent::check($data) || !$this->checkNumOfPages($data['numOfPages']) || !parent::checkDateOfIssue($data['dateOfIssue'], '1888') ||
+        if (!parent::check($data) || !$this->checkNumOfPages($data['numOfPages']) || !parent::checkDateOfIssue($data['dateOfIssue'], TypesOfWork::Kniha->value) ||
             !$this->checkPublishers($data['publishers']) || !$this->checkAuthor($data['author'])) {
             return false;
         }

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Helpers\Types;
+use App\Helpers\TypesOfWork;
 use App\Models\Country;
 use App\Models\Genre;
 use App\Models\MovieDetail;
@@ -32,7 +32,7 @@ class MovieDetailController extends WorkController
         }
         $message = 'Film bol úspešne pridaný.';
         if ($this->check($d)) {
-            $work = parent::workAdd($d, Types::Movie->name);
+            $work = parent::workAdd($d, TypesOfWork::Film->name);
             $movieDetail = new MovieDetail();
             $movieDetail->setWorkId($work->getId());
             $movieDetail->setLength((int)$d['movieLength']);
@@ -49,7 +49,7 @@ class MovieDetailController extends WorkController
 
     public function check($data) : bool
     {
-        if (!parent::check($data) || !$this->checkLength($data['movieLength']) || !parent::checkDateOfIssue($data['dateOfIssue'], '1888') ||
+        if (!parent::check($data) || !$this->checkLength($data['movieLength']) || !parent::checkDateOfIssue($data['dateOfIssue'], TypesOfWork::Film->value) ||
             !$this->checkProdCompany($data['prodCompany']) || !$this->checkDirector($data['director'])) {
             return false;
         }

@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\WorkController;
-use App\Helpers\Types;
+use App\Helpers\TypesOfWork;
 use App\Models\Country;
 use App\Models\Genre;
 use App\Models\SeriesDetail;
@@ -32,7 +32,7 @@ class SeriesDetailController extends WorkController
         }
         $message = 'Seriál bol úspešne pridaný.';
         if ($this->check($d)) {
-            $work = parent::workAdd($d, Types::Series->name);
+            $work = parent::workAdd($d, TypesOfWork::Seriál->name);
             $seriesDetail = new SeriesDetail();
             $seriesDetail->setWorkId($work->getId());
             $seriesDetail->setNumOfSeasons((int)$d['numOfSeasons']);
@@ -50,7 +50,7 @@ class SeriesDetailController extends WorkController
 
     public function check($data) : bool
     {
-        if (!parent::check($data) || !parent::checkDateOfIssue($data['dateOfIssue'], '1932') || !$this->checkNumOfSeasons($data['numOfSeasons']) ||
+        if (!parent::check($data) || !parent::checkDateOfIssue($data['dateOfIssue'], TypesOfWork::Seriál->value) || !$this->checkNumOfSeasons($data['numOfSeasons']) ||
             !$this->checkNumOfEpisodes($data['numOfEpisodes']) || !$this->checkSeasonsEpisodesNumLogic($data['numOfSeasons'], $data['numOfEpisodes']) ||
             !$this->checkProdCompany($data['prodCompany']) || !$this->checkDirector($data['director'])) {
             return false;

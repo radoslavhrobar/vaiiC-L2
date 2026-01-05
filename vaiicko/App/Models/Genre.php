@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Helpers\Types;
+use App\Helpers\TypesOfWork;
+use App\Helpers\TypesOfWorkGenres;
 use Framework\Core\Model;
 
 class Genre extends Model
@@ -10,7 +11,7 @@ class Genre extends Model
     public function __construct(
         protected ?int  $id = null,
         protected string $name = '',
-        protected string $type = Types::Both->name
+        protected string $type = TypesOfWorkGenres::Obidva->name
     ){
     }
 

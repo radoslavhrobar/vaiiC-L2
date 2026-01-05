@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Helpers\Types;
+use App\Helpers\TypesOfWork;
 use App\Models\Country;
 use App\Models\Genre;
 use App\Models\Work;
@@ -20,7 +20,9 @@ class WorkController extends BaseController
 
     public function rankings(Request $request): Response
     {
-        return $this->html();
+        $genres = Genre::getAll();
+        $types = TypesOfWork::cases();
+        return $this->html(compact('genres', 'types'));
     }
 
     public function adding(Request $request): Response
