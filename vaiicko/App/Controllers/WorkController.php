@@ -25,6 +25,29 @@ class WorkController extends BaseController
         return $this->html(compact('genres', 'types'));
     }
 
+    public function ajaxCheckTypeOfWork(Request $request): Response
+    {
+        $type = $request->value('type');
+        $genres = $this->chooseGenres($type);
+        $yearFrom = TypesOfWork::getYear($type);
+        return $this->json([
+            'genres' => array_map(fn($g) => [
+                'id' => $g->getId(),
+                'name' => $g->getName()
+            ], $genres)
+         ,'yearFrom' => $yearFrom]);
+    }
+
+    public function chooseGenres(string $typeOfWork): array
+    {
+       return match ($typeOfWork) {
+            'Film', 'Seriál' => Genre::getAll(whereClause: '`type` = ?', whereParams: ['Kino']),
+            'Kniha' => Genre::getAll(whereClause: '`type` = ?', whereParams: ['Kniha']),
+            'všetky' => Genre::getAll(whereClause: '`type` = ?', whereParams: ['Obidva']),
+            default => [],
+        };
+    }
+
     public function adding(Request $request): Response
     {
         return $this->html();
