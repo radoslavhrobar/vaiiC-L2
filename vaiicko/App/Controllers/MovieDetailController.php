@@ -20,7 +20,7 @@ class MovieDetailController extends WorkController
     public function form(Request $request): Response
     {
         $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Cinema', 'Both']);
+        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']);
         return $this->html(compact('countries', 'genres'));
     }
 
@@ -43,7 +43,7 @@ class MovieDetailController extends WorkController
             $message = 'Formulárové údaje obsahujú chyby.';
         }
         $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Cinema', 'Both']);
+        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']);
         return $this->html(compact('countries', 'genres', 'message'), 'form');
     }
 

@@ -12,7 +12,7 @@ class Work extends Model
         protected string $type = '',
         protected ?int $genre_id = null,
         protected string $date_of_issue = '',
-        protected string $place_of_issue = '',
+        protected ?int $place_of_issue_id = null,
         protected string $description = '',
         protected string $image = ''
     )
@@ -34,17 +34,17 @@ class Work extends Model
         return $this->name;
     }
 
-    public function setName(?string $name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    public function getType(): ?string
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function setType(?string $type): void
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -71,20 +71,20 @@ class Work extends Model
 
     public function getPlaceOfIssue(): ?string
     {
-        return $this->place_of_issue;
+        return $this->place_of_issue_id;
     }
 
-    public function setPlaceOfIssue(?string $placeOfIssue): void
+    public function setPlaceOfIssue(?int $placeOfIssue): void
     {
-        $this->place_of_issue = $placeOfIssue;
+        $this->place_of_issue_id = $placeOfIssue;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    public function setDescription(?string $description): void
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }

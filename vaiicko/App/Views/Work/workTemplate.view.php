@@ -16,7 +16,7 @@
     </label>
     <select class="col-sm-6" name="genre" id="genre">
         <?php foreach ($genres as $genre): ?>
-            <option value="<?= $genre->getName() ?>">
+            <option value="<?= $genre->getId() ?>">
                 <?= $genre->getName() ?>
             </option>
         <?php endforeach; ?>
@@ -36,7 +36,7 @@
     </label>
     <select class="col-sm-6" name="placeOfIssue" id="placeOfIssue">
         <?php foreach ($countries as $country): ?>
-            <option value="<?= $country->getName() ?>">
+            <option value="<?= $country->getId() ?>">
                 <?= $country->getName() ?>
             </option>
         <?php endforeach; ?>

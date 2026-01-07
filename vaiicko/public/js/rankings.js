@@ -1,3 +1,4 @@
+let year = 0;
 async function serverCheckTypeOfWork() {
     const typeSelect = document.getElementById('typeOfWork');
     const genreSelect = document.getElementById('genreRankings');
@@ -22,6 +23,10 @@ async function serverCheckTypeOfWork() {
         genreSelect.appendChild(option);
     });
 
+    year = yearFrom.value;
+    if (json.yearFrom > year) {
+        yearFrom.value = json.yearFrom
+    }
     yearFrom.min = json.yearFrom;
     yearTo.min = json.yearFrom;
 }

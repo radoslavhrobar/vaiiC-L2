@@ -3,10 +3,14 @@
 namespace App\Controllers;
 
 use App\Helpers\TypesOfWork;
+use App\Models\BookDetail;
 use App\Models\Country;
 use App\Models\Genre;
+use App\Models\MovieDetail;
+use App\Models\SeriesDetail;
 use App\Models\Work;
 use Framework\Core\BaseController;
+use Framework\Core\Model;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 
@@ -18,11 +22,111 @@ class WorkController extends BaseController
         return $this->html();
     }
 
-    public function rankings(Request $request): Response
-    {
+    public function rankings(Request $request): Response {
+        $data = $request->post();
         $genres = Genre::getAll();
         $types = TypesOfWork::cases();
-        return $this->html(compact('genres', 'types'));
+        $works = Work::getAll(orderBy: '`name`');
+        $workDetails = $this->getMultipleWorkDetails($works);
+        if ($data) {
+            if (!isset($data['type'], $data['genre'], $data['yearTo'], $data['yearFrom'])) {
+                throw new \Exception('Nedostatočné údaje pre filtrovanie.');
+            }
+            if ($data['type'] === 'všetky' && $data['genre'] === 'všetky') {
+                $works = Work::getAll(
+                    whereClause: '`date_of_issue` BETWEEN ? AND ?',
+                    whereParams: [
+                        $data['yearFrom'] . '-01-01',
+                        $data['yearTo'] . '-12-31'
+                    ],
+                    orderBy: '`name`'
+                );
+                $workDetails = $this->getMultipleWorkDetails($works);
+            } else if ($data['type'] === 'všetky' && $data['genre'] !== 'všetky') {
+                $works = Work::getAll(
+                    whereClause: '`genre_id` = ? AND `date_of_issue` BETWEEN ? AND ?',
+                    whereParams: [
+                        $data['genre'],
+                        $data['yearFrom'] . '-01-01',
+                        $data['yearTo'] . '-12-31'
+                    ],
+                    orderBy: '`name`'
+                );
+                $workDetails = $this->getMultipleWorkDetails($works);
+            } else if ($data['genre'] === 'všetky') {
+                $works = Work::getAll(
+                    whereClause: '`type` = ? AND `date_of_issue` BETWEEN ? AND ?',
+                    whereParams: [
+                        $data['type'],
+                        $data['yearFrom'] . '-01-01',
+                        $data['yearTo'] . '-12-31'
+                    ],
+                    orderBy: '`name`'
+                );
+                $workDetails = $this->getWorkDetails($works, $data['type']);
+            } else {
+                $works = Work::getAll(
+                    whereClause: '`type` = ? AND `genre_id` = ? AND `date_of_issue` BETWEEN ? AND ?',
+                    whereParams: [
+                        $data['type'],
+                        $data['genre'],
+                        $data['yearFrom'] . '-01-01',
+                        $data['yearTo'] . '-12-31'
+                    ],
+                    orderBy: '`name`'
+                );
+                $workDetails = $this->getWorkDetails($works, $data['type']);
+            }
+        }
+        $genresByWorkIds = Genre::getGenresByWorkIds($works);
+        $countriesByWorkIds = Country::getCountriesByWorkIds($works);
+        return $this->html(compact('genres', 'types', 'works', 'workDetails', 'genresByWorkIds', 'countriesByWorkIds'));
+    }
+
+    public function getWorkDetails(array $works, string $typeOfWork): array
+    {
+        $workDetails = [];
+        $i = 0;
+        switch ($typeOfWork) {
+            case 'Film':
+                foreach ($works as $work) {
+                    $workDetails[$i] = MovieDetail::getOne($work->getId());
+                    $i++;
+                }
+                break;
+            case 'Seriál':
+                foreach ($works as $work) {
+                    $workDetails[$i] = SeriesDetail::getOne($work->getId());
+                    $i++;
+                }
+                break;
+            case 'Kniha':
+                foreach ($works as $work) {
+                    $workDetails[$i] = BookDetail::getOne($work->getId());
+                    $i++;
+                }
+                break;
+            default:
+                throw new \Exception('Neznámy typ diela.');
+        }
+        return $workDetails;
+    }
+
+    public function getMultipleWorkDetails(array $works): array
+    {
+        $workDetails = [];
+        $i = 0;
+        foreach ($works as $work) {
+            if ($work->getType() === 'Film') {
+                $workDetails[$i] = MovieDetail::getOne($work->getId());
+            } else if ($work->getType() === 'Seriál') {
+                $workDetails[$i] = SeriesDetail::getOne($work->getId());
+            } else if ($work->getType() === 'Kniha') {
+                $workDetails[$i] = BookDetail::getOne($work->getId());
+            }
+            $i++;
+        }
+        return $workDetails;
     }
 
     public function ajaxCheckTypeOfWork(Request $request): Response
@@ -41,8 +145,8 @@ class WorkController extends BaseController
     public function chooseGenres(string $typeOfWork): array
     {
        return match ($typeOfWork) {
-            'Film', 'Seriál' => Genre::getAll(whereClause: '`type` = ?', whereParams: ['Kino']),
-            'Kniha' => Genre::getAll(whereClause: '`type` = ?', whereParams: ['Kniha']),
+            'Film', 'Seriál' => Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']),
+            'Kniha' => Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']),
             'všetky' => Genre::getAll(whereClause: '`type` = ?', whereParams: ['Obidva']),
             default => [],
         };
@@ -58,8 +162,7 @@ class WorkController extends BaseController
         $work = new Work();
         $work->setName(trim($d['workName']));
         $work->setType($type);
-        $genres = Genre::getAll(whereClause: '`name` = ?', whereParams: [$d['genre']]);
-        $work->setGenre($genres[0]->getId());
+        $work->setGenre($d['genre']);
         $work->setDateOfIssue($d['dateOfIssue']);
         $work->setPlaceOfIssue($d['placeOfIssue']);
         $work->setDescription(trim($d['description']));
@@ -92,13 +195,13 @@ class WorkController extends BaseController
         return true;
     }
 
-    public function checkGenre(string $genre): bool
+    public function checkGenre(string $id): bool
     {
-        if (empty($genre)) {
+        if (empty($id)) {
             return false;
         }
-        $genres = Genre::getAll(whereClause: '`name` = ?', whereParams: [$genre]);
-        if (empty($genres)) {
+        $genre = Genre::getOne($id);
+        if (empty($genre)) {
             return false;
         }
         return true;
@@ -112,13 +215,13 @@ class WorkController extends BaseController
         return true;
     }
 
-    public function checkPlaceOfIssue(string $name): bool
+    public function checkPlaceOfIssue(string $id): bool
     {
-        if (empty($name)) {
+        if (empty($id)) {
             return false;
         }
-        $countries = Country::getAll(whereClause: '`name` = ?', whereParams: [$name]);
-        if (empty($countries)) {
+        $country = Country::getOne($id);
+        if (empty($country)) {
             return false;
         }
         return true;

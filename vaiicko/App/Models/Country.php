@@ -42,4 +42,12 @@ class Country extends Model
     {
         $this->name = $name;
     }
+
+    public static function getCountriesByWorkIds(array $works) : array {
+        $countries = [];
+        foreach ($works as $i => $work) {
+            $countries[$i] = Country::getOne($work->getPlaceOfIssue());
+        }
+        return $countries;
+    }
 }

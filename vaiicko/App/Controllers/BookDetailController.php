@@ -19,7 +19,7 @@ class BookDetailController extends WorkController
     public function form(Request $request): Response
     {
         $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Book', 'Both']);
+        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']);
         return $this->html(compact('countries', 'genres'));
     }
 
@@ -42,7 +42,7 @@ class BookDetailController extends WorkController
             $message = 'Formulárové údaje obsahujú chyby.';
         }
         $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Book', 'Both']);
+        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']);
         return $this->html(compact('countries', 'genres', 'message'), 'form');
     }
 

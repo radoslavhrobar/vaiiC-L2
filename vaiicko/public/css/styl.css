@@ -124,9 +124,23 @@ body {
     margin-right: 10px;
 }
 
-.options span {
-
+.rankingsSpan {
+    color: #5b3a29;
 }
+
+.rankingsCard .card-body {
+    background-color: burlywood;
+}
+
+.rankingsCard {
+    background-color: burlywood;
+    border: 2px solid saddlebrown;
+}
+
+.avgRating {
+    background-color: #5b3a29;
+}
+
 
 
 
