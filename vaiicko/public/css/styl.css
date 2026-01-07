@@ -85,7 +85,8 @@ body {
 .imp {
     color: red;
 }
- .forms span {
+
+.forms span {
     text-align: center;
     font-size: 15px;
     color: red;
@@ -157,6 +158,11 @@ body {
 
 .workLink:hover {
     text-decoration: underline;
+}
+
+.star-rating label {
+    color: #bc0012;
+    cursor: pointer;
 }
 
 
