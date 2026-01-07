@@ -249,7 +249,7 @@ class WorkController extends BaseController
     public function checkDescription(string $description): bool
     {
         $description = trim($description);
-        if (empty($description) || (mb_strlen($description) < 3 || mb_strlen($description) > 2000)) {
+        if (empty($description) || (mb_strlen($description) < 3 || mb_strlen($description) > 1000)) {
             return false;
         }
         return true;

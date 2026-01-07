@@ -6,7 +6,7 @@
 /** @var \App\Models\SeriesDetail $seriesDetail */
 /** @var \App\Models\Genre $genreByWorkId */
 /** @var \App\Models\Country $countryByWorkId */
-
+/** @var \Framework\Core\IAuthenticator $auth */
 ?>
 <div class="row workRow p-4 rounded my-3">
     <div class="col-6 col-md-3 text-center order-1 order-md-1 mb-3 mb-md-0">
@@ -77,4 +77,50 @@
     <p class="text-secondary">
         <?= $work->getDescription() ?>
     </p>
+</div>
+<div class="workParts p-4 rounded mb-5">
+    <h4 class="fw-bold mb-4">
+        Recenzie
+        <span class="text-secondary">(3)</span>
+    </h4>
+
+    <div class="card workParts mb-3">
+        <div class="card-body">
+            <div>
+                <strong>PeterK </strong>
+                <span class="text-danger fw-bold">9/10</span>
+            </div>
+            <p class="mb-0 mt-2">
+                Vizuálne absolútna špička, príbeh funguje a emócie nechýbajú.
+                Jeden z najlepších animákov posledných rokov.
+            </p>
+        </div>
+    </div>
+
+    <?php if ($auth->isLogged()): ?>
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Pridať recenziu</h5>
+                <form>
+                    <div class="mb-2">
+                            <textarea class="form-control"
+                                      rows="3"
+                                      placeholder="Napíš svoju recenziu..."></textarea>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <select class="form-select w-auto">
+                            <option>10</option>
+                            <option>9</option>
+                            <option>8</option>
+                            <option>7</option>
+                            <option>6</option>
+                        </select>
+                        <button class="btn btn-primary">
+                            Odoslať
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
