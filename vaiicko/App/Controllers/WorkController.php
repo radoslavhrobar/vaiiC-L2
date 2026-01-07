@@ -157,6 +157,22 @@ class WorkController extends BaseController
         return $this->html();
     }
 
+    public function ownPage(Request $request): Response
+    {
+        $id = $request->value('id');
+        $work = Work::getOne($id);
+        if (empty($work)) {
+            throw new \Exception('Dielo neexistuje.');
+        }
+        $workDetail = match ($work->getType()) {
+            'Film' => MovieDetail::getOne($id),
+            'Seriál' => SeriesDetail::getOne($id),
+            'Kniha' => BookDetail::getOne($id),
+            default => throw new \Exception('Neznámy typ diela.'),
+        };
+        return $this->html(compact('work', 'workDetail'));
+    }
+
     public function workAdd($d, string $type): Work
     {
         $work = new Work();

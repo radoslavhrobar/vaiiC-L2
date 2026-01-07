@@ -124,7 +124,11 @@ body {
     margin-right: 10px;
 }
 
-.rankingsSpan {
+.specialBackgroundColor {
+   background-color: #5b3a29;
+}
+
+.specialColor {
     color: #5b3a29;
 }
 
@@ -137,8 +141,13 @@ body {
     border: 2px solid saddlebrown;
 }
 
-.avgRating {
-    background-color: #5b3a29;
+.workLink {
+    text-decoration: none;
+    color: black;
+}
+
+.workLink:hover {
+    text-decoration: underline;
 }
 
 

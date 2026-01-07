@@ -50,8 +50,8 @@
     <!--             alt="Plagát">-->
             <div class="flex-grow-1">
                 <h5 class= "mb-1 fw-bold">
-                    <span class="rankingsSpan"><?= $i +1 ?>.</span>
-                        <a href="<?= $link->url("work.page", ['id' => $work->getId()]) ?>"><?= $work->getName() ?></a>
+                    <span class="specialColor"><?= $i +1 ?>.</span>
+                        <a class="workLink" href="<?= $link->url("work.ownPage", ['id' => $work->getId()]) ?>"><?= $work->getName() ?></a>
                     <span class="text-secondary fw-normal">(<?= (new DateTime($work->getDateOfIssue()))->format('Y') ?>)</span>
                 </h5>
                 <div class="text-secondary fw-bold small mb-2">
@@ -62,7 +62,7 @@
                 </p>
             </div>
             <div class="text-center d-flex flex-column justify-content-center">
-                <div class="avgRating text-white fw-bold fs-5 px-3 py-2 rounded">
+                <div class="specialBackgroundColor text-white fw-bold fs-5 px-3 py-2 rounded">
                     sdfsdfds
                 </div>
                 <div class="text-secondary mt-1">
