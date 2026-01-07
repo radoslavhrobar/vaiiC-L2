@@ -83,27 +83,32 @@ class WorkController extends BaseController
         return $this->html(compact('genres', 'types', 'works', 'workDetails', 'genresByWorkIds', 'countriesByWorkIds'));
     }
 
+    public function getWorkDetail(string $typeOfWork, string $id) : mixed {
+        return match ($typeOfWork) {
+            'Film' => MovieDetail::getOne($id),
+            'Seriál' => SeriesDetail::getOne($id),
+            'Kniha' => BookDetail::getOne($id),
+            default => throw new \Exception('Neznámy typ diela.'),
+        };
+    }
+
     public function getWorkDetails(array $works, string $typeOfWork): array
     {
         $workDetails = [];
-        $i = 0;
         switch ($typeOfWork) {
             case 'Film':
-                foreach ($works as $work) {
+                foreach ($works as $i => $work) {
                     $workDetails[$i] = MovieDetail::getOne($work->getId());
-                    $i++;
                 }
                 break;
             case 'Seriál':
-                foreach ($works as $work) {
+                foreach ($works as $i => $work) {
                     $workDetails[$i] = SeriesDetail::getOne($work->getId());
-                    $i++;
                 }
                 break;
             case 'Kniha':
-                foreach ($works as $work) {
+                foreach ($works as $i => $work) {
                     $workDetails[$i] = BookDetail::getOne($work->getId());
-                    $i++;
                 }
                 break;
             default:
@@ -115,16 +120,8 @@ class WorkController extends BaseController
     public function getMultipleWorkDetails(array $works): array
     {
         $workDetails = [];
-        $i = 0;
-        foreach ($works as $work) {
-            if ($work->getType() === 'Film') {
-                $workDetails[$i] = MovieDetail::getOne($work->getId());
-            } else if ($work->getType() === 'Seriál') {
-                $workDetails[$i] = SeriesDetail::getOne($work->getId());
-            } else if ($work->getType() === 'Kniha') {
-                $workDetails[$i] = BookDetail::getOne($work->getId());
-            }
-            $i++;
+        foreach ($works as $i => $work) {
+            $workDetails[$i] = $this->getWorkDetail($work->getType(), $work->getId());
         }
         return $workDetails;
     }
@@ -147,7 +144,7 @@ class WorkController extends BaseController
        return match ($typeOfWork) {
             'Film', 'Seriál' => Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']),
             'Kniha' => Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']),
-            'všetky' => Genre::getAll(whereClause: '`type` = ?', whereParams: ['Obidva']),
+            'všetky' => Genre::getAll(),
             default => [],
         };
     }
@@ -164,13 +161,19 @@ class WorkController extends BaseController
         if (empty($work)) {
             throw new \Exception('Dielo neexistuje.');
         }
-        $workDetail = match ($work->getType()) {
-            'Film' => MovieDetail::getOne($id),
-            'Seriál' => SeriesDetail::getOne($id),
-            'Kniha' => BookDetail::getOne($id),
-            default => throw new \Exception('Neznámy typ diela.'),
-        };
-        return $this->html(compact('work', 'workDetail'));
+        $genreByWorkId = Genre::getOne($work->getGenre());
+        $countryByWorkId = Country::getOne($work->getPlaceOfIssue());
+        $movieDetail = null;
+        $seriesDetail = null;
+        $bookDetail = null;
+        if ($work->getType() === 'Film') {
+            $movieDetail = MovieDetail::getOne($work->getId());
+        } elseif ($work->getType() === 'Seriál') {
+            $seriesDetail = SeriesDetail::getOne($work->getId());
+        } else if ($work->getType() === 'Kniha') {
+            $bookDetail = BookDetail::getOne($work->getId());
+        }
+        return $this->html(compact('work', 'genreByWorkId', 'countryByWorkId', 'movieDetail', 'seriesDetail', 'bookDetail'));
     }
 
     public function workAdd($d, string $type): Work

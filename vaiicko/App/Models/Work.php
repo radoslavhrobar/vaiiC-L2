@@ -29,7 +29,7 @@ class Work extends Model
         $this->id = $id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -49,7 +49,7 @@ class Work extends Model
         $this->type = $type;
     }
 
-    public function getGenre(): ?string
+    public function getGenre(): ?int
     {
         return $this->genre_id;
     }
@@ -69,7 +69,7 @@ class Work extends Model
         $this->date_of_issue = $dateOfIssue;
     }
 
-    public function getPlaceOfIssue(): ?string
+    public function getPlaceOfIssue(): ?int
     {
         return $this->place_of_issue_id;
     }

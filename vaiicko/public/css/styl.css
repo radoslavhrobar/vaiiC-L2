@@ -141,6 +141,15 @@ body {
     border: 2px solid saddlebrown;
 }
 
+.workRow {
+    background-color: burlywood;
+    border: 2px solid saddlebrown;
+}
+
+.workParts {
+    border: 2px solid saddlebrown;
+}
+
 .workLink {
     text-decoration: none;
     color: black;

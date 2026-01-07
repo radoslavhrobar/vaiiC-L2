@@ -42,7 +42,7 @@
     </div>
 </form>
 <?php foreach ($works as $i => $work): ?>
-    <div class="card mx-5 rankingsCard">
+    <div class="card mb-1 mx-5 rankingsCard">
         <div class="card-body d-flex gap-3">
     <!--        <img src="poster.jpg"-->
     <!--             class="rounded"-->
@@ -52,10 +52,10 @@
                 <h5 class= "mb-1 fw-bold">
                     <span class="specialColor"><?= $i +1 ?>.</span>
                         <a class="workLink" href="<?= $link->url("work.ownPage", ['id' => $work->getId()]) ?>"><?= $work->getName() ?></a>
-                    <span class="text-secondary fw-normal">(<?= (new DateTime($work->getDateOfIssue()))->format('Y') ?>)</span>
+                    <span class="text-secondary fw-normal">(<?= (new DateTime($work->getDateOfIssue()))->format('Y') ?><?= (!isset($_POST['type']) || $_POST['type'] === 'všetky') ? ', ' . $work->getType() : '' ?>)</span>
                 </h5>
                 <div class="text-secondary fw-bold small mb-2">
-                    <?= $countriesByWorkIds[$i]->getName()  ?> • <?= $genresByWorkIds[$i]->getName()  ?>
+                    <?= $countriesByWorkIds[$i]->getName()  ?><?= (!isset($_POST['genre']) || $_POST['genre'] === 'všetky') ? ' • ' . $genresByWorkIds[$i]->getName() : '' ?>
                 </div>
                 <p class="mb-0 text-secondary small">
                     <?= mb_strimwidth($work->getDescription(), 0, 70, '…') ?>
