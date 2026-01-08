@@ -160,9 +160,13 @@ body {
     text-decoration: underline;
 }
 
-.star-rating label {
+.starRating label {
     color: #bc0012;
     cursor: pointer;
+}
+
+.userRating {
+    color: #bc0012;
 }
 
 

@@ -2,8 +2,8 @@
 /** @var \App\Helpers\TypesOfWork[] $types */
 /** @var \App\Models\Genre[] $genres */
 /** @var \App\Models\Work[] $works */
-/** @var \App\Models\Genre[] $genresByWorkIds */
-/** @var \App\Models\Country[] $countriesByWorkIds */
+/** @var \App\Models\Genre[] $genresByIds */
+/** @var \App\Models\Country[] $countriesByIds */
 /** @var  $workDetails */
 /** @var \Framework\Support\LinkGenerator $link */
 
@@ -55,7 +55,7 @@
                     <span class="text-secondary fw-normal">(<?= (new DateTime($work->getDateOfIssue()))->format('Y') ?><?= (!isset($_POST['type']) || $_POST['type'] === 'všetky') ? ', ' . $work->getType() : '' ?>)</span>
                 </h5>
                 <div class="text-secondary fw-bold small mb-2">
-                    <?= $countriesByWorkIds[$i]->getName()  ?><?= (!isset($_POST['genre']) || $_POST['genre'] === 'všetky') ? ' • ' . $genresByWorkIds[$i]->getName() : '' ?>
+                    <?= $countriesByIds[$i]->getName()  ?><?= (!isset($_POST['genre']) || $_POST['genre'] === 'všetky') ? ' • ' . $genresByIds[$i]->getName() : '' ?>
                 </div>
                 <p class="mb-0 text-secondary small">
                     <?= mb_strimwidth($work->getDescription(), 0, 70, '…') ?>

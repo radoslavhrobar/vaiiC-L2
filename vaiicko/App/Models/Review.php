@@ -8,12 +8,12 @@ class Review extends Model
 {
     public function __construct(
         protected ?int $id = null,
-        protected string $title = '',
         protected ?string $body = null,
         protected int $rating = 0,
         protected ?int $user_id = null,
         protected ?int $work_id = null,
         protected string $created_at = '',
+        protected ?string $updated_at = null
     ) {
     }
 
@@ -25,17 +25,6 @@ class Review extends Model
     public function setId(?int $id): void
     {
         $this->id = $id;
-    }
-
-
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
     }
 
     public function getBody(): ?string
@@ -86,5 +75,15 @@ class Review extends Model
     public function setCreatedAt(string $created_at): void
     {
         $this->created_at = $created_at;
+    }
+
+    public function getUpdatedAt(): ?string
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?string $updated_at): void
+    {
+        $this->updated_at = $updated_at;
     }
 }

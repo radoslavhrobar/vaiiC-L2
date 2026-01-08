@@ -23,16 +23,34 @@ class ReviewController extends BaseController
         }
         $data = $request->post();
         $dataGet = $request->get();
-        if (!isset($data['title'], $data['body'], $data['rating'], $dataGet['workId'])) {
+        if (!isset($data['body'], $data['rating'], $dataGet['workId'])) {
             throw new Exception("Nedostatočné údaje o recenzii.");
         }
         $review = new Review();
-        $review->setTitle($data['title']);
-        $review->setBody($data['body']);
+        if (!empty($data['body'])) {
+            $review->setBody($data['body']);
+        }
         $review->setRating((int)$data['rating']);
         $review->setWorkId((int)$dataGet['workId']);
         $review->setUserId($user->getId());
         $review->setCreatedAt(date('Y-m-d H:i:s'));
+        $review->save();
+        return $this->redirect($this->url("work.ownPage", ['id' => $dataGet['workId']]));
+    }
+
+    public function edit(Request $request): Response
+    {
+        $data = $request->post();
+        $dataGet = $request->get();
+        if (!isset($data['body'], $data['rating'], $dataGet['workId'], $dataGet['id'])) {
+            throw new Exception("Nedostatočné údaje o recenzii.");
+        }
+        $review = Review::getOne($dataGet['id']);
+        if (!empty($data['body'])) {
+            $review->setBody($data['body']);
+        }
+        $review->setRating((int)$data['rating']);
+        $review->setUpdatedAt(date('Y-m-d H:i:s'));
         $review->save();
         return $this->redirect($this->url("work.ownPage", ['id' => $dataGet['workId']]));
     }

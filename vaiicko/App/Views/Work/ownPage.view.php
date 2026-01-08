@@ -6,6 +6,11 @@
 /** @var \App\Models\SeriesDetail $seriesDetail */
 /** @var \App\Models\Genre $genreByWorkId */
 /** @var \App\Models\Country $countryByWorkId */
+/** @var \App\Models\Review[] $reviews */
+/** @var \App\Models\Review[] $reviewsFiltered */
+/** @var \App\Models\User[] $users */
+/** @var bool $hasReview */
+/** @var \App\Models\Review $myReview */
 /** @var \Framework\Core\IAuthenticator $auth */
 ?>
 <div class="row workRow p-4 rounded my-3">
@@ -68,7 +73,7 @@
             87 %
         </div>
         <div class="text-secondary mt-2">
-            10 721 hodnotení
+            <?= count($reviews) ?> hodnotení
         </div>
     </div>
 </div>
@@ -78,39 +83,67 @@
         <?= $work->getDescription() ?>
     </p>
 </div>
+
+<strong id="infoMessage"></strong>
+
 <div class="workParts p-4 rounded mb-5">
     <h4 class="fw-bold mb-4">
         Recenzie
-        <span class="text-secondary">(3)</span>
+        <span class="text-secondary">(<?= count($reviewsFiltered) ?>)</span>
     </h4>
 
-    <div class="card workParts mb-3">
-        <div class="card-body">
-            <div>
-                <strong>PeterK </strong>
-                <span class="text-danger fw-bold">9/10</span>
+    <?php foreach ($reviewsFiltered as $i => $review):
+        if (!$myReview || $review->getId() !== $myReview->getId()):?>
+            <div class="card workParts mb-3">
+                <div class="card-body">
+                    <div>
+                        <strong class="fw-bold fs-5"><?= $users[$i]->getUsername() ?></strong>
+                        <span class="userRating fw-normal">
+                            <?php for ($j = 0; $j < $review->getRating(); $j++): ?>
+                                ★
+                            <?php endfor; ?>
+                        </span>
+                    </div>
+                    <p class="mb-0 mt-2">
+                        <?= $review->getBody() ?: ''  ?>
+                    </p>
+                </div>
             </div>
-            <p class="mb-0 mt-2">
-                Vizuálne absolútna špička, príbeh funguje a emócie nechýbajú.
-                Jeden z najlepších animákov posledných rokov.
-            </p>
-        </div>
-    </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
 
-    <?php if ($auth->isLogged()): ?>
+    <?php if ($myReview): ?>
+        <h4 class="fw-bold mb-4">
+            Moja Recenzia
+        </h4>
+        <div class="card workParts mb-3">
+            <div class="card-body">
+                <div>
+                    <strong class="fw-bold fs-5"><?= $auth->getUser()->getUsername() ?></strong>
+                    <span class="userRating fw-normal">
+                                <?php for ($j = 0; $j < $myReview->getRating(); $j++): ?>
+                                    ★
+                                <?php endfor; ?>
+                            </span>
+                </div>
+                <p class="mb-0 mt-2">
+                    <?= $myReview->getBody() ?: '' ?>
+                </p>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!$hasReview): ?>
         <div class="card mt-4">
             <div class="card-body">
                 <h5 class="fw-bold mb-3">Pridať recenziu</h5>
                 <form  id="review" action="<?= $link->url("review.add", ['workId' => $work->getId()]) ?>" method="post">
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="title" placeholder="Názov recenzie">
-                    </div>
-                    <div class="mb-3">
                         <textarea class="form-control" rows="3" name="body" placeholder="Napíš svoju recenziu..."></textarea>
                     </div>
                     <span>Hodnotenie:</span>
-                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
-                        <div class="star-rating">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                        <div class="starRating">
                             <input type="radio" id="star5" name="rating" value="5">
                             <label for="star5">★★★★★</label>
                             <input type="radio" id="star4" name="rating" value="4">
@@ -129,5 +162,34 @@
                 </form>
             </div>
         </div>
+    <?php elseif($myReview): ?>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">Upraviť recenziu</h5>
+            <form  id="review" action="<?= $link->url("review.edit", ['workId' => $work->getId(), 'id' => $myReview->getId()]) ?>" method="post">
+                <div class="mb-3">
+                    <textarea class="form-control" rows="3" name="body" placeholder="Napíš svoju recenziu..."><?= $myReview->getBody() ?></textarea>
+                </div>
+                <span>Hodnotenie:</span>
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 gap-md-0">
+                    <div class="starRating">
+                        <input type="radio" id="star5" name="rating" value="5" <?=  $myReview->getRating() === 5 ? 'checked' : '' ?>>
+                        <label for="star5">★★★★★</label>
+                        <input type="radio" id="star4" name="rating" value="4" <?=  $myReview->getRating() === 4 ? 'checked' : '' ?>>
+                        <label for="star4">★★★★</label>
+                        <input type="radio" id="star3" name="rating" value="3" <?=  $myReview->getRating() === 3 ? 'checked' : '' ?>>
+                        <label for="star3">★★★</label>
+                        <input type="radio" id="star2" name="rating" value="2" <?=  $myReview->getRating() === 2 ? 'checked' : '' ?>>
+                        <label for="star2">★★</label>
+                        <input type="radio" id="star1" name="rating" value="1" <?=  $myReview->getRating() === 1 ? 'checked' : '' ?>>
+                        <label for="star1">★</label>
+                    </div>
+                    <button type="submit" class="btn-brown">
+                        Upraviť
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <?php endif; ?>
 </div>

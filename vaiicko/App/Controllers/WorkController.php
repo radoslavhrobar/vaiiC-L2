@@ -7,7 +7,9 @@ use App\Models\BookDetail;
 use App\Models\Country;
 use App\Models\Genre;
 use App\Models\MovieDetail;
+use App\Models\Review;
 use App\Models\SeriesDetail;
+use App\Models\User;
 use App\Models\Work;
 use Framework\Core\BaseController;
 use Framework\Core\Model;
@@ -78,9 +80,9 @@ class WorkController extends BaseController
                 $workDetails = $this->getWorkDetails($works, $data['type']);
             }
         }
-        $genresByWorkIds = Genre::getGenresByWorkIds($works);
-        $countriesByWorkIds = Country::getCountriesByWorkIds($works);
-        return $this->html(compact('genres', 'types', 'works', 'workDetails', 'genresByWorkIds', 'countriesByWorkIds'));
+        $genresByIds = $this->getGenresByIds($works);
+        $countriesByIds = $this->getCountriesByIds($works);
+        return $this->html(compact('genres', 'types', 'works', 'workDetails', 'genresByIds', 'countriesByIds'));
     }
 
     public function getWorkDetail(string $typeOfWork, string $id) : mixed {
@@ -173,7 +175,50 @@ class WorkController extends BaseController
         } else if ($work->getType() === 'Kniha') {
             $bookDetail = BookDetail::getOne($work->getId());
         }
-        return $this->html(compact('work', 'genreByWorkId', 'countryByWorkId', 'movieDetail', 'seriesDetail', 'bookDetail'));
+        $reviews = Review::getAll('work_id = ?', [$work->getId()], 'created_at DESC');
+        $reviewsFiltered  = Review::getAll('(`work_id` = ? AND `body` IS NOT NULL)', [$work->getId()], 'created_at DESC');
+        $users = $this->getUsersByIds($reviewsFiltered);
+        $myReview = null;
+        $hasReview = $this->hasReview($reviews, $this->app->getAuth()->getUser(), $myReview);
+        return $this->html(compact('work', 'genreByWorkId', 'countryByWorkId', 'movieDetail', 'seriesDetail', 'bookDetail', 'reviews', 'users', 'hasReview', 'reviewsFiltered', 'myReview'));
+    }
+
+    public function getCountriesByIds(array $works) : array {
+        $countries = [];
+        foreach ($works as $i => $work) {
+            $countries[$i] = Country::getOne($work->getPlaceOfIssue());
+        }
+        return $countries;
+    }
+
+    public function getGenresByIds(array $works) : array {
+        $genres = [];
+        foreach ($works as $i => $work) {
+            $genres[$i] = Genre::getOne($work->getGenre());
+        }
+        return $genres;
+    }
+
+    public function getUsersByIds(array $reviews) : array {
+        $users = [];
+        foreach ($reviews as $i => $review) {
+            $users[$i] = User::getOne($review->getUserId());
+        }
+        return $users;
+    }
+
+    public function hasReview(array $reviews, ?User $user, ?Review &$myReview): bool
+    {
+        if (!$user) {
+            return true;
+        }
+        foreach ($reviews as $review) {
+            if ($review->getUserId() === $user->getId()) {
+                $myReview = $review;
+                return true;
+            }
+        }
+        return false;
     }
 
     public function workAdd($d, string $type): Work

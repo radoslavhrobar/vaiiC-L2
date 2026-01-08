@@ -44,12 +44,4 @@ class Genre extends Model
     {
         $this->type = $type;
     }
-
-    public static function getGenresByWorkIds(array $works) : array {
-        $genres = [];
-        foreach ($works as $i => $work) {
-            $genres[$i] = Genre::getOne($work->getGenre());
-        }
-        return $genres;
-    }
 }
