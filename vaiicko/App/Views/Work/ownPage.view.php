@@ -11,6 +11,8 @@
 /** @var \App\Models\User[] $users */
 /** @var bool $hasReview */
 /** @var \App\Models\Review $myReview */
+/** @var string $text */
+/** @var string $color */
 /** @var \Framework\Core\IAuthenticator $auth */
 ?>
 <div class="row workRow p-4 rounded my-3">
@@ -70,7 +72,7 @@
     </div>
     <div class="col-6 col-md-3 text-center d-flex flex-column justify-content-center order-2 order-md-3 mb-3 mb-md-0">
         <div class="specialBackgroundColor text-white fw-bold py-3 display-6 rounded">
-            87 %
+            Picus
         </div>
         <div class="text-secondary mt-2">
             <?= count($reviews) ?> hodnotení
@@ -83,8 +85,6 @@
         <?= $work->getDescription() ?>
     </p>
 </div>
-
-<strong id="infoMessage"></strong>
 
 <div class="workParts p-4 rounded mb-5">
     <h4 class="fw-bold mb-4">
@@ -113,9 +113,17 @@
     <?php endforeach; ?>
 
     <?php if ($myReview): ?>
+        <div class="text-center mb-4">
+            <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
+        </div>
         <h4 class="fw-bold mb-4">
-            Moja Recenzia
+            <?php if ($myReview->getBody() === null): ?>
+                Moje Hodnotenie
+            <?php else: ?>
+                Moja Recenzia
+            <?php endif; ?>
         </h4>
+
         <div class="card workParts mb-3">
             <div class="card-body">
                 <div>

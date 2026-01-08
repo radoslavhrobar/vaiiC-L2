@@ -180,7 +180,9 @@ class WorkController extends BaseController
         $users = $this->getUsersByIds($reviewsFiltered);
         $myReview = null;
         $hasReview = $this->hasReview($reviews, $this->app->getAuth()->getUser(), $myReview);
-        return $this->html(compact('work', 'genreByWorkId', 'countryByWorkId', 'movieDetail', 'seriesDetail', 'bookDetail', 'reviews', 'users', 'hasReview', 'reviewsFiltered', 'myReview'));
+        $text = $request->value('text');
+        $color = $request->value('color');
+        return $this->html(compact('work', 'genreByWorkId', 'countryByWorkId', 'movieDetail', 'seriesDetail', 'bookDetail', 'reviews', 'users', 'hasReview', 'reviewsFiltered', 'myReview', 'text', 'color'));
     }
 
     public function getCountriesByIds(array $works) : array {
