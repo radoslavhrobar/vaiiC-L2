@@ -39,7 +39,7 @@
                             <a class="nav-link" aria-current="page" href="<?= $link->url("auth.print") ?>">Používatelia</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="<?= $link->url("work.adding") ?>">Pridanie diela</a>
+                            <a class="nav-link" aria-current="page" href="<?= $link->url("movieDetail.form") ?>">Pridanie diela</a>
                         </li>
                     </ul>
                     <div class="nav-item dropdown me-2 mb-2 mb-md-0">

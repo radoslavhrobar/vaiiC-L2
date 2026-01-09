@@ -1,5 +1,7 @@
 <?php
 /** @var \Framework\Support\LinkGenerator $link*/
+/** @var string $text */
+/** @var string $color */
 ?>
 
 <form id="workForm" class="forms" action="<?= $link->url("bookDetail.add") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
@@ -26,7 +28,9 @@
         </label>
         <input class="col-sm-6" type="text" name="author" id="author">
         <span id="authorMessage"></span>
-        <span><?= $message ?? '' ?></span>
+    </div>
+    <div class="text-center">
+        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
     </div>
     <div class="text-center">
         <input class="btn-brown" type="submit" value="Pridať knihu">

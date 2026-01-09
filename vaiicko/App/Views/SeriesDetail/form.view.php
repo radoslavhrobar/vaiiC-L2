@@ -1,5 +1,7 @@
 <?php
 /** @var \Framework\Support\LinkGenerator $link*/
+/** @var string $text */
+/** @var string $color */
 ?>
 
 <form id="workForm" class="forms" action="<?= $link->url("seriesDetail.add") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
@@ -33,7 +35,9 @@
         </label>
         <input class="col-sm-6" type="text" name="director" id="director">
         <span id="directorMessage"></span>
-        <span><?= $message ?? '' ?></span>
+    </div>
+    <div class="text-center">
+        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
     </div>
     <div class="text-center">
         <input class="btn-brown" type="submit" value="Pridať seriál">

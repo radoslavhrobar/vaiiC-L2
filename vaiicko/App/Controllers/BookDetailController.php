@@ -29,7 +29,8 @@ class BookDetailController extends WorkController
         if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $d['numOfPages'], $d['publishers'], $d['author'])) {
             throw new \Exception('Nedostatočné údaje pre pridanie knihy.');
         }
-        $message = 'Kniha bola úspešne pridaná.';
+        $text = 'Kniha bola úspešne pridaná.';
+        $color = 'success';
         if ($this->check($d)) {
             $work = parent::workAdd($d, TypesOfWork::Kniha->name);
             $bookDetail = new BookDetail();
@@ -39,11 +40,12 @@ class BookDetailController extends WorkController
             $bookDetail->setAuthor(trim($d['author']));
             $bookDetail->save();
         } else {
-            $message = 'Formulárové údaje obsahujú chyby.';
+            $text = 'Knižné údaje obsahujú chyby.';
+            $color = 'danger';
         }
         $countries = Country::getAll();
         $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']);
-        return $this->html(compact('countries', 'genres', 'message'), 'form');
+        return $this->html(compact('countries', 'genres', 'text', 'color'), 'form');
     }
 
     public function check($data): bool
@@ -65,7 +67,7 @@ class BookDetailController extends WorkController
     public function checkPublishers(string $publishers) : bool
     {
         $publishers = trim($publishers);
-        if (empty($publishers) || mb_strlen($publishers) > 255 || !preg_match('/^[\p{L}0-9 .,&\'\-]+$/u', $publishers)) {
+        if (empty($publishers) || mb_strlen($publishers) > 255 || !preg_match('/^[\p{L}0-9 .,&\'\-]+$/u', $publishers) || !preg_match('/^\p{Lu}$/u', mb_substr($publishers, 0, 1, 'UTF-8'))) {
             return false;
         }
         return true;
@@ -74,7 +76,7 @@ class BookDetailController extends WorkController
     public function checkAuthor(string $author) : bool
     {
         $author = trim($author);
-        if (empty($author) || mb_strlen($author) > 100 || !preg_match('/^[\p{L} \'\-]+$/u', $author)) {
+        if (empty($author) || mb_strlen($author) > 100 || !preg_match('/^[\p{L} \'\-]+$/u', $author) || !preg_match('/^\p{Lu}$/u', mb_substr($author, 0, 1, 'UTF-8'))) {
             return false;
         }
         return true;

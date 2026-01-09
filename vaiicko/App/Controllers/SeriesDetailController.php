@@ -30,7 +30,8 @@ class SeriesDetailController extends WorkController
             $d['prodCompany'], $d['director'])) {
             throw new \Exception('Nedostatočné údaje pre pridanie seriálu.');
         }
-        $message = 'Seriál bol úspešne pridaný.';
+        $text = 'Seriál bol úspešne pridaný.';
+        $color = 'success';
         if ($this->check($d)) {
             $work = parent::workAdd($d, TypesOfWork::Seriál->name);
             $seriesDetail = new SeriesDetail();
@@ -41,11 +42,12 @@ class SeriesDetailController extends WorkController
             $seriesDetail->setDirector(trim($d['director']));
             $seriesDetail->save();
         } else {
-            $message = 'Formulárové údaje obsahujú chyby.';
+            $text = 'Seriálové údaje obsahujú chyby.';
+            $color = 'danger';
         }
         $countries = Country::getAll();
         $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']);
-        return $this->html(compact('countries', 'genres', 'message'), 'form');
+        return $this->html(compact('countries', 'genres', 'text', 'color'), 'form');
     }
 
     public function check($data) : bool
@@ -84,7 +86,7 @@ class SeriesDetailController extends WorkController
     public function checkProdCompany(string $prodCompany) : bool
     {
         $prodCompany = trim($prodCompany);
-        if (empty($prodCompany) || mb_strlen($prodCompany) > 255 || !preg_match('/^[\p{L}0-9 .,&\'\-]+$/u', $prodCompany)) {
+        if (empty($prodCompany) || mb_strlen($prodCompany) > 255 || !preg_match('/^[\p{L}0-9 .,&\'\-]+$/u', $prodCompany) || !preg_match('/^\p{Lu}$/u', mb_substr($prodCompany, 0, 1, 'UTF-8'))) {
             return false;
         }
         return true;
@@ -93,7 +95,7 @@ class SeriesDetailController extends WorkController
     public function checkDirector(string $director) : bool
     {
         $director = trim($director);
-        if (empty($director) || mb_strlen($director) > 100 || !preg_match('/^[\p{L} \'\-]+$/u', $director)) {
+        if (empty($director) || mb_strlen($director) > 100 || !preg_match('/^[\p{L} \'\-]+$/u', $director) || !preg_match('/^\p{Lu}$/u', mb_substr($director, 0, 1, 'UTF-8'))) {
             return false;
         }
         return true;
