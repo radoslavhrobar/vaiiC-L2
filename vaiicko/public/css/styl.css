@@ -169,6 +169,12 @@ body {
     color: #bc0012;
 }
 
+.errorMessage {
+    color: #c9060a;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
 
 
 

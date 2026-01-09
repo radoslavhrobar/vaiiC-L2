@@ -113,7 +113,7 @@
     <?php endforeach; ?>
 
     <?php if ($myReview): ?>
-        <div class="text-center mb-4">
+        <div class="text-center">
             <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
         </div>
         <h4 class="fw-bold mb-4">
@@ -145,9 +145,10 @@
         <div class="card mt-4">
             <div class="card-body">
                 <h5 class="fw-bold mb-3">Pridať recenziu</h5>
-                <form  id="review" action="<?= $link->url("review.add", ['workId' => $work->getId()]) ?>" method="post">
+                <form  id="reviewForm" action="<?= $link->url("review.add", ['workId' => $work->getId()]) ?>" method="post">
                     <div class="mb-3">
-                        <textarea class="form-control" rows="3" name="body" placeholder="Napíš svoju recenziu..."></textarea>
+                        <textarea class="form-control" rows="3" name="body" id="reviewBody" placeholder="Napíš svoju recenziu..."></textarea>
+                        <div class="errorMessage" id="reviewBodyMessage"></div>
                     </div>
                     <span>Hodnotenie:</span>
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
@@ -163,6 +164,7 @@
                             <input type="radio" id="star1" name="rating" value="1">
                             <label for="star1">★</label>
                         </div>
+                        <div class="errorMessage" id="ratingMessage"></div>
                         <button type="submit" class="btn-brown">
                             Odoslať
                         </button>
@@ -176,10 +178,11 @@
             <h5 class="fw-bold mb-3">Upraviť recenziu</h5>
             <form  id="review" action="<?= $link->url("review.edit", ['workId' => $work->getId(), 'id' => $myReview->getId()]) ?>" method="post">
                 <div class="mb-3">
-                    <textarea class="form-control" rows="3" name="body" placeholder="Napíš svoju recenziu..."><?= $myReview->getBody() ?></textarea>
+                    <textarea class="form-control" rows="3" id="reviewBody" name="body" placeholder="Napíš svoju recenziu..."><?= $myReview->getBody() ?></textarea>
+                    <div class="errorMessage" id="reviewBodyMessage"></div>
                 </div>
                 <span>Hodnotenie:</span>
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 gap-md-0">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                     <div class="starRating">
                         <input type="radio" id="star5" name="rating" value="5" <?=  $myReview->getRating() === 5 ? 'checked' : '' ?>>
                         <label for="star5">★★★★★</label>
@@ -201,3 +204,4 @@
     </div>
     <?php endif; ?>
 </div>
+<script src="<?= $link->asset('js/reviews.js') ?>"></script>
