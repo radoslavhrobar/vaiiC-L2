@@ -86,10 +86,10 @@ body {
     color: red;
 }
 
-.forms span {
+.forms strong {
     text-align: center;
     font-size: 15px;
-    color: red;
+    color: #c9060a;
 }
 
 .btn-brown {
@@ -167,12 +167,6 @@ body {
 
 .userRating {
     color: #bc0012;
-}
-
-.errorMessage {
-    color: #c9060a;
-    text-align: center;
-    margin-bottom: 30px;
 }
 
 

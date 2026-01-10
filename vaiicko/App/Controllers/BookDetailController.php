@@ -20,7 +20,8 @@ class BookDetailController extends WorkController
     {
         $countries = Country::getAll();
         $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']);
-        return $this->html(compact('countries', 'genres'));
+        $limit = TypesOfWork::Kniha->value;
+        return $this->html(compact('countries', 'genres', 'limit'));
     }
 
     public function add(Request $request): Response
@@ -45,7 +46,8 @@ class BookDetailController extends WorkController
         }
         $countries = Country::getAll();
         $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']);
-        return $this->html(compact('countries', 'genres', 'text', 'color'), 'form');
+        $limit = TypesOfWork::Kniha->value;
+        return $this->html(compact('countries', 'genres', 'text', 'color', 'limit'), 'form');
     }
 
     public function check($data): bool
@@ -67,7 +69,7 @@ class BookDetailController extends WorkController
     public function checkPublishers(string $publishers) : bool
     {
         $publishers = trim($publishers);
-        if (empty($publishers) || mb_strlen($publishers) > 255 || !preg_match('/^[\p{L}0-9 .,&\'\-]+$/u', $publishers) || !preg_match('/^\p{Lu}$/u', mb_substr($publishers, 0, 1, 'UTF-8'))) {
+        if (empty($publishers) || mb_strlen($publishers) < 2 || mb_strlen($publishers) > 255 || !preg_match('/^[\p{L}0-9 .,&\'\-]+$/u', $publishers) || !preg_match('/^[\p{Lu}0-9]$/u', mb_substr($publishers, 0, 1, 'UTF-8'))) {
             return false;
         }
         return true;
@@ -76,7 +78,7 @@ class BookDetailController extends WorkController
     public function checkAuthor(string $author) : bool
     {
         $author = trim($author);
-        if (empty($author) || mb_strlen($author) > 100 || !preg_match('/^[\p{L} \'\-]+$/u', $author) || !preg_match('/^\p{Lu}$/u', mb_substr($author, 0, 1, 'UTF-8'))) {
+        if (empty($author) || mb_strlen($author) < 5 || mb_strlen($author) > 255 || !preg_match('/^[\p{L} \'\-]+$/u', $author) || !preg_match('/^\p{Lu}$/u', mb_substr($author, 0, 1, 'UTF-8'))) {
             return false;
         }
         return true;

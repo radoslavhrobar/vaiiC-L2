@@ -148,7 +148,7 @@
                 <form  id="reviewForm" action="<?= $link->url("review.add", ['workId' => $work->getId()]) ?>" method="post">
                     <div class="mb-3">
                         <textarea class="form-control" rows="3" name="body" id="reviewBody" placeholder="Napíš svoju recenziu..."></textarea>
-                        <div class="errorMessage" id="reviewBodyMessage"></div>
+                        <strong class="errorMessage" id="reviewBodyMessage"></strong>
                     </div>
                     <span>Hodnotenie:</span>
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
@@ -176,10 +176,10 @@
     <div class="card mt-4">
         <div class="card-body">
             <h5 class="fw-bold mb-3">Upraviť recenziu</h5>
-            <form  id="review" action="<?= $link->url("review.edit", ['workId' => $work->getId(), 'id' => $myReview->getId()]) ?>" method="post">
+            <form id="reviewForm" class="forms" action="<?= $link->url("review.edit", ['workId' => $work->getId(), 'id' => $myReview->getId()]) ?>" method="post">
                 <div class="mb-3">
                     <textarea class="form-control" rows="3" id="reviewBody" name="body" placeholder="Napíš svoju recenziu..."><?= $myReview->getBody() ?></textarea>
-                    <div class="errorMessage" id="reviewBodyMessage"></div>
+                    <strong class="errorMessage" id="reviewBodyMessage"></strong>
                 </div>
                 <span>Hodnotenie:</span>
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">

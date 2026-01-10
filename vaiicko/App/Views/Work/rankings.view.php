@@ -32,9 +32,9 @@
         </div>
         <div class="col-lg-4 text-lg-start text-center mb-lg-0 mb-2 filter-card">
             <label class="filterLabel" for="yearFrom">Obdobie: </label>
-            <input id="yearFrom" type="number" name="yearFrom" value="<?= \App\Helpers\TypesOfWork::minYear() ?>" min="<?= \App\Helpers\TypesOfWork::minYear() ?>" max="2026" style="width:80px" />
+            <input id="yearFrom" type="number" name="yearFrom" value="<?= \App\Helpers\TypesOfWork::minYear() ?>" min="<?= \App\Helpers\TypesOfWork::minYear() ?>" max="<?= date('Y-m-d') ?>" style="width:80px" />
             <label class="filterLabel ms-2" for="yearTo">—</label>
-            <input id="yearTo" type="number" name="yearTo" value="2026" min="<?= \App\Helpers\TypesOfWork::minYear() ?>" max="2026" style="width:80px" />
+            <input id="yearTo" type="number" name="yearTo" value="<?= date('Y-m-d') ?>" min="<?= \App\Helpers\TypesOfWork::minYear() ?>" max="<?= date('Y-m-d') ?>" style="width:80px" />
         </div>
     </div>
     <div class="text-center mt-3">

@@ -246,10 +246,10 @@ class WorkController extends BaseController
     public function checkWorkName(string $workName): bool
     {
         $workName = trim($workName);
-        if (empty($workName) || (mb_strlen($workName) < 2 || mb_strlen($workName) > 255) ||  !preg_match('/^\p{Lu}$/u', mb_substr($workName, 0, 1, 'UTF-8'))) {
+        if (empty($workName) || (mb_strlen($workName) < 2 || mb_strlen($workName) > 255) ||  !preg_match('/^[\p{Lu}0-9]$/u', mb_substr($workName, 0, 1, 'UTF-8'))) {
             return false;
         }
-        if (!preg_match('/^[a-zA-ZáäčďéëíĺľňóöôřšťúüýžÁÄČĎÉËÍĹĽŇÓÖÔŘŠŤÚÜÝŽ0-9 :,.\'-]+$/u', $workName)) {
+        if (!preg_match('/^[\p{L}0-9 :.,&\'\-]+$/u', $workName)) {
             return false;
         }
         return true;
@@ -290,7 +290,7 @@ class WorkController extends BaseController
     public function checkDescription(string $description): bool
     {
         $description = trim($description);
-        if (empty($description) || (mb_strlen($description) < 3 || mb_strlen($description) > 1000) || !preg_match('/^\p{Lu}$/u', mb_substr($description, 0, 1, 'UTF-8'))) {
+        if (empty($description) || (mb_strlen($description) < 3 || mb_strlen($description) > 1000) || !preg_match('/^[\p{Lu}0-9]$/u', mb_substr($description, 0, 1, 'UTF-8'))) {
             return false;
         }
         return true;

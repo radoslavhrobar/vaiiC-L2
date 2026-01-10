@@ -4,7 +4,7 @@
 /** @var string $color */
 ?>
 
-<form id="workForm" class="forms" action="<?= $link->url("bookDetail.add") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
+<form id="bookForm" class="forms" action="<?= $link->url("bookDetail.add") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
     <?php require __DIR__ . '/../Work/adding.view.php' ?>
     <h4 class="titleName mt-4">Pridanie knihy</h4>
     <?php require __DIR__ . '/../Work/workTemplate.view.php' ?>
@@ -12,22 +12,22 @@
         <label class="col-sm-3" for="numOfPages">Počet strán:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="number" name="numOfPages" id="numOfPages">
-        <span id="lengthMessage"></span>
+        <input class="col-sm-6" type="number" min="1" max="5000" name="numOfPages" id="numOfPages">
+        <strong id="lengthMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="publishers">Vydavateľstvo:
             <span class="imp">*</span>
         </label>
         <input class="col-sm-6" type="text" name="publishers" id="publishers">
-        <span id="publishersMessage"></span>
+        <strong id="publishersMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="author">Autor:
             <span class="imp">*</span>
         </label>
         <input class="col-sm-6" type="text" name="author" id="author">
-        <span id="authorMessage"></span>
+        <strong id="authorMessage"></strong>
     </div>
     <div class="text-center">
         <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
@@ -36,3 +36,4 @@
         <input class="btn-brown" type="submit" value="Pridať knihu">
     </div>
 </form>
+<script src="<?= $link->asset('js/works.js') ?>"></script>

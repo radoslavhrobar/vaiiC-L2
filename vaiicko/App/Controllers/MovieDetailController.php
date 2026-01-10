@@ -21,7 +21,8 @@ class MovieDetailController extends WorkController
     {
         $countries = Country::getAll();
         $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']);
-        return $this->html(compact('countries', 'genres'));
+        $limit = TypesOfWork::Film->value;
+        return $this->html(compact('countries', 'genres', 'limit'));
     }
 
     public function add(Request $request): Response
@@ -46,7 +47,8 @@ class MovieDetailController extends WorkController
         }
         $countries = Country::getAll();
         $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']);
-        return $this->html(compact('countries', 'genres', 'text', 'color'), 'form');
+        $limit = TypesOfWork::Film->value;
+        return $this->html(compact('countries', 'genres', 'text', 'color', 'limit'), 'form');
     }
 
     public function check($data) : bool
@@ -70,7 +72,7 @@ class MovieDetailController extends WorkController
     public function checkProdCompany(string $prodCompany) : bool
     {
         $prodCompany = trim($prodCompany);
-        if (empty($prodCompany) || mb_strlen($prodCompany) > 255 || !preg_match('/^[\p{L}0-9 .,&\'\-]+$/u', $prodCompany) || !preg_match('/^\p{Lu}$/u', mb_substr($prodCompany, 0, 1, 'UTF-8'))) {
+        if (empty($prodCompany) || mb_strlen($prodCompany) < 2 || mb_strlen($prodCompany) > 255 || !preg_match('/^[\p{L}0-9 .,&\'\-]+$/u', $prodCompany) || !preg_match('/^[\p{Lu}0-9]$/u', mb_substr($prodCompany, 0, 1, 'UTF-8'))) {
             return false;
         }
         return true;
@@ -79,7 +81,7 @@ class MovieDetailController extends WorkController
     public function checkDirector(string $director) : bool
     {
         $director = trim($director);
-        if (empty($director) || mb_strlen($director) > 100 || !preg_match('/^[\p{L} \'\-]+$/u', $director) || !preg_match('/^\p{Lu}$/u', mb_substr($director, 0, 1, 'UTF-8'))) {
+        if (empty($director) || mb_strlen($director) < 5 || mb_strlen($director) > 255 || !preg_match('/^[\p{L} \'\-]+$/u', $director) || !preg_match('/^\p{Lu}$/u', mb_substr($director, 0, 1, 'UTF-8'))) {
             return false;
         }
         return true;
