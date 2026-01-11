@@ -207,9 +207,7 @@ window.addEventListener('DOMContentLoaded', function() {
         sending.addEventListener('submit', async function (event) {
             event.preventDefault();
             const valid = await checkForm();
-            if (!valid) {
-                alert('Formulár obsahuje chyby. Skontroluj prosím všetky údaje.')
-            } else {
+            if (valid) {
                 sending.submit();
             }
         });

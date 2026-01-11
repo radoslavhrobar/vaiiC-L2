@@ -27,13 +27,14 @@ class BookDetailController extends WorkController
     public function add(Request $request): Response
     {
         $d = $request->post();
-        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $d['numOfPages'], $d['publishers'], $d['author'])) {
+        $files = $request->file();
+        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $files['image'], $d['numOfPages'], $d['publishers'], $d['author'])) {
             throw new \Exception('Nedostatočné údaje pre pridanie knihy.');
         }
         $text = 'Kniha bola úspešne pridaná.';
         $color = 'success';
-        if ($this->check($d)) {
-            $work = parent::workAdd($d, TypesOfWork::Kniha->name);
+        if ($this->check($d, $files['image'])) {
+            $work = parent::workAdd($d, $files['image'], TypesOfWork::Kniha->name);
             $bookDetail = new BookDetail();
             $bookDetail->setWorkId($work->getId());
             $bookDetail->setNumOfPages((int)$d['numOfPages']);
@@ -50,9 +51,18 @@ class BookDetailController extends WorkController
         return $this->html(compact('countries', 'genres', 'text', 'color', 'limit'), 'form');
     }
 
-    public function check($data): bool
+    public function page(Request $request): Response
     {
-        if (!parent::check($data) || !$this->checkNumOfPages($data['numOfPages']) || !parent::checkDateOfIssue($data['dateOfIssue'], TypesOfWork::Kniha->value) ||
+        $data = parent::initialPage($request);
+        $bookDetail = BookDetail::getOne($data['work']->getId());
+        return $this->html(['work' => $data['work'], 'genreByWorkId' => $data['genreByWorkId'], 'countryByWorkId' => $data['countryByWorkId'], 'reviews' => $data['reviews'],
+            'users' => $data['users'], 'hasReview' => $data['hasReview'], 'reviewsFiltered' =>$data['reviewsFiltered'],
+            'myReview' => $data['myReview'], 'text' => $data['text'], 'color' => $data['color'], 'bookDetail' => $bookDetail]);
+    }
+
+    public function check($data, $file): bool
+    {
+        if (!parent::check($data, $file) || !$this->checkNumOfPages($data['numOfPages']) || !parent::checkDateOfIssue($data['dateOfIssue'], TypesOfWork::Kniha->value) ||
             !$this->checkPublishers($data['publishers']) || !$this->checkAuthor($data['author'])) {
             return false;
         }

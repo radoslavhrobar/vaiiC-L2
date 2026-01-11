@@ -25,16 +25,26 @@ class MovieDetailController extends WorkController
         return $this->html(compact('countries', 'genres', 'limit'));
     }
 
+    public function page(Request $request): Response
+    {
+        $data = parent::initialPage($request);
+        $movieDetail = MovieDetail::getOne($data['work']->getId());
+        return $this->html(['work' => $data['work'], 'genreByWorkId' => $data['genreByWorkId'], 'countryByWorkId' => $data['countryByWorkId'], 'reviews' => $data['reviews'],
+            'users' => $data['users'], 'hasReview' => $data['hasReview'], 'reviewsFiltered' =>$data['reviewsFiltered'],
+            'myReview' => $data['myReview'], 'text' => $data['text'], 'color' => $data['color'], 'movieDetail' => $movieDetail]);
+    }
+
     public function add(Request $request): Response
     {
         $d = $request->post();
-        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $d['movieLength'], $d['prodCompany'], $d['director'])) {
+        $files = $request->file();
+        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $files['image'], $d['movieLength'], $d['prodCompany'], $d['director'])) {
             throw new \Exception('Nedostatočné údaje pre pridanie filmu.');
         }
         $text = 'Film bol úspešne pridaný.';
         $color = 'success';
-        if ($this->check($d)) {
-            $work = parent::workAdd($d, TypesOfWork::Film->name);
+        if ($this->check($d, $files['image'])) {
+            $work = parent::workAdd($d, $files['image'], TypesOfWork::Film->name);
             $movieDetail = new MovieDetail();
             $movieDetail->setWorkId($work->getId());
             $movieDetail->setLength((int)$d['movieLength']);
@@ -51,9 +61,9 @@ class MovieDetailController extends WorkController
         return $this->html(compact('countries', 'genres', 'text', 'color', 'limit'), 'form');
     }
 
-    public function check($data) : bool
+    public function check($data, $file) : bool
     {
-        if (!parent::check($data) || !$this->checkLength($data['movieLength']) || !parent::checkDateOfIssue($data['dateOfIssue'], TypesOfWork::Film->value) ||
+        if (!parent::check($data, $file) || !$this->checkLength($data['movieLength']) || !parent::checkDateOfIssue($data['dateOfIssue'], TypesOfWork::Film->value) ||
             !$this->checkProdCompany($data['prodCompany']) || !$this->checkDirector($data['director'])) {
             return false;
         }

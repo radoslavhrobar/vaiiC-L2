@@ -4,10 +4,10 @@
 /** @var string $color */
 ?>
 
-<form id="seriesForm" class="forms" action="<?= $link->url("seriesDetail.add") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
+<form id="seriesForm" class="forms formsOrganized" action="<?= $link->url("seriesDetail.add") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
     <?php require __DIR__ . '/../Work/adding.view.php' ?>
     <h4 class="titleName mt-4">Pridanie seriálu</h4>
-    <?php require __DIR__ . '/../Work/workTemplate.view.php' ?>
+    <?php require __DIR__ . '/../Work/formTemplate.view.php' ?>
     <div class="row">
         <label class="col-sm-3" for="numOfSeasons">Počet sezón:
             <span class="imp">*</span>

@@ -1,9 +1,13 @@
 function checkBody(body) {
+    let firstLetterFormat = /^[\p{Lu}0-9]$/u;
     if (body.value.length === 0) {
         return ["gray", ""];
     }
     if (body.value.trim().length === 0) {
         return ["red", "Text recenzie nemôže obsahovať len medzery!"]
+    }
+    if (!firstLetterFormat.test(body.value.charAt(0))) {
+        return ["red", "Recenzia musí začínať veľkým písmenom alebo číslicou!"]
     }
     if (body.value.length < 10) {
         return ["red", "Text recenzie musí mať aspoň 10 znakov!"]
@@ -12,8 +16,8 @@ function checkBody(body) {
 }
 
 function checkRating(rating) {
-    if (rating.value === "") {
-        return ["red", "Hodnotenie je povinné pole!"]
+    if (rating === "") {
+        return ["red", "Hodnotenie je povinné pole!"];
     }
     return ["lightgreen", ""];
 }
@@ -21,12 +25,13 @@ function checkRating(rating) {
 function checkForm() {
     let valid = true;
     const reviewBody = document.getElementById('reviewBody');
-    const rating = document.getElementById('rating');
+    const selected = document.querySelector('input[name="rating"]:checked');
+    const ratingValue = selected ? selected.value : document.getElementById('noStar').value;
     const reviewBodyMessage = document.getElementById('reviewBodyMessage');
     const ratingMessage = document.getElementById('ratingMessage');
 
     const resultBody = checkBody(reviewBody);
-    const resultRating = checkRating(rating);
+    const resultRating = checkRating(ratingValue);
 
     updateOutput(reviewBody, reviewBodyMessage, resultBody[0], resultBody[1]);
     if (ratingMessage) ratingMessage.textContent = resultRating[1];
@@ -44,8 +49,6 @@ window.addEventListener('DOMContentLoaded', function() {
             const valid = checkForm();
             if (valid) {
                 sending.submit();
-            } else {
-                alert('Formulár obsahuje chyby. Skontroluj prosím všetky údaje.')
             }
         });
     }
@@ -57,3 +60,8 @@ window.addEventListener('DOMContentLoaded', function() {
         updateOutput(reviewBody, reviewBodyMessage, resultBody[0], resultBody[1]);
     })
 });
+
+function updateOutput(element, elementMessage, color, message) {
+    if (element) element.style.borderColor = color;
+    if (elementMessage) elementMessage.textContent = message;
+}

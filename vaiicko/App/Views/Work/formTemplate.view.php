@@ -2,7 +2,6 @@
 /** @var \App\Models\Country[] $countries */
 /** @var \App\Models\Genre[] $genres */
 /** @var string $limit */
-/** @var \Framework\Support\LinkGenerator $link */
 ?>
 
 <div class="row">
@@ -55,6 +54,6 @@
     <label class="col-sm-3" for="workImage">Náhľad:
         <span class="imp">*</span>
     </label>
-    <input class="col-sm-6" type="file" name="workImage" id="workImage">
+    <input class="col-sm-6" type="file" name="image" id="workImage">
     <strong id="workImageMessage"></strong>
 </div>

@@ -14,15 +14,15 @@ use Framework\Core\Model;
 class User extends Model implements IIdentity
 {
     public function __construct(
-        public ?int $id = null,
-        public ?string $email = null,
-        public ?string $username = null,
-        public ?string $password = null,
-        public string $role = Role::User->name,
-        public ?string $name = null,
-        public ?string $surname = null,
-        public ?string $gender = null,
-        public ?string $created_at = null,
+        protected ?int $id = null,
+        protected string $email = '',
+        protected string $username = '',
+        protected string $password = '',
+        protected string $role = Role::User->name,
+        protected ?string $name = null,
+        protected ?string $surname = null,
+        protected ?string $gender = null,
+        protected string $created_at = '',
     ) {
     }
 
@@ -36,32 +36,32 @@ class User extends Model implements IIdentity
         $this->id = $id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function setEmail(?string $email): void
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    public function getUsername(): ?string
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    public function setUsername(?string $username): void
+    public function setUsername(string $username): void
     {
         $this->username = $username;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function setPassword(?string $password): void
+    public function setPassword(string $password): void
     {
         $this->password = $password;
     }
@@ -106,12 +106,12 @@ class User extends Model implements IIdentity
         $this->role = $role;
     }
 
-    public function getCreatedAt(): ?string
+    public function getCreatedAt(): string
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(?string $created_at): void
+    public function setCreatedAt(string $created_at): void
     {
         $this->created_at = $created_at;
     }

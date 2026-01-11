@@ -82,6 +82,8 @@ class AuthController extends BaseController
     public function register(Request $request): Response
     {
         $d = $request->post();
+        $text = 'Úspešná registrácia!';
+        $color = 'success';
         if ($this->check($d, false)) {
             $user = new User();
             $user->setEmail($d['email']);
@@ -96,11 +98,13 @@ class AuthController extends BaseController
             if (!empty($d['gender'])) {
                 $user->setGender($d['gender']);
             }
+            $user->setCreatedAt(date('Y-m-d H:i:s'));
             $user->save();
-            return $this->redirect($this->url('home.index'));
+            return $this->html(compact('text', 'color') , 'login');
         }
-        $message = 'Formulárové údaje obsahujú chyby.';
-        return $this->html(compact('message'), 'registration');
+        $text = 'Formulárové údaje obsahujú chyby.';
+        $color = 'danger';
+        return $this->html(compact('text', 'color'), 'registration');
     }
 
     public function edit(Request $request): Response
@@ -120,8 +124,8 @@ class AuthController extends BaseController
             throw new Exception("Používateľ nenájdený.");
         }
         $d = $request->post();
-        $message = 'Údaje boli úspešne aktualizované.';
-
+        $text = 'Údaje boli úspešne aktualizované.';
+        $color = 'success';
         if ($this->check($d, true)) {
             $user->setEmail($d['email']);
             $user->setUsername($d['username']);
@@ -145,9 +149,10 @@ class AuthController extends BaseController
             }
             $user->save();
         } else {
-            $message = 'Formulárové údaje obsahujú chyby.';
+            $text = 'Formulárové údaje obsahujú chyby.';
+            $color = 'danger';
         }
-        return $this->html(compact( 'message'), 'edit');
+        return $this->html(compact( 'text','color'), 'edit');
     }
 
     public function delete(Request $request): Response
@@ -232,7 +237,7 @@ class AuthController extends BaseController
 
     public function checkUsername(string $username, ?int $currentUserId): bool
     {
-        if (empty($username) || (strlen($username) < 3 || strlen($username) > 30)) {
+        if (empty($username) || (mb_strlen($username) < 3 || mb_strlen($username) > 30)) {
             return false;
         }
         if (is_numeric($username[0]) || !ctype_alnum($username)) {
@@ -258,7 +263,7 @@ class AuthController extends BaseController
         if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password)) {
             return false;
         }
-        if (!preg_match('/[0-9]/', $password) || !preg_match('/[!@#$%^&*]/', $password) || strlen($password) < 8) {
+        if (!preg_match('/[0-9]/', $password) || !preg_match('/[!@#$%^&*]/', $password) || mb_strlen($password) < 8) {
             return false;
         }
         return true;
@@ -283,7 +288,7 @@ class AuthController extends BaseController
         if (empty($personal)) {
             return true;
         }
-        if (strlen($personal) > 80 || !preg_match('/^[a-zA-ZáäčďéëíĺľňóöôřšťúüýžÁÄČĎÉËÍĹĽŇÓÖÔŘŠŤÚÜÝŽ]+$/u', $personal) || !ctype_upper($personal[0])) {
+        if (mb_strlen($personal) > 80 || !preg_match('/^[a-zA-ZáäčďéëíĺľňóöôřšťúüýžÁÄČĎÉËÍĹĽŇÓÖÔŘŠŤÚÜÝŽ]+$/u', $personal) || !ctype_upper($personal[0])) {
             return false;
         }
         return true;

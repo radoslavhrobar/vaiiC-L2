@@ -1,47 +1,49 @@
 <?php
 /** @var \Framework\Support\LinkGenerator $link*/
+/** @var string $text */
+/** @var string $color*/
 ?>
 
-<form id="registration" class="forms" action="<?= $link->url("auth.register") ?>" method="post" autocomplete="on">
+<form id="registration" class="forms formsOrganized" action="<?= $link->url("auth.register") ?>" method="post" autocomplete="on">
     <h4 class="titleName">Registrácia</h4>
     <div class="row">
         <label class="col-sm-3" for="email">Email:
             <span class="imp">*</span>
         </label>
         <input class="col-sm-6" type="text" name="email" id="email" value="<?= $_POST['email'] ?? '' ?>" autofocus>
-        <span id="emailMessage"></span>
+        <strong id="emailMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="username">Používateľské meno:
             <span class="imp">*</span>
         </label>
         <input class="col-sm-6" type="text" name="username" id="username" value="<?= $_POST['username'] ?? '' ?>">
-        <span id="usernameMessage"></span>
+        <strong id="usernameMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="password">Heslo:
             <span class="imp">*</span>
         </label>
         <input class="col-sm-6" type="password" name="password" id="password" value="<?= $_POST['password'] ?? '' ?>">
-        <span id="passwordMessage"></span>
+        <strong id="passwordMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="verifyPassword">Overenie hesla:
             <span class="imp">*</span>
         </label>
         <input class="col-sm-6" type="password" name="verifyPassword" id="verifyPassword" value="<?= $_POST['verifyPassword'] ?? '' ?>">
-        <span id="verifyPasswordMessage"></span>
+        <strong id="verifyPasswordMessage"></strong>
     </div>
     <h5 class="titleName extra">Dodatočné informácie:</h5>
     <div class="row">
         <label class="col-sm-3" for="name">Meno:</label>
         <input class="col-sm-6" type="text" name="name" id="name" value="<?= $_POST['name'] ?? '' ?>">
-        <span id="nameMessage"></span>
+        <strong id="nameMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="surname">Priezvisko:</label>
         <input class="col-sm-6" type="text" name="surname" id="surname" value="<?= $_POST['surname'] ?? '' ?>">
-        <span id="surnameMessage"></span>
+        <strong id="surnameMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="gender">Pohlavie:</label>
@@ -51,10 +53,11 @@
             <input type="radio" name="gender" id="gender" value="Female"  <?= isset($_POST['gender']) && $_POST['gender'] == 'Female' ? 'checked' : '' ?>>žena
             <input type="radio" name="gender" id="gender" value="Other"  <?= isset($_POST['gender']) && $_POST['gender'] == 'Other' ? 'checked' : '' ?>>iné
         </div>
-        <span><?= $message ?? '' ?></span>
+        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
     </div>
     <div class="text-center">
         <input class="btn-brown" type="submit" value="Zaregistrovať">
     </div>
 </form>
+<script src="<?= $link->asset('js/auth.js') ?>"></script>
 

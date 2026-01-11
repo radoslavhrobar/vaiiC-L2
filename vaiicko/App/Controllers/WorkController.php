@@ -15,6 +15,7 @@ use Framework\Core\BaseController;
 use Framework\Core\Model;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
+use Framework\Support\LinkGenerator;
 
 class WorkController extends BaseController
 {
@@ -150,7 +151,7 @@ class WorkController extends BaseController
             default => [],
         };
     }
-    public function ownPage(Request $request): Response
+    public function initialPage(Request $request): array
     {
         $id = $request->value('id');
         $work = Work::getOne($id);
@@ -159,16 +160,6 @@ class WorkController extends BaseController
         }
         $genreByWorkId = Genre::getOne($work->getGenre());
         $countryByWorkId = Country::getOne($work->getPlaceOfIssue());
-        $movieDetail = null;
-        $seriesDetail = null;
-        $bookDetail = null;
-        if ($work->getType() === 'Film') {
-            $movieDetail = MovieDetail::getOne($work->getId());
-        } elseif ($work->getType() === 'Seriál') {
-            $seriesDetail = SeriesDetail::getOne($work->getId());
-        } else if ($work->getType() === 'Kniha') {
-            $bookDetail = BookDetail::getOne($work->getId());
-        }
         $reviews = Review::getAll('work_id = ?', [$work->getId()], 'created_at DESC');
         $reviewsFiltered  = Review::getAll('(`work_id` = ? AND `body` IS NOT NULL)', [$work->getId()], 'created_at DESC');
         $users = $this->getUsersByIds($reviewsFiltered);
@@ -176,7 +167,9 @@ class WorkController extends BaseController
         $hasReview = $this->hasReview($reviews, $this->app->getAuth()->getUser(), $myReview);
         $text = $request->value('text');
         $color = $request->value('color');
-        return $this->html(compact('work', 'genreByWorkId', 'countryByWorkId', 'movieDetail', 'seriesDetail', 'bookDetail', 'reviews', 'users', 'hasReview', 'reviewsFiltered', 'myReview', 'text', 'color'));
+        return ['work' => $work, 'genreByWorkId' => $genreByWorkId, 'countryByWorkId' => $countryByWorkId,
+            'reviews' => $reviews, 'users' => $users, 'hasReview' => $hasReview, 'reviewsFiltered' =>$reviewsFiltered,
+            'myReview' => $myReview, 'text' => $text, 'color' => $color];
     }
 
     public function getCountriesByIds(array $works) : array {
@@ -217,7 +210,7 @@ class WorkController extends BaseController
         return false;
     }
 
-    public function workAdd($d, string $type): Work
+    public function workAdd($d, $file, string $type): Work
     {
         $work = new Work();
         $work->setName(trim($d['workName']));
@@ -226,6 +219,8 @@ class WorkController extends BaseController
         $work->setDateOfIssue($d['dateOfIssue']);
         $work->setPlaceOfIssue($d['placeOfIssue']);
         $work->setDescription(trim($d['description']));
+        $uploadDir = '/../../../public/uploads/works/';
+        $work->setImage($file->getName());
         $work->save();
         return $work;
     }
@@ -234,10 +229,10 @@ class WorkController extends BaseController
     {
         return $this->html();
     }
-    public function check($data): bool
+    public function check($data, $file): bool
     {
         if (!$this->checkWorkName($data['workName']) || !$this->checkGenre($data['genre']) ||
-            !$this->checkPlaceOfIssue($data['placeOfIssue']) || !$this->checkDescription($data['description'])) {
+            !$this->checkPlaceOfIssue($data['placeOfIssue']) || !$this->checkDescription($data['description']) || !$this->checkImage($file)) {
             return false;
         }
         return true;
@@ -291,6 +286,22 @@ class WorkController extends BaseController
     {
         $description = trim($description);
         if (empty($description) || (mb_strlen($description) < 3 || mb_strlen($description) > 1000) || !preg_match('/^[\p{Lu}0-9]$/u', mb_substr($description, 0, 1, 'UTF-8'))) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkImage($file): bool
+    {
+        if ($file->getError() !== UPLOAD_ERR_OK) {
+            return false;
+        }
+        $allowedTypes = ['image/jpeg', 'image/png'];
+        if (!in_array($file->getType(), $allowedTypes)) {
+            return false;
+        }
+        $maxFileSize = 5 * 1024 * 1024;
+        if ($file->getSize() > $maxFileSize) {
             return false;
         }
         return true;

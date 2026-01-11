@@ -6,7 +6,6 @@
 /** @var \App\Models\Country[] $countriesByIds */
 /** @var  $workDetails */
 /** @var \Framework\Support\LinkGenerator $link */
-
 ?>
 
 <form id="workForm" class="forms" action="<?= $link->url("work.rankings") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
@@ -51,7 +50,8 @@
             <div class="flex-grow-1">
                 <h5 class= "mb-1 fw-bold">
                     <span class="specialColor"><?= $i +1 ?>.</span>
-                        <a class="workLink" href="<?= $link->url("work.ownPage", ['id' => $work->getId()]) ?>"><?= $work->getName() ?></a>
+                    <a class="workLink" href="<?= $work->getType() === 'Film' ? $link->url("movieDetail.page", ['id' => $work->getId()]) : ($work->getType() === 'Kniha' ? $link->url("bookDetail.page", ['id' => $work->getId()]) : ($work->getType() === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $work->getId()]) : '#')); ?>">
+                        <?= $work->getName() ?></a>
                     <span class="text-secondary fw-normal">(<?= (new DateTime($work->getDateOfIssue()))->format('Y') ?><?= (!isset($_POST['type']) || $_POST['type'] === 'všetky') ? ', ' . $work->getType() : '' ?>)</span>
                 </h5>
                 <div class="text-secondary fw-bold small mb-2">

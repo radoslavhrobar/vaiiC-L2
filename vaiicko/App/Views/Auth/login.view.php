@@ -3,7 +3,8 @@
 /** @var string|null $message */
 /** @var \Framework\Support\LinkGenerator $link */
 /** @var \Framework\Support\View $view */
-
+/** @var string $text */
+/** @var string $color*/
 
 ?>
 
@@ -12,9 +13,12 @@
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
             <div class="card card-signin my-5">
                 <div class="card-body">
+                    <div class="text-center mb-3">
+                        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
+                    </div>
                     <h5 class="titleName mt-0">Prihlásenie</h5>
                     <div class="text-center text-danger mb-3">
-                        <?= @$message ?>
+                        <strong><?= @$message ?></strong>
                     </div>
                     <form class="form-signin" method="post" action="<?= $link->url("auth.login") ?>">
                         <div class="form-label-group mb-3">

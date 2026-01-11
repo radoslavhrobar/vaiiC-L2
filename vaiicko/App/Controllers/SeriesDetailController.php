@@ -27,14 +27,15 @@ class SeriesDetailController extends WorkController
     public function add(Request $request): Response
     {
         $d = $request->post();
-        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $d['numOfSeasons'], $d['numOfEpisodes'],
+        $files = $request->file();
+        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $files['image'], $d['numOfSeasons'], $d['numOfEpisodes'],
             $d['prodCompany'], $d['director'])) {
             throw new \Exception('Nedostatočné údaje pre pridanie seriálu.');
         }
         $text = 'Seriál bol úspešne pridaný.';
         $color = 'success';
-        if ($this->check($d)) {
-            $work = parent::workAdd($d, TypesOfWork::Seriál->name);
+        if ($this->check($d, $files['image'])) {
+            $work = parent::workAdd($d, $files['image'], TypesOfWork::Seriál->name);
             $seriesDetail = new SeriesDetail();
             $seriesDetail->setWorkId($work->getId());
             $seriesDetail->setNumOfSeasons((int)$d['numOfSeasons']);
@@ -52,9 +53,18 @@ class SeriesDetailController extends WorkController
         return $this->html(compact('countries', 'genres', 'text', 'color', 'limit'), 'form');
     }
 
-    public function check($data) : bool
+    public function page(Request $request): Response
     {
-        if (!parent::check($data) || !parent::checkDateOfIssue($data['dateOfIssue'], TypesOfWork::Seriál->value) || !$this->checkNumOfSeasons($data['numOfSeasons']) ||
+        $data = parent::initialPage($request);
+        $seriesDetail = SeriesDetail::getOne($data['work']->getId());
+        return $this->html(['work' => $data['work'], 'genreByWorkId' => $data['genreByWorkId'], 'countryByWorkId' => $data['countryByWorkId'], 'reviews' => $data['reviews'],
+            'users' => $data['users'], 'hasReview' => $data['hasReview'], 'reviewsFiltered' =>$data['reviewsFiltered'],
+            'myReview' => $data['myReview'], 'text' => $data['text'], 'color' => $data['color'], 'seriesDetail' => $seriesDetail]);
+    }
+
+    public function check($data, $file) : bool
+    {
+        if (!parent::check($data, $file) || !parent::checkDateOfIssue($data['dateOfIssue'], TypesOfWork::Seriál->value) || !$this->checkNumOfSeasons($data['numOfSeasons']) ||
             !$this->checkNumOfEpisodes($data['numOfEpisodes']) || !$this->checkSeasonsEpisodesNumLogic($data['numOfSeasons'], $data['numOfEpisodes']) ||
             !$this->checkProdCompany($data['prodCompany']) || !$this->checkDirector($data['director'])) {
             return false;
