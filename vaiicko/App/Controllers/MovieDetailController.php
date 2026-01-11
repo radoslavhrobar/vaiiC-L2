@@ -7,7 +7,7 @@ use App\Models\Country;
 use App\Models\Genre;
 use App\Models\MovieDetail;
 use App\Models\Work;
-use DateTime;
+use Exception;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 
@@ -17,24 +17,13 @@ class MovieDetailController extends WorkController
     {
         return $this->html();
     }
-    public function form(Request $request): Response
-    {
-        $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']);
-        $limit = TypesOfWork::Film->value;
-        return $this->html(compact('countries', 'genres', 'limit'));
-    }
-
-    public function page(Request $request): Response
-    {
-        $data = parent::initialPage($request);
-        $movieDetail = MovieDetail::getOne($data['work']->getId());
-        return $this->html(['work' => $data['work'], 'genreByWorkId' => $data['genreByWorkId'], 'countryByWorkId' => $data['countryByWorkId'], 'reviews' => $data['reviews'],
-            'users' => $data['users'], 'hasReview' => $data['hasReview'], 'reviewsFiltered' =>$data['reviewsFiltered'],
-            'myReview' => $data['myReview'], 'text' => $data['text'], 'color' => $data['color'], 'movieDetail' => $movieDetail]);
-    }
-
     public function add(Request $request): Response
+    {
+        $data = $this->getData();
+        return $this->html($data);
+    }
+
+    public function addMovie(Request $request): Response
     {
         $d = $request->post();
         $files = $request->file();
@@ -55,10 +44,70 @@ class MovieDetailController extends WorkController
             $text = 'Filmové údaje obsahujú chyby.';
             $color = 'danger';
         }
+        $data = $this->getData();
+        return $this->html(compact('text', 'color') +  $data, 'add');
+    }
+
+    public function edit(Request $request): Response
+    {
+        $data = $this->checkForExistence($request);
+        $data2 = $this->getData();
+        return $this->html($data + $data2);
+    }
+
+    public function editMovie(Request $request): Response
+    {
+        $data = $this->checkForExistence($request);
+        $d = $request->post();
+        $files = $request->file();
+        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $files['image'], $d['movieLength'], $d['prodCompany'], $d['director'])) {
+            throw new \Exception('Nedostatočné údaje pre upravenie filmu.');
+        }
+        $text = 'Film bol úspešne upravený.';
+        $color = 'success';
+        if ($this->check($d, $files['image'])) {
+            $work = $data['work'];
+            $movieDetail = $data['movieDetail'];
+            parent::workEdit($d, $files['image'], $work);
+            $movieDetail->setLength((int)$d['movieLength']);
+            $movieDetail->setProdCompany(trim($d['prodCompany']));
+            $movieDetail->setDirector(trim($d['director']));
+            $movieDetail->save();
+        } else {
+            $text = 'Filmové údaje obsahujú chyby.';
+            $color = 'danger';
+        }
+        $data2 = $this->getData();
+        return $this->html($data + $data2 + compact('text', 'color'), 'edit');
+    }
+
+    public function checkForExistence(Request $request): array
+    {
+        $workId = (int)$request->value('id');
+        $work = Work::getOne($workId);
+        if (!$work) {
+            throw new \Exception('Film s daným ID neexistuje.');
+        }
+        $movieDetail = MovieDetail::getOne($workId);
+        if (!$movieDetail) {
+            throw new Exception("Detaily filmu nenájdené.");
+        }
+        return compact('work', 'movieDetail');
+    }
+
+    public function getData() : array
+    {
         $countries = Country::getAll();
         $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']);
         $limit = TypesOfWork::Film->value;
-        return $this->html(compact('countries', 'genres', 'text', 'color', 'limit'), 'form');
+        return compact('countries', 'genres', 'limit');
+    }
+
+    public function page(Request $request): Response
+    {
+        $data = parent::initialPage($request);
+        $movieDetail = MovieDetail::getOne($data['work']->getId());
+        return $this->html($data + compact('movieDetail'));
     }
 
     public function check($data, $file) : bool

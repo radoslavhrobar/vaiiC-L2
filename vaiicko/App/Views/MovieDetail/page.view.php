@@ -47,6 +47,6 @@
 </div>
 <?php require __DIR__ . '/../Work/pageTemplate.view.php' ?>
 <div class="text-center">
-    <button onclick="window.location.href='<?= $link->url("movieDetail.form") ?>'" type="submit" class="btn-brown">
+    <button onclick="window.location.href='<?= $link->url("movieDetail.edit", ['id' => $work->getId()]) ?>'" type="submit" class="btn-brown">
         Upraviť detaily filmu
 </div>

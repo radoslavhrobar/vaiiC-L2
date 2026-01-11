@@ -1,5 +1,5 @@
 function checkWorkName(workName) {
-    let format = /^[\p{L}0-9 :,.&'-]+$/u;
+    let format = /^[\p{L}0-9 :,.&?'-]+$/u;
     let firstLetterFormat =  /^[\p{Lu}0-9]$/u;
     let value = workName.value.trim();
     if (value === "") {

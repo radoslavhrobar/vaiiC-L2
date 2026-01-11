@@ -50,6 +50,6 @@
 </div>
 <?php require __DIR__ . '/../Work/pageTemplate.view.php' ?>
 <div class="text-center">
-    <button onclick="window.location.href='<?= $link->url("seriesDetail.form") ?>'" type="submit" class="btn-brown">
+    <button onclick="window.location.href='<?= $link->url("seriesDetail.edit", ['id' => $work->getId()]) ?>'" type="submit" class="btn-brown">
         Upraviť detaily seriálu
 </div>

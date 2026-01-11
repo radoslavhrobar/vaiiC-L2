@@ -30,7 +30,6 @@ class WorkController extends BaseController
         $genres = Genre::getAll();
         $types = TypesOfWork::cases();
         $works = Work::getAll(orderBy: '`name`');
-        $workDetails = $this->getMultipleWorkDetails($works);
         $ok = true;
         if ($data) {
             if (!isset($data['type'], $data['genre'], $data['yearTo'], $data['yearFrom'])) {
@@ -48,7 +47,6 @@ class WorkController extends BaseController
                     ],
                     orderBy: '`name`'
                 );
-                $workDetails = $this->getMultipleWorkDetails($works);
             } else if ($data['type'] === 'všetky' && $data['genre'] !== 'všetky') {
                 $works = Work::getAll(
                     whereClause: '`genre_id` = ? AND `date_of_issue` BETWEEN ? AND ?',
@@ -59,7 +57,6 @@ class WorkController extends BaseController
                     ],
                     orderBy: '`name`'
                 );
-                $workDetails = $this->getMultipleWorkDetails($works);
             } else if ($data['genre'] === 'všetky') {
                 $works = Work::getAll(
                     whereClause: '`type` = ? AND `date_of_issue` BETWEEN ? AND ?',
@@ -70,7 +67,6 @@ class WorkController extends BaseController
                     ],
                     orderBy: '`name`'
                 );
-                $workDetails = $this->getWorkDetails($works, $data['type']);
             } else {
                 $works = Work::getAll(
                     whereClause: '`type` = ? AND `genre_id` = ? AND `date_of_issue` BETWEEN ? AND ?',
@@ -82,55 +78,11 @@ class WorkController extends BaseController
                     ],
                     orderBy: '`name`'
                 );
-                $workDetails = $this->getWorkDetails($works, $data['type']);
             }
         }
         $genresByIds = $this->getGenresByIds($works);
         $countriesByIds = $this->getCountriesByIds($works);
-        return $this->html(compact('genres', 'types', 'works', 'workDetails', 'genresByIds', 'countriesByIds', 'ok'));
-    }
-
-    public function getWorkDetail(string $typeOfWork, string $id) : mixed {
-        return match ($typeOfWork) {
-            'Film' => MovieDetail::getOne($id),
-            'Seriál' => SeriesDetail::getOne($id),
-            'Kniha' => BookDetail::getOne($id),
-            default => throw new \Exception('Neznámy typ diela.'),
-        };
-    }
-
-    public function getWorkDetails(array $works, string $typeOfWork): array
-    {
-        $workDetails = [];
-        switch ($typeOfWork) {
-            case 'Film':
-                foreach ($works as $i => $work) {
-                    $workDetails[$i] = MovieDetail::getOne($work->getId());
-                }
-                break;
-            case 'Seriál':
-                foreach ($works as $i => $work) {
-                    $workDetails[$i] = SeriesDetail::getOne($work->getId());
-                }
-                break;
-            case 'Kniha':
-                foreach ($works as $i => $work) {
-                    $workDetails[$i] = BookDetail::getOne($work->getId());
-                }
-                break;
-            default:
-                throw new \Exception('Neznámy typ diela.');
-        }
-        return $workDetails;
-    }
-
-    public function getMultipleWorkDetails(array $works): array
-    {
-        $workDetails = [];
-        foreach ($works as $i => $work) {
-            $workDetails[$i] = $this->getWorkDetail($work->getType(), $work->getId());
-        }
-        return $workDetails;
+        return $this->html(compact('genres', 'types', 'works', 'genresByIds', 'countriesByIds', 'ok'));
     }
 
     public function ajaxCheckTypeOfWork(Request $request): Response
@@ -171,9 +123,7 @@ class WorkController extends BaseController
         $hasReview = $this->hasReview($reviews, $this->app->getAuth()->getUser(), $myReview);
         $text = $request->value('text');
         $color = $request->value('color');
-        return ['work' => $work, 'genreByWorkId' => $genreByWorkId, 'countryByWorkId' => $countryByWorkId,
-            'reviews' => $reviews, 'users' => $users, 'hasReview' => $hasReview, 'reviewsFiltered' =>$reviewsFiltered,
-            'myReview' => $myReview, 'text' => $text, 'color' => $color];
+        return compact('work', 'genreByWorkId', 'countryByWorkId', 'reviews', 'reviewsFiltered', 'users', 'hasReview', 'myReview', 'text', 'color');
     }
 
     public function getCountriesByIds(array $works) : array {
@@ -223,10 +173,18 @@ class WorkController extends BaseController
         $work->setDateOfIssue($d['dateOfIssue']);
         $work->setPlaceOfIssue($d['placeOfIssue']);
         $work->setDescription(trim($d['description']));
-        $uploadDir = '/../../../public/uploads/works/';
-        $work->setImage($file->getName());
         $work->save();
         return $work;
+    }
+
+    public function workEdit($d, $file, Work $work): void
+    {
+        $work->setName(trim($d['workName']));
+        $work->setGenre($d['genre']);
+        $work->setDateOfIssue($d['dateOfIssue']);
+        $work->setPlaceOfIssue($d['placeOfIssue']);
+        $work->setDescription(trim($d['description']));
+        $work->save();
     }
 
     public function form(Request $request) : Response
@@ -236,7 +194,7 @@ class WorkController extends BaseController
     public function check($data, $file): bool
     {
         if (!$this->checkWorkName($data['workName']) || !$this->checkGenre($data['genre']) ||
-            !$this->checkPlaceOfIssue($data['placeOfIssue']) || !$this->checkDescription($data['description']) || !$this->checkImage($file)) {
+            !$this->checkPlaceOfIssue($data['placeOfIssue']) || !$this->checkDescription($data['description'])) {
             return false;
         }
         return true;
@@ -256,7 +214,7 @@ class WorkController extends BaseController
         if (empty($workName) || (mb_strlen($workName) < 2 || mb_strlen($workName) > 255) ||  !preg_match('/^[\p{Lu}0-9]$/u', mb_substr($workName, 0, 1, 'UTF-8'))) {
             return false;
         }
-        if (!preg_match('/^[\p{L}0-9 :.,&\'\-]+$/u', $workName)) {
+        if (!preg_match('/^[\p{L}0-9 :.,&?\'\-]+$/u', $workName)) {
             return false;
         }
         return true;

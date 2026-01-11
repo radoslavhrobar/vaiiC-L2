@@ -2,11 +2,12 @@
 
 namespace App\Controllers;
 
-use App\Controllers\WorkController;
 use App\Helpers\TypesOfWork;
 use App\Models\BookDetail;
 use App\Models\Country;
 use App\Models\Genre;
+use App\Models\Work;
+use Exception;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 
@@ -16,15 +17,13 @@ class BookDetailController extends WorkController
     {
         return $this->html();
     }
-    public function form(Request $request): Response
+    public function add(Request $request): Response
     {
-        $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']);
-        $limit = TypesOfWork::Kniha->value;
-        return $this->html(compact('countries', 'genres', 'limit'));
+        $data = $this->getData();
+        return $this->html($data);
     }
 
-    public function add(Request $request): Response
+    public function addBook(Request $request): Response
     {
         $d = $request->post();
         $files = $request->file();
@@ -45,19 +44,70 @@ class BookDetailController extends WorkController
             $text = 'Knižné údaje obsahujú chyby.';
             $color = 'danger';
         }
+        $data = $this->getData();
+        return $this->html(compact('text', 'color') + $data, 'add');
+    }
+
+    public function edit(Request $request): Response
+    {
+        $data1 = $this->checkForExistence($request);
+        $data2 = $this->getData();
+        return $this->html($data1 + $data2);
+    }
+
+    public function editBook(Request $request): Response
+    {
+        $data = $this->checkForExistence($request);
+        $d = $request->post();
+        $files = $request->file();
+        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $files['image'], $d['numOfPages'], $d['publishers'], $d['author'])) {
+            throw new \Exception('Nedostatočné údaje pre upravnie knihy.');
+        }
+        $text = 'Kniha bola úspešne upravená.';
+        $color = 'success';
+        if ($this->check($d, $files['image'])) {
+            $work = $data['work'];
+            $bookDetail = $data['bookDetail'];
+            parent::workEdit($d, $files['image'], $work);
+            $bookDetail->setNumOfPages((int)$d['numOfPages']);
+            $bookDetail->setPublishers(trim($d['publishers']));
+            $bookDetail->setAuthor(trim($d['author']));
+            $bookDetail->save();
+        } else {
+            $text = 'Knižné údaje obsahujú chyby.';
+            $color = 'danger';
+        }
+        $data2 = $this->getData();
+        return $this->html($data + $data2 + compact( 'text', 'color'), 'edit');
+    }
+
+    public function checkForExistence(Request $request): array
+    {
+        $workId = (int)$request->value('id');
+        $work = Work::getOne($workId);
+        if (!$work) {
+            throw new \Exception('Kniha s daným ID neexistuje.');
+        }
+        $bookDetail = BookDetail::getOne($workId);
+        if (!$bookDetail) {
+            throw new Exception("Detaily knihynenájdené.");
+        }
+        return compact('work', 'bookDetail');
+    }
+
+    public function getData() : array
+    {
         $countries = Country::getAll();
         $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']);
         $limit = TypesOfWork::Kniha->value;
-        return $this->html(compact('countries', 'genres', 'text', 'color', 'limit'), 'form');
+        return compact('countries', 'genres', 'limit');
     }
 
     public function page(Request $request): Response
     {
         $data = parent::initialPage($request);
         $bookDetail = BookDetail::getOne($data['work']->getId());
-        return $this->html(['work' => $data['work'], 'genreByWorkId' => $data['genreByWorkId'], 'countryByWorkId' => $data['countryByWorkId'], 'reviews' => $data['reviews'],
-            'users' => $data['users'], 'hasReview' => $data['hasReview'], 'reviewsFiltered' =>$data['reviewsFiltered'],
-            'myReview' => $data['myReview'], 'text' => $data['text'], 'color' => $data['color'], 'bookDetail' => $bookDetail]);
+        return $this->html($data + compact('bookDetail'));
     }
 
     public function check($data, $file): bool

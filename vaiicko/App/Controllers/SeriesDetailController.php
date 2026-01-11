@@ -2,11 +2,12 @@
 
 namespace App\Controllers;
 
-use App\Controllers\WorkController;
 use App\Helpers\TypesOfWork;
 use App\Models\Country;
 use App\Models\Genre;
 use App\Models\SeriesDetail;
+use App\Models\Work;
+use Exception;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 
@@ -16,15 +17,13 @@ class SeriesDetailController extends WorkController
     {
         return $this->html();
     }
-    public function form(Request $request): Response
+    public function add(Request $request): Response
     {
-        $countries = Country::getAll();
-        $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']);
-        $limit = TypesOfWork::Seriál->value;
-        return $this->html(compact('countries', 'genres', 'limit'));
+        $data = $this->getData();
+        return $this->html($data);
     }
 
-    public function add(Request $request): Response
+    public function addSeries(Request $request): Response
     {
         $d = $request->post();
         $files = $request->file();
@@ -47,19 +46,72 @@ class SeriesDetailController extends WorkController
             $text = 'Seriálové údaje obsahujú chyby.';
             $color = 'danger';
         }
+        $data = $this->getData();
+        return $this->html($data + compact( 'text', 'color'), 'add');
+    }
+
+    public function edit(Request $request): Response
+    {
+        $data1 = $this->checkForExistence($request);
+        $data2 = $this->getData();
+        return $this->html($data1 + $data2);
+    }
+
+    public function editSeries(Request $request): Response
+    {
+        $data = $this->checkForExistence($request);
+        $d = $request->post();
+        $files = $request->file();
+        if (!isset($d['workName'], $d['genre'], $d['dateOfIssue'], $d['placeOfIssue'], $d['description'], $files['image'], $d['numOfSeasons'], $d['numOfEpisodes'],
+            $d['prodCompany'], $d['director'])) {
+            throw new \Exception('Nedostatočné údaje pre upravenie seriálu.');
+        }
+        $text = 'Seriál bol úspešne upravený.';
+        $color = 'success';
+        if ($this->check($d, $files['image'])) {
+            $work = $data['work'];
+            $seriesDetail = $data['seriesDetail'];
+            parent::workEdit($d, $files['image'], $work);
+            $seriesDetail->setNumOfSeasons((int)$d['numOfSeasons']);
+            $seriesDetail->setNumOfEpisodes((int)$d['numOfEpisodes']);
+            $seriesDetail->setProdCompany(trim($d['prodCompany']));
+            $seriesDetail->setDirector(trim($d['director']));
+            $seriesDetail->save();
+        } else {
+            $text = 'Seriálové údaje obsahujú chyby.';
+            $color = 'danger';
+        }
+        $data2 = $this->getData();
+        return $this->html($data + $data2 + compact( 'text', 'color'), 'edit');
+    }
+
+    public function checkForExistence(Request $request): array
+    {
+        $workId = (int)$request->value('id');
+        $work = Work::getOne($workId);
+        if (!$work) {
+            throw new \Exception('Seriál s daným ID neexistuje.');
+        }
+        $seriesDetail = SeriesDetail::getOne($workId);
+        if (!$seriesDetail) {
+            throw new Exception("Detaily seriálu nenájdené.");
+        }
+        return compact('work', 'seriesDetail');
+    }
+
+    public function getData() : array
+    {
         $countries = Country::getAll();
         $genres = Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']);
         $limit = TypesOfWork::Seriál->value;
-        return $this->html(compact('countries', 'genres', 'text', 'color', 'limit'), 'form');
+        return compact('countries', 'genres', 'limit');
     }
 
     public function page(Request $request): Response
     {
         $data = parent::initialPage($request);
         $seriesDetail = SeriesDetail::getOne($data['work']->getId());
-        return $this->html(['work' => $data['work'], 'genreByWorkId' => $data['genreByWorkId'], 'countryByWorkId' => $data['countryByWorkId'], 'reviews' => $data['reviews'],
-            'users' => $data['users'], 'hasReview' => $data['hasReview'], 'reviewsFiltered' =>$data['reviewsFiltered'],
-            'myReview' => $data['myReview'], 'text' => $data['text'], 'color' => $data['color'], 'seriesDetail' => $seriesDetail]);
+        return $this->html($data + compact('seriesDetail'));
     }
 
     public function check($data, $file) : bool

@@ -4,16 +4,16 @@
 /** @var string $color */
 ?>
 
-<form id="bookForm" class="forms formsOrganized" action="<?= $link->url("bookDetail.add") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
+<form id="bookForm" class="forms formsOrganized" action="<?= $link->url("bookDetail.addBook") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
     <?php require __DIR__ . '/../Work/adding.view.php' ?>
     <h4 class="titleName mt-4">Pridanie knihy</h4>
-    <?php require __DIR__ . '/../Work/formTemplate.view.php' ?>
+    <?php require __DIR__ . '/../Work/addTemplate.view.php' ?>
     <div class="row">
         <label class="col-sm-3" for="numOfPages">Počet strán:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="number" min="1" max="5000" name="numOfPages" id="numOfPages">
-        <strong id="lengthMessage"></strong>
+        <input class="col-sm-6" type="number" min="1" max="5000" name="numOfPages" id="numOfPages" required>
+        <strong id="numOfPagesMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="publishers">Vydavateľstvo:

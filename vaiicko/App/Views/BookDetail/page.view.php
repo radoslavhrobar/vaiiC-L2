@@ -46,6 +46,6 @@
 </div>
 <?php require __DIR__ . '/../Work/pageTemplate.view.php' ?>
 <div class="text-center">
-    <button onclick="window.location.href='<?= $link->url("bookDetail.form") ?>'" type="submit" class="btn-brown">
+    <button onclick="window.location.href='<?= $link->url("bookDetail.edit", ['id' => $work->getId()]) ?>'" type="submit" class="btn-brown">
         Upraviť detaily knihy
 </div>
