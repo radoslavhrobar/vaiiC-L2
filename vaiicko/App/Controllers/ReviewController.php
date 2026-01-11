@@ -60,10 +60,10 @@ class ReviewController extends BaseController
             $review = Review::getOne($dataGet['id']);
             if (!empty($data['body'])) {
                 $review->setBody($data['body']);
+                $text = 'Recenzia bola upravená.';
             } else {
                 $review->setBody(null);
             }
-            $text = 'Recenzia bola upravená.';
             $review->setRating((int)$data['rating']);
             $review->setUpdatedAt(date('Y-m-d H:i:s'));
             $review->save();

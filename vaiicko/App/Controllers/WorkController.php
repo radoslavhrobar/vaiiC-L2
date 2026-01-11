@@ -31,9 +31,13 @@ class WorkController extends BaseController
         $types = TypesOfWork::cases();
         $works = Work::getAll(orderBy: '`name`');
         $workDetails = $this->getMultipleWorkDetails($works);
+        $ok = true;
         if ($data) {
             if (!isset($data['type'], $data['genre'], $data['yearTo'], $data['yearFrom'])) {
                 throw new \Exception('Nedostatočné údaje pre filtrovanie.');
+            }
+            if (!$this->checkRankings($data)) {
+                $ok = false;
             }
             if ($data['type'] === 'všetky' && $data['genre'] === 'všetky') {
                 $works = Work::getAll(
@@ -83,7 +87,7 @@ class WorkController extends BaseController
         }
         $genresByIds = $this->getGenresByIds($works);
         $countriesByIds = $this->getCountriesByIds($works);
-        return $this->html(compact('genres', 'types', 'works', 'workDetails', 'genresByIds', 'countriesByIds'));
+        return $this->html(compact('genres', 'types', 'works', 'workDetails', 'genresByIds', 'countriesByIds', 'ok'));
     }
 
     public function getWorkDetail(string $typeOfWork, string $id) : mixed {
@@ -238,6 +242,14 @@ class WorkController extends BaseController
         return true;
     }
 
+    public function checkRankings($data) : bool {
+        if (($this->checkType($data['type']) || $data['type'] === 'všetky') && ($this->checkGenre($data['genre']) || $data['genre'] === 'všetky') &&
+            $this->checkYearFrom($data['yearFrom'], $data['type']) && $this->checkYearTo($data['yearTo'], $data['yearFrom'], $data['type'])) {
+            return true;
+        }
+        return false;
+    }
+
     public function checkWorkName(string $workName): bool
     {
         $workName = trim($workName);
@@ -286,6 +298,30 @@ class WorkController extends BaseController
     {
         $description = trim($description);
         if (empty($description) || (mb_strlen($description) < 3 || mb_strlen($description) > 1000) || !preg_match('/^[\p{Lu}0-9]$/u', mb_substr($description, 0, 1, 'UTF-8'))) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkType(string $type): bool
+    {
+        if (empty($type) || !in_array($type, array_map(fn($t) => $t->name, TypesOfWork::cases()))) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkYearFrom(string $yearFrom, string $type) : bool{
+        $limitYear = TypesOfWork::getYear($type);
+        if (empty($yearFrom) || !is_numeric($yearFrom) || (int)$yearFrom < (int)$limitYear || (int)$yearFrom > 2026) {
+            return false;
+        }
+        return true;
+    }
+
+    public function checkYearTo(string $yearTo, string $yearFrom, string $type) : bool {
+        $limitYear = TypesOfWork::getYear($type);
+        if (empty($yearTo) || !is_numeric($yearTo) || (int)$yearTo < (int)$limitYear || (int)$yearTo > 2026 || (int)$yearTo < (int)$yearFrom) {
             return false;
         }
         return true;
