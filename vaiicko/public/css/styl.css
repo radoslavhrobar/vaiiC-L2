@@ -1,3 +1,10 @@
+@media (min-width: 768px) {
+    .user-card {
+        margin-left: 200px;
+        margin-right: 200px;
+    }
+}
+
 body {
     background-color:  blanchedalmond;
 }
@@ -103,7 +110,7 @@ body {
 .user-card {
     background-color: burlywood;
     border: 2px solid saddlebrown;
-    margin: 0 50px 30px;
+    margin: 0 40px 10px;
 }
 
 .btn-delete {
@@ -151,12 +158,12 @@ body {
     border: 2px solid saddlebrown;
 }
 
-.workLink {
+.listLink {
     text-decoration: none;
     color: black;
 }
 
-.workLink:hover {
+.listLink:hover {
     text-decoration: underline;
 }
 

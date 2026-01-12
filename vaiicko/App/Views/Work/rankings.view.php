@@ -56,7 +56,7 @@
                 <div class="flex-grow-1">
                     <h5 class= "mb-1 fw-bold">
                         <span class="specialColor"><?= $i +1 ?>.</span>
-                        <a class="workLink" href="<?= $work->getType() === 'Film' ? $link->url("movieDetail.page", ['id' => $work->getId()]) : ($work->getType() === 'Kniha' ? $link->url("bookDetail.page", ['id' => $work->getId()]) : ($work->getType() === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $work->getId()]) : '#')); ?>">
+                        <a class="listLink" href="<?= $work->getType() === 'Film' ? $link->url("movieDetail.page", ['id' => $work->getId()]) : ($work->getType() === 'Kniha' ? $link->url("bookDetail.page", ['id' => $work->getId()]) : ($work->getType() === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $work->getId()]) : '#')); ?>">
                             <?= $work->getName() ?></a>
                         <span class="text-secondary fw-normal">(<?= (new DateTime($work->getDateOfIssue()))->format('Y') ?><?= (!isset($_POST['type']) || $_POST['type'] === 'všetky') ? ', ' . $work->getType() : '' ?>)</span>
                     </h5>

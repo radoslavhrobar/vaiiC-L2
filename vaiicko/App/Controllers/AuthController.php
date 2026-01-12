@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Configuration;
 use App\Helpers\Gender;
 use App\Helpers\Role;
+use App\Models\Review;
 use App\Models\User;
 use Exception;
 use Framework\Core\BaseController;
@@ -180,9 +181,27 @@ class AuthController extends BaseController
 
     public function print(Request $request): Response
     {
-        $users = User::getAll();
+        $users = User::getAll(orderBy: '`username` DESC');
         $isAdmin = $this->checkAdmin();
-        return $this->html(compact('users', 'isAdmin'));
+        $reviewCounts = $this->getReviewCountsByIds($users);
+        $ratingCounts = $this->getRatingCountsByIds($users);
+        return $this->html(compact('users', 'isAdmin', 'reviewCounts', 'ratingCounts'));
+    }
+
+    public function getReviewCountsByIds(array $users) : array {
+        $counts = [];
+        foreach ($users as $i => $user) {
+            $counts[$i] = count(Review::getAll(whereClause: '`user_id` = ? AND `body` IS NOT NULL', whereParams: [$user->getId()]));
+        }
+        return $counts;
+    }
+
+    public function getRatingCountsByIds(array $users) : array {
+        $counts = [];
+        foreach ($users as $i => $user) {
+            $counts[$i] = count(Review::getAll(whereClause: '`user_id` = ?', whereParams: [$user->getId()]));
+        }
+        return $counts;
     }
 
     public function checkAdmin(): bool
