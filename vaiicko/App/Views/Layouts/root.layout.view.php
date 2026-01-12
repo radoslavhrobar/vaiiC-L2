@@ -60,10 +60,10 @@
                     </div>
 
                     <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Hľadať" aria-label="Search">
-                        <button class="btn btn-outline-dark" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
+                        <div class="position-relative">
+                            <input id="searchInput" class="form-control me-2" type="search" placeholder="Hľadať" autocomplete="off">
+                            <div id="searchResults" class="list-group position-absolute w-100 mt-1" style="z-index:1000"></div>
+                        </div>
                     </form>
                 </div>
             </nav>
@@ -79,3 +79,4 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
+<script src="<?= $link->asset('js/search.js') ?>"></script>

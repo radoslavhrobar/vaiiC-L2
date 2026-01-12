@@ -11,8 +11,10 @@ use App\Models\Review;
 use App\Models\SeriesDetail;
 use App\Models\User;
 use App\Models\Work;
+use DateTime;
 use Framework\Core\BaseController;
 use Framework\Core\Model;
+use Framework\Core\Router;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 use Framework\Support\LinkGenerator;
@@ -96,6 +98,22 @@ class WorkController extends BaseController
                 'name' => $g->getName()
             ], $genres)
          ,'yearFrom' => $yearFrom]);
+    }
+
+    public function ajaxSearchWorks(Request $request): Response
+    {
+        $text = $request->value('text');
+        $works = Work::getAll(whereClause: '`name` LIKE ?', whereParams: ["%$text%"], orderBy: '`name`', limit: 10);
+        return $this->json([
+            'works' => array_map(fn($w) => [
+                'url' => $w->getType() === 'Kniha' ? $this->url('bookDetail.page', ['id' => $w->getId()]) :
+                    ($w->getType() === 'Film' ? $this->url('movieDetail.page', ['id' => $w->getId()]) :
+                        $this->url('seriesDetail.page', ['id' => $w->getId()])),
+                'year' => (new DateTime($w->getDateOfIssue()))->format('Y'),
+                'name' => $w->getName(),
+                'type' => $w->getType(),
+            ], $works)
+        ]);
     }
 
     public function chooseGenres(string $typeOfWork): array
