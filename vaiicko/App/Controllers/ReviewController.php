@@ -27,10 +27,6 @@ class ReviewController extends BaseController
         if (!isset($data['body'], $data['rating'], $dataGet['workId'])) {
             throw new Exception("Nedostatočné údaje o recenzii.");
         }
-        $alreadyThere = Review::getAll(whereClause: '(`user_id` = ? AND `work_id` = ?)', whereParams: [$user->getId(), ->getId()]);
-        if (count($alreadyThere) === 1) {
-            throw new \Exception('Dielo je už v obľúbených.');
-        }
         $text = 'Hodnotenie bolo pridané.';
         $color = 'success';
         if ($this->checkBody($data['body']) && $this->checkRating($data['rating'])) {

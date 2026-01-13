@@ -117,9 +117,9 @@ class WorkController extends BaseController
         ]);
     }
 
-    public function ajaxAddFav(Request $request): Response
+    public function ajaxUpdateFav(Request $request): Response
     {
-        $id = $request->value('workId');
+        $id = (int)$request->value('workId');
         $work = Work::getOne($id);
         if (empty($work)) {
             throw new \Exception('Dielo neexistuje.');
@@ -128,15 +128,17 @@ class WorkController extends BaseController
         if (empty($user)) {
             throw new \Exception('Používateľ nie je prihlásený.');
         }
-        $isFav = FavoriteWork::getAll(whereClause: '(`user_id` = ? AND `work_id` = ?)', whereParams: [$user->getId(), $work->getId()]);
-        if (count($isFav) === 1) {
-            throw new \Exception('Dielo je už v obľúbených.');
+        $isFavorite = $this->isFavorite($work, $user);
+        if ($isFavorite) {
+            $isFav = FavoriteWork::getAll(whereClause: '(`user_id` = ? AND `work_id` = ?)', whereParams: [$user->getId(), $work->getId()]);
+            $isFav[0]->delete();
+            return $this->json(['adding' => false]);
         }
         $favWork = new FavoriteWork();
         $favWork->setUserId($user->getId());
         $favWork->setWorkId($work->getId());
         $favWork->save();
-        return $this->json(['ok' => true]);
+        return $this->json(['adding' => true]);
     }
 
     public function chooseGenres(string $typeOfWork): array
@@ -158,6 +160,7 @@ class WorkController extends BaseController
         $genreByWorkId = Genre::getOne($work->getGenre());
         $countryByWorkId = Country::getOne($work->getPlaceOfIssue());
         $reviews = Review::getAll('work_id = ?', [$work->getId()], 'created_at DESC');
+        $avgRating = $this->getAverageRating($reviews)/5*100;
         $reviewsFiltered  = Review::getAll('(`work_id` = ? AND `body` IS NOT NULL)', [$work->getId()], 'created_at DESC');
         $users = $this->getUsersByIds($reviewsFiltered);
         $myReview = null;
@@ -165,7 +168,18 @@ class WorkController extends BaseController
         $isFavorite  = $this->isFavorite($work, $this->app->getAuth()->getUser());
         $text = $request->value('text');
         $color = $request->value('color');
-        return compact('work', 'genreByWorkId', 'countryByWorkId', 'reviews', 'reviewsFiltered', 'users', 'hasReview', 'myReview', 'text', 'color', 'isFavorite');
+        return compact('work', 'genreByWorkId', 'countryByWorkId', 'reviews', 'reviewsFiltered', 'users', 'hasReview', 'myReview', 'text', 'color', 'isFavorite', 'avgRating');
+    }
+
+    public function getAverageRating($reviews): float {
+        if (count($reviews) === 0) {
+            return 0;
+        }
+        $sum = 0;
+        foreach ($reviews as $review) {
+            $sum += $review->getRating();
+        }
+        return round($sum / count($reviews), 2);
     }
 
     public function isFavorite(Work $work, ?User $user): bool {

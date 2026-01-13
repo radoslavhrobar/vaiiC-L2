@@ -21,7 +21,7 @@
 
 <?php if ($auth->isLogged()): ?>
     <div class="d-flex align-items-center mb-3">
-        <strong>Pridať do obľúbených:</strong>
+        <strong><?= !$isFavorite ? 'Pridať do obľúbených:' : 'Odobrať z obľúbených:' ?></strong>
         <i id="favoriteHeart" class="bi <?= $isFavorite ? 'bi-heart-fill text-danger' : 'bi-heart text-secondary' ?> fs-2 ms-3" data-work-id="<?= $work->getId() ?>" role="button"></i>
     </div>
 <?php endif; ?>
@@ -155,3 +155,4 @@
     <?php endif; ?>
 </div>
 <script src="<?= $link->asset('js/reviews.js') ?>"></script>
+<script src="<?= $link->asset('js/favorites.js') ?>"></script>
