@@ -176,6 +176,14 @@ body {
     color: #bc0012;
 }
 
+#favoriteHeart {
+    cursor: pointer;
+}
+
+#favoriteHeart:hover {
+    transform: scale(1.1);
+}
+
 
 
 

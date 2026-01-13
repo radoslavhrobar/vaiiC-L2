@@ -6,17 +6,25 @@
 /** @var \App\Models\User[] $users */
 /** @var bool $hasReview */
 /** @var \App\Models\Review $myReview */
+/** @var bool $isFavorite */
 /** @var string $text */
 /** @var string $color */
 /** @var \Framework\Core\IAuthenticator $auth */
 ?>
 
-<div class="workParts p-4 rounded mb-5">
+<div class="workParts p-4 rounded mb-3">
     <h5 class="fw-bold mb-3">Obsah</h5>
     <p class="text-secondary">
         <?= $work->getDescription() ?>
     </p>
 </div>
+
+<?php if ($auth->isLogged()): ?>
+    <div class="d-flex align-items-center mb-3">
+        <strong>Pridať do obľúbených:</strong>
+        <i id="favoriteHeart" class="bi <?= $isFavorite ? 'bi-heart-fill text-danger' : 'bi-heart text-secondary' ?> fs-2 ms-3" data-work-id="<?= $work->getId() ?>" role="button"></i>
+    </div>
+<?php endif; ?>
 
 <div class="workParts p-4 rounded mb-5">
     <h4 class="fw-bold mb-4">

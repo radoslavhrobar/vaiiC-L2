@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Helpers\TypesOfWork;
 use App\Models\BookDetail;
 use App\Models\Country;
+use App\Models\FavoriteWork;
 use App\Models\Genre;
 use App\Models\MovieDetail;
 use App\Models\Review;
@@ -116,6 +117,28 @@ class WorkController extends BaseController
         ]);
     }
 
+    public function ajaxAddFav(Request $request): Response
+    {
+        $id = $request->value('workId');
+        $work = Work::getOne($id);
+        if (empty($work)) {
+            throw new \Exception('Dielo neexistuje.');
+        }
+        $user = $this->app->getAuth()->getUser();
+        if (empty($user)) {
+            throw new \Exception('Používateľ nie je prihlásený.');
+        }
+        $isFav = FavoriteWork::getAll(whereClause: '(`user_id` = ? AND `work_id` = ?)', whereParams: [$user->getId(), $work->getId()]);
+        if (count($isFav) === 1) {
+            throw new \Exception('Dielo je už v obľúbených.');
+        }
+        $favWork = new FavoriteWork();
+        $favWork->setUserId($user->getId());
+        $favWork->setWorkId($work->getId());
+        $favWork->save();
+        return $this->json(['ok' => true]);
+    }
+
     public function chooseGenres(string $typeOfWork): array
     {
        return match ($typeOfWork) {
@@ -139,9 +162,21 @@ class WorkController extends BaseController
         $users = $this->getUsersByIds($reviewsFiltered);
         $myReview = null;
         $hasReview = $this->hasReview($reviews, $this->app->getAuth()->getUser(), $myReview);
+        $isFavorite  = $this->isFavorite($work, $this->app->getAuth()->getUser());
         $text = $request->value('text');
         $color = $request->value('color');
-        return compact('work', 'genreByWorkId', 'countryByWorkId', 'reviews', 'reviewsFiltered', 'users', 'hasReview', 'myReview', 'text', 'color');
+        return compact('work', 'genreByWorkId', 'countryByWorkId', 'reviews', 'reviewsFiltered', 'users', 'hasReview', 'myReview', 'text', 'color', 'isFavorite');
+    }
+
+    public function isFavorite(Work $work, ?User $user): bool {
+        if (!$user) {
+            return false;
+        }
+        $isFav = FavoriteWork::getAll(whereClause: '(`user_id` = ? AND `work_id` = ?)', whereParams: [$user->getId(), $work->getId()]);
+        if (count($isFav) === 1) {
+            return true;
+        }
+        return false;
     }
 
     public function getCountriesByIds(array $works) : array {
