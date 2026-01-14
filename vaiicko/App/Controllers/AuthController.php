@@ -204,8 +204,14 @@ class AuthController extends BaseController
         if (!$user) {
             throw new Exception("Používateľ nenájdený.");
         }
-        $reviews = Review::getAll(whereClause: '`user_id` = ? AND `body` IS NOT NULL', whereParams: [$user->getId()], orderBy: '`created_at` DESC');
-        $ratings = Review::getAll(whereClause: '`user_id` = ? ', whereParams: [$user->getId()], orderBy: '`created_at` DESC');
+        $worksRatings = null;
+        $favoriteWorks = null;
+        if ($request->hasValue('tab') && $request->value('tab') === 'ratings') {
+            $worksRatings = $this->getWorksRatings($user->getId());
+        } elseif ($request->hasValue('tab') && $request->value('tab') === 'favorites') {
+            $favoriteWorks = $this->getFavoriteWorks($user->getId());
+        }
+        $worksReviews = $this->getWorksReviews($user->getId());
         $favGenres = $this->getFavoriteGenres($user->getId());
         if (!empty(array_column($favGenres, 'count'))) {
             $maxCount = max(array_column($favGenres, 'count'));
@@ -213,8 +219,8 @@ class AuthController extends BaseController
             $maxCount = 0;
         }
         $percentages = $this->calculatePercentages($favGenres, $maxCount);
-        $countFav = count(FavoriteWork::getAll(whereClause: '`user_id` = ?', whereParams: [$user->getId()]));
-        return $this->html(compact('user', 'reviews', 'ratings', 'favGenres', 'countFav', 'percentages'));
+        $whichActive = $request->hasValue('tab') ? $request->value('tab') : 'reviews';
+        return $this->html(compact('user', 'favGenres', 'percentages', 'whichActive', 'worksReviews', 'worksRatings', 'favoriteWorks'));
     }
 
     public function getFavoriteGenres($userId): array {
@@ -227,6 +233,45 @@ class AuthController extends BaseController
             GROUP BY g.id
             ORDER BY count DESC
             LIMIT 3
+            ';
+        $stmt = Connection::getInstance()->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getWorksReviews($userId): array {
+        $sql  = '
+            SELECT w.name w.date_of_issue, w.type, r.rating, r.body
+            FROM reviews r
+            JOIN works w ON r.work_id = w.id
+            WHERE r.user_id = ?
+            AND r.body IS NOT NULL
+            ORDER BY r.created_at DESC
+            ';
+        $stmt = Connection::getInstance()->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getWorksRatings($userId): array {
+        $sql  = '
+            SELECT w.name, w.date_of_issue, w.type, r.rating
+            FROM reviews r
+            JOIN works w ON r.work_id = w.id
+            WHERE r.user_id = ?
+            ORDER BY r.created_at DESC
+            ';
+        $stmt = Connection::getInstance()->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getFavoriteWorks($userId): array {
+        $sql  = '
+            SELECT w.name, 
+            FROM favoriteworks fw
+            JOIN works w ON fw.work_id = w.id
+            WHERE fw.user_id = ?
             ';
         $stmt = Connection::getInstance()->prepare($sql);
         $stmt->execute([$userId]);

@@ -3,9 +3,10 @@
 /** @var \App\Models\User $user */
 /** @var \App\Models\Review[] $reviews */
 /** @var \App\Models\Review[] $ratings */
+/** @var \App\Models\Fav */
 /** @var $favGenres */
-/** @var $countFav */
 /** @var $percentages */
+/** @var $whichActive */
 ?>
 <div class="baseInfoRow row rounded mx-2 my-3 p-3 border">
     <div class="col-md-6 userInfoCol rounded p-3">
@@ -21,9 +22,6 @@
         </div>
         <div>
             Na C&L od: <strong><?= (new DateTime($user->getCreatedAt()))->format('Y-m-d') ?></strong>
-        </div>
-        <div>
-            Počet obľúbených diel: <strong><?= $countFav ?></strong>
         </div>
     </div>
     <div class="col-md-6">
@@ -46,4 +44,17 @@
         <?php endif; ?>
     </div>
 </div>
+<div class="btn-group w-100 mb-4">
+    <button class="btn btnUserPage <?= $whichActive === 'reviews' ? 'active' : '' ?>" onclick="window.location.href='<?= $link->url("auth.page", ['id' => $user->getId(), 'tab' => 'reviews']) ?>'">
+        📝 Recenzie
+    </button>
+    <button class="btn btnUserPage <?= $whichActive === 'ratings' ? 'active' : '' ?>" onclick="window.location.href='<?= $link->url("auth.page", ['id' => $user->getId(), 'tab' => 'ratings']) ?>'">
+        <i class="bi bi-star-fill text-danger"></i> Hodnotenia
+    </button>
+    <button class="btn btnUserPage <?= $whichActive === 'favs' ? 'active' : '' ?>" onclick="window.location.href='<?= $link->url("auth.page", ['id' => $user->getId(), 'tab' => 'favs']) ?>'">
+        ❤️ Obľúbené diela
+    </button>
+</div>
+
+
 

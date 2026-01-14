@@ -12,7 +12,7 @@
 /** @var \Framework\Core\IAuthenticator $auth */
 ?>
 
-<div class="workParts p-4 rounded mb-3">
+<div class="pageParts p-4 rounded mb-3">
     <h5 class="fw-bold mb-3">Obsah</h5>
     <p class="text-secondary">
         <?= $work->getDescription() ?>
@@ -26,7 +26,7 @@
     </div>
 <?php endif; ?>
 
-<div class="workParts p-4 rounded mb-5">
+<div class="pageParts p-4 rounded mb-5">
     <h4 class="fw-bold mb-4">
         Recenzie
         <span class="text-secondary">(<?= count($reviewsFiltered) ?>)</span>
@@ -34,7 +34,7 @@
 
     <?php foreach ($reviewsFiltered as $i => $review):
         if (!$myReview || $review->getId() !== $myReview->getId()):?>
-            <div class="card workParts mb-3">
+            <div class="card pageParts mb-3">
                 <div class="card-body">
                     <div>
                         <strong class="fw-bold fs-5"><?= $users[$i]->getUsername() ?></strong>
@@ -64,7 +64,7 @@
             <?php endif; ?>
         </h4>
 
-        <div class="card workParts mb-3">
+        <div class="card pageParts mb-3">
             <div class="card-body">
                 <div>
                     <strong class="fw-bold fs-5"><?= $auth->getUser()->getUsername() ?></strong>
