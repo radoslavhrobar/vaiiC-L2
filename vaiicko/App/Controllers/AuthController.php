@@ -5,10 +5,14 @@ namespace App\Controllers;
 use App\Configuration;
 use App\Helpers\Gender;
 use App\Helpers\Role;
+use App\Models\FavoriteWork;
 use App\Models\Review;
 use App\Models\User;
+use App\Models\Work;
 use Exception;
 use Framework\Core\BaseController;
+use Framework\Core\Model;
+use Framework\DB\Connection;
 use Framework\Http\Request;
 use Framework\Http\Responses\JsonResponse;
 use Framework\Http\Responses\Response;
@@ -186,6 +190,55 @@ class AuthController extends BaseController
         $reviewCounts = $this->getReviewCountsByIds($users);
         $ratingCounts = $this->getRatingCountsByIds($users);
         return $this->html(compact('users', 'isAdmin', 'reviewCounts', 'ratingCounts'));
+    }
+
+    public function page(Request $request): Response
+    {
+        $id = null;
+        if (!$request->hasValue('id')) {
+            $id = $this->app->getAuth()->getUser()?->getId();
+        } else {
+            $id = (int)$request->value('id');
+        }
+        $user = User::getOne($id);
+        if (!$user) {
+            throw new Exception("Používateľ nenájdený.");
+        }
+        $reviews = Review::getAll(whereClause: '`user_id` = ? AND `body` IS NOT NULL', whereParams: [$user->getId()], orderBy: '`created_at` DESC');
+        $ratings = Review::getAll(whereClause: '`user_id` = ? ', whereParams: [$user->getId()], orderBy: '`created_at` DESC');
+        $favGenres = $this->getFavoriteGenres($user->getId());
+        if (!empty(array_column($favGenres, 'count'))) {
+            $maxCount = max(array_column($favGenres, 'count'));
+        } else {
+            $maxCount = 0;
+        }
+        $percentages = $this->calculatePercentages($favGenres, $maxCount);
+        $countFav = count(FavoriteWork::getAll(whereClause: '`user_id` = ?', whereParams: [$user->getId()]));
+        return $this->html(compact('user', 'reviews', 'ratings', 'favGenres', 'countFav', 'percentages'));
+    }
+
+    public function getFavoriteGenres($userId): array {
+        $sql  = '
+            SELECT g.name, count(*) AS count
+            FROM favoriteworks fw
+            JOIN works w ON fw.work_id = w.id
+            JOIN genres g ON w.genre_id = g.id
+            WHERE fw.user_id = ?
+            GROUP BY g.id
+            ORDER BY count DESC
+            LIMIT 3
+            ';
+        $stmt = Connection::getInstance()->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function calculatePercentages($favGenres, $max) : array {
+        $percentages = [];
+        foreach ($favGenres as $i => $genre) {
+            $percentages[$i] = ($max > 0) ? ($genre['count'] / $max) * 100 : 0;
+        }
+        return $percentages;
     }
 
     public function getReviewCountsByIds(array $users) : array {

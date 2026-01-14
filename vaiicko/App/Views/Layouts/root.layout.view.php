@@ -48,7 +48,8 @@
                         </a>
                         <ul class="dropdown-menu">
                             <?php if ($auth->isLogged()) { ?>
-                                <li><a class="dropdown-item" href="<?= $link->url("auth.logout") ?>">Odhlásenie</a></li>
+                                <li><a class="dropdown-item" href="<?= $link->url("auth.page") ?>">Môj profil</a></li>
+                                <li><a class="dropdown-item" href="<?= $link->url("auth.logout") ?>">Odhlásiť sa</a></li>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.edit") ?>">Zmeniť údaje</a></li>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.delete") ?>"
                                        onclick="return confirm('Naozaj chceš zmazať svoj účet?')">Zmazať účet</a></li>
@@ -61,7 +62,7 @@
 
                     <form class="d-flex" role="search">
                         <div class="position-relative">
-                            <input id="searchInput" class="form-control me-2" type="search" placeholder="Hľadať" autocomplete="off">
+                            <input id="searchInput" class="form-control me-2" type="search" placeholder="Hľadať dielo..." autocomplete="off">
                             <div id="searchResults" class="list-group position-absolute w-100 mt-1" style="z-index:1000"></div>
                         </div>
                     </form>

@@ -15,12 +15,11 @@ use App\Helpers\Role;
     <?php if ($auth->getUser() && $user->getId() !== $auth->getUser()->getId()): ?>
         <div class="card user-card">
             <div class="card-header">
-                <h5 class="mb-1 mt-1 fw-bold">
-                    <strong class="specialColor"><?= $i + 1 . '. ' ?></strong>
-                    <a class="listLink" href="<?= $link->url('auth.page', ['id' => $user->getId()]) ?>">
-                    <?= $user->getUsername() ?>
-                    </a>
-                </h5>
+                <form action="<?= $link->url('auth.page') ?>" method="post">
+                    <strong class="specialColor "><?= $i + 1 . '. ' ?></strong>
+                    <input type="hidden" name="id" value="<?= $user->getId() ?>">
+                    <button type="submit" class="listLinkButton"><?= $user->getUsername() ?></button>
+                </form>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between">
