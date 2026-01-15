@@ -16,6 +16,7 @@ use DateTime;
 use Framework\Core\BaseController;
 use Framework\Core\Model;
 use Framework\Core\Router;
+use Framework\DB\Connection;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 use Framework\Support\LinkGenerator;
@@ -32,60 +33,62 @@ class WorkController extends BaseController
         $data = $request->post();
         $genres = Genre::getAll();
         $types = TypesOfWork::cases();
-        $works = Work::getAll(orderBy: '`name`');
+        $sql = '
+            SELECT 
+                w.id, w.name, w.type, w.date_of_issue, w.description,
+                g.name AS genre, c.name AS country, 
+                AVG(r.rating) AS avg_rating, 
+                COUNT(r.rating) AS rating_count, 
+                COUNT(fw.work_id) AS favorites_count
+            FROM works w
+            JOIN countries c ON w.place_of_issue_id = c.id
+            JOIN genres g ON w.genre_id = g.id
+            LEFT JOIN reviews r ON r.work_id = w.id
+            LEFT JOIN favoriteworks fw ON fw.work_id = w.id
+        ';
         $ok = true;
         if ($data) {
-            if (!isset($data['type'], $data['genre'], $data['yearTo'], $data['yearFrom'])) {
+            if (!isset($data['type'], $data['genre'], $data['yearTo'], $data['yearFrom'], $data['order'])) {
                 throw new \Exception('Nedostatočné údaje pre filtrovanie.');
             }
             if (!$this->checkRankings($data)) {
                 $ok = false;
+                return $this->html(compact('genres', 'types', 'ok') );
             }
-            if ($data['type'] === 'všetky' && $data['genre'] === 'všetky') {
-                $works = Work::getAll(
-                    whereClause: '`date_of_issue` BETWEEN ? AND ?',
-                    whereParams: [
-                        $data['yearFrom'] . '-01-01',
-                        $data['yearTo'] . '-12-31'
-                    ],
-                    orderBy: '`name`'
-                );
-            } else if ($data['type'] === 'všetky' && $data['genre'] !== 'všetky') {
-                $works = Work::getAll(
-                    whereClause: '`genre_id` = ? AND `date_of_issue` BETWEEN ? AND ?',
-                    whereParams: [
-                        $data['genre'],
-                        $data['yearFrom'] . '-01-01',
-                        $data['yearTo'] . '-12-31'
-                    ],
-                    orderBy: '`name`'
-                );
-            } else if ($data['genre'] === 'všetky') {
-                $works = Work::getAll(
-                    whereClause: '`type` = ? AND `date_of_issue` BETWEEN ? AND ?',
-                    whereParams: [
-                        $data['type'],
-                        $data['yearFrom'] . '-01-01',
-                        $data['yearTo'] . '-12-31'
-                    ],
-                    orderBy: '`name`'
-                );
-            } else {
-                $works = Work::getAll(
-                    whereClause: '`type` = ? AND `genre_id` = ? AND `date_of_issue` BETWEEN ? AND ?',
-                    whereParams: [
-                        $data['type'],
-                        $data['genre'],
-                        $data['yearFrom'] . '-01-01',
-                        $data['yearTo'] . '-12-31'
-                    ],
-                    orderBy: '`name`'
-                );
+            $where = ['w.date_of_issue BETWEEN ? AND ?'];
+            $params = [
+                $data['yearFrom'] . '-01-01',
+                $data['yearTo'] . '-12-31'
+            ];
+
+            if ($data['type'] !== 'všetky') {
+                $where[] = 'w.type = ?';
+                $params[] = $data['type'];
             }
+
+            if ($data['genre'] !== 'všetky') {
+                $where[] = 'w.genre_id = ?';
+                $params[] = $data['genre'];
+            }
+
+            $sql .= ' WHERE ' . implode(' AND ', $where);
         }
-        $genresByIds = $this->getGenresByIds($works);
-        $countriesByIds = $this->getCountriesByIds($works);
-        return $this->html(compact('genres', 'types', 'works', 'genresByIds', 'countriesByIds', 'ok'));
+        $sql .= ' GROUP BY w.id, w.name, w.type, w.date_of_issue, g.name, c.name';
+        $orderBy = $this->whichOrderBy($data['order'] ?? '');
+        $sql .= ' ORDER BY ' . $orderBy;
+        $stmt = Connection::getInstance()->prepare($sql);
+        $stmt->execute($params ?? null);
+        $works = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->html(compact('genres', 'types', 'works', 'ok'));
+    }
+
+    public function whichOrderBy($order) : string{
+        return match ($order) {
+            'worst' => 'avg_rating ASC',
+            'favorite' => 'favorites_count DESC',
+            'newest' => 'w.date_of_issue DESC',
+            default => 'avg_rating DESC',
+        };
     }
 
     public function ajaxCheckTypeOfWork(Request $request): Response
@@ -193,22 +196,6 @@ class WorkController extends BaseController
         return false;
     }
 
-    public function getCountriesByIds(array $works) : array {
-        $countries = [];
-        foreach ($works as $i => $work) {
-            $countries[$i] = Country::getOne($work->getPlaceOfIssue());
-        }
-        return $countries;
-    }
-
-    public function getGenresByIds(array $works) : array {
-        $genres = [];
-        foreach ($works as $i => $work) {
-            $genres[$i] = Genre::getOne($work->getGenre());
-        }
-        return $genres;
-    }
-
     public function getUsersByIds(array $reviews) : array {
         $users = [];
         foreach ($reviews as $i => $review) {
@@ -269,7 +256,7 @@ class WorkController extends BaseController
 
     public function checkRankings($data) : bool {
         if (($this->checkType($data['type']) || $data['type'] === 'všetky') && ($this->checkGenre($data['genre']) || $data['genre'] === 'všetky') &&
-            $this->checkYearFrom($data['yearFrom'], $data['type']) && $this->checkYearTo($data['yearTo'], $data['yearFrom'], $data['type'])) {
+            $this->checkYearFrom($data['yearFrom'], $data['type']) && $this->checkYearTo($data['yearTo'], $data['yearFrom'], $data['type']) && $this->checkOrderBy($data['order'])) {
             return true;
         }
         return false;
@@ -350,6 +337,11 @@ class WorkController extends BaseController
             return false;
         }
         return true;
+    }
+
+    public function checkOrderBy($order): bool
+    {
+        return in_array($order, ['best', 'worst', 'favorite', 'newest']);
     }
 
     public function checkImage($file): bool
