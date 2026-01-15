@@ -206,12 +206,14 @@ class AuthController extends BaseController
         }
         $worksRatings = null;
         $favoriteWorks = null;
+        $worksReviews = null;
         if ($request->hasValue('tab') && $request->value('tab') === 'ratings') {
             $worksRatings = $this->getWorksRatings($user->getId());
         } elseif ($request->hasValue('tab') && $request->value('tab') === 'favorites') {
             $favoriteWorks = $this->getFavoriteWorks($user->getId());
+        } else {
+            $worksReviews = $this->getWorksReviews($user->getId());
         }
-        $worksReviews = $this->getWorksReviews($user->getId());
         $favGenres = $this->getFavoriteGenres($user->getId());
         if (!empty(array_column($favGenres, 'count'))) {
             $maxCount = max(array_column($favGenres, 'count'));
@@ -241,7 +243,7 @@ class AuthController extends BaseController
 
     public function getWorksReviews($userId): array {
         $sql  = '
-            SELECT w.name w.date_of_issue, w.type, r.rating, r.body
+            SELECT w.name, w.id, w.date_of_issue, w.type, r.rating, r.body
             FROM reviews r
             JOIN works w ON r.work_id = w.id
             WHERE r.user_id = ?
