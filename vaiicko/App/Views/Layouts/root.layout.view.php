@@ -36,7 +36,7 @@
                             <a class="nav-link" aria-current="page" href="#">Zaujímavosti</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="<?= $link->url("auth.print") ?>">Používatelia</a>
+                            <a class="nav-link" aria-current="page" href="<?= $link->url("auth.all") ?>">Používatelia</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="<?= $link->url("movieDetail.add") ?>">Pridanie diela</a>

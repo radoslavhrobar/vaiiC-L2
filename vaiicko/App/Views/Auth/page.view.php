@@ -1,9 +1,6 @@
 <?php
 /** @var Framework\Support\LinkGenerator $link */
 /** @var \App\Models\User $user */
-/** @var $worksRatings */
-/** @var $worksReviews */
-/** @var $favoriteWorks */
 /** @var $favGenres */
 /** @var $percentages */
 /** @var $whichActive */
@@ -51,39 +48,7 @@
     <button class="btn btnUserPage <?= $whichActive === 'ratings' ? 'active' : '' ?>" onclick="window.location.href='<?= $link->url("auth.page", ['id' => $user->getId(), 'tab' => 'ratings']) ?>'">
         <i class="bi bi-star-fill text-danger"></i> Hodnotenia
     </button>
-    <button class="btn btnUserPage <?= $whichActive === 'favs' ? 'active' : '' ?>" onclick="window.location.href='<?= $link->url("auth.page", ['id' => $user->getId(), 'tab' => 'favs']) ?>'">
+    <button class="btn btnUserPage <?= $whichActive === 'favs' ? 'active' : '' ?>" onclick="window.location.href='<?= $link->url("auth.page", ['id' => $user->getId(), 'tab' => 'favorites']) ?>'">
         ❤️ Obľúbené diela
     </button>
 </div>
-<div class="pageParts p-4 rounded mb-5">
-    <h4 class="fw-bold mb-4">
-        Recenzie
-        <span class="text-secondary">(<?= count($worksReviews) ?>)</span>
-    </h4>
-
-    <?php foreach ($worksReviews as $i => $workReview): ?>
-            <div class="card pageParts mb-3">
-                <div class="card-body d-flex flex-column">
-                    <div>
-                    </div>
-                    <div>
-                        <div>
-                            <a class="listLink" href="<?= $workReview ['type'] === 'Film' ? $link->url("movieDetail.page", ['id' => $workReview['id']]) : ($workReview ['type'] === 'Kniha' ? $link->url("bookDetail.page", ['id' => $workReview['id']]) : ($workReview ['type'] === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $workReview['id']]) : '#')); ?>"><?= $workReview['name'] ?> </a>
-                            <span class="userRating fw-normal">
-                                <?php for ($j = 0; $j < $workReview['rating']; $j++): ?>
-                                    ★
-                                <?php endfor; ?>
-                            </span>
-                            <span class="text-secondary"> (<?= (new DateTime($workReview['date_of_issue']))->format('Y') . ', ' . $workReview['type']?>)</span>
-                        </div>
-                        <div>
-                            <?= $workReview['body'] ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    <?php endforeach; ?>
-</div>
-
-
-

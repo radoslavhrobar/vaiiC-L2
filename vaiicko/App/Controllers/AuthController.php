@@ -176,14 +176,14 @@ class AuthController extends BaseController
             $target->delete();
             $users = User::getAll();
             $isAdmin = $this->checkAdmin();
-            return $this->html(compact('users', 'isAdmin'), 'print');
+            return $this->html(compact('users', 'isAdmin'), 'all');
         }
         $user->delete();
         $this->app->getAuth()->logout();
         return $this->redirect($this->url("home.index"));
     }
 
-    public function print(Request $request): Response
+    public function all(Request $request): Response
     {
         $users = User::getAll(orderBy: '`username` DESC');
         $isAdmin = $this->checkAdmin();
@@ -194,7 +194,6 @@ class AuthController extends BaseController
 
     public function page(Request $request): Response
     {
-        $id = null;
         if (!$request->hasValue('id')) {
             $id = $this->app->getAuth()->getUser()?->getId();
         } else {
@@ -204,16 +203,7 @@ class AuthController extends BaseController
         if (!$user) {
             throw new Exception("Používateľ nenájdený.");
         }
-        $worksRatings = null;
-        $favoriteWorks = null;
-        $worksReviews = null;
-        if ($request->hasValue('tab') && $request->value('tab') === 'ratings') {
-            $worksRatings = $this->getWorksRatings($user->getId());
-        } elseif ($request->hasValue('tab') && $request->value('tab') === 'favorites') {
-            $favoriteWorks = $this->getFavoriteWorks($user->getId());
-        } else {
-            $worksReviews = $this->getWorksReviews($user->getId());
-        }
+
         $favGenres = $this->getFavoriteGenres($user->getId());
         if (!empty(array_column($favGenres, 'count'))) {
             $maxCount = max(array_column($favGenres, 'count'));
@@ -222,7 +212,16 @@ class AuthController extends BaseController
         }
         $percentages = $this->calculatePercentages($favGenres, $maxCount);
         $whichActive = $request->hasValue('tab') ? $request->value('tab') : 'reviews';
-        return $this->html(compact('user', 'favGenres', 'percentages', 'whichActive', 'worksReviews', 'worksRatings', 'favoriteWorks'));
+
+        if ($request->hasValue('tab') && $request->value('tab') === 'ratings') {
+            $worksRatings = $this->getWorksRatings($user->getId());
+            return $this->html(compact('user', 'favGenres', 'percentages', 'whichActive', 'worksRatings'), 'ratingSection');
+        } elseif ($request->hasValue('tab') && $request->value('tab') === 'favorites') {
+            $favoriteWorks = $this->getFavoriteWorks($user->getId());
+            return $this->html(compact('user', 'favGenres', 'percentages', 'whichActive', 'favoriteWorks'), 'favSection');
+        }
+        $worksReviews = $this->getWorksReviews($user->getId());
+        return $this->html(compact('user', 'favGenres', 'percentages', 'whichActive', 'worksReviews',), 'reviewSection');
     }
 
     public function getFavoriteGenres($userId): array {
@@ -243,12 +242,12 @@ class AuthController extends BaseController
 
     public function getWorksReviews($userId): array {
         $sql  = '
-            SELECT w.name, w.id, w.date_of_issue, w.type, r.rating, r.body
+            SELECT w.name, w.id, w.date_of_issue, w.type, r.rating, r.body, r.created_at, r.updated_at
             FROM reviews r
             JOIN works w ON r.work_id = w.id
             WHERE r.user_id = ?
             AND r.body IS NOT NULL
-            ORDER BY r.created_at DESC
+            ORDER BY COALESCE(r.updated_at, r.created_at) DESC
             ';
         $stmt = Connection::getInstance()->prepare($sql);
         $stmt->execute([$userId]);
@@ -257,11 +256,11 @@ class AuthController extends BaseController
 
     public function getWorksRatings($userId): array {
         $sql  = '
-            SELECT w.name, w.date_of_issue, w.type, r.rating
+            SELECT w.name, w.id, w.date_of_issue, w.type, r.rating, r.created_at, r.updated_at
             FROM reviews r
             JOIN works w ON r.work_id = w.id
             WHERE r.user_id = ?
-            ORDER BY r.created_at DESC
+            ORDER BY COALESCE(r.updated_at, r.created_at) DESC
             ';
         $stmt = Connection::getInstance()->prepare($sql);
         $stmt->execute([$userId]);
@@ -270,7 +269,7 @@ class AuthController extends BaseController
 
     public function getFavoriteWorks($userId): array {
         $sql  = '
-            SELECT w.name, 
+            SELECT w.name, w.id, w.type
             FROM favoriteworks fw
             JOIN works w ON fw.work_id = w.id
             WHERE fw.user_id = ?
