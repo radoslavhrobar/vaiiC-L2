@@ -1,7 +1,5 @@
 <?php
 /** @var \Framework\Support\LinkGenerator $link*/
-/** @var string $text */
-/** @var string $color */
 ?>
 
 <form id="bookForm" class="forms formsOrganized" action="<?= $link->url("bookDetail.addBook") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
@@ -29,9 +27,7 @@
         <input class="col-sm-6" type="text" name="author" id="author">
         <strong id="authorMessage"></strong>
     </div>
-    <div class="text-center">
-        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
-    </div>
+    <?php require __DIR__ . '/../Work/errors.view.php' ?>
     <div class="text-center">
         <input class="btn-brown" type="submit" value="Pridať knihu">
     </div>

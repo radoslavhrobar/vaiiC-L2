@@ -32,7 +32,12 @@ class MovieDetailController extends WorkController
         }
         $text = 'Film bol úspešne pridaný.';
         $color = 'success';
+        $data = $this->getData();
         if ($this->check($d, $files['image'])) {
+            $result = $this->checkImageFull($files['image'], $data);
+            if (!empty($result)) {
+                return $this->html($result, 'add');
+            }
             $work = parent::workAdd($d, $files['image'], TypesOfWork::Film->name);
             $movieDetail = new MovieDetail();
             $movieDetail->setWorkId($work->getId());
@@ -44,7 +49,6 @@ class MovieDetailController extends WorkController
             $text = 'Filmové údaje obsahujú chyby.';
             $color = 'danger';
         }
-        $data = $this->getData();
         return $this->html(compact('text', 'color') +  $data, 'add');
     }
 

@@ -32,7 +32,12 @@ class BookDetailController extends WorkController
         }
         $text = 'Kniha bola úspešne pridaná.';
         $color = 'success';
+        $data = $this->getData();
         if ($this->check($d, $files['image'])) {
+            $result = $this->checkImageFull($files['image'], $data);
+            if (!empty($result)) {
+                return $this->html($result, 'add');
+            }
             $work = parent::workAdd($d, $files['image'], TypesOfWork::Kniha->name);
             $bookDetail = new BookDetail();
             $bookDetail->setWorkId($work->getId());
@@ -44,7 +49,6 @@ class BookDetailController extends WorkController
             $text = 'Knižné údaje obsahujú chyby.';
             $color = 'danger';
         }
-        $data = $this->getData();
         return $this->html(compact('text', 'color') + $data, 'add');
     }
 

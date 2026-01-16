@@ -35,7 +35,7 @@ class WorkController extends BaseController
         $types = TypesOfWork::cases();
         $sql = '
             SELECT 
-                w.id, w.name, w.type, w.date_of_issue, w.description,
+                w.id, w.name, w.type, w.date_of_issue, w.description, w.image,
                 g.name AS genre, c.name AS country, 
                 AVG(r.rating) AS avg_rating, 
                 COUNT(r.rating) AS rating_count, 
@@ -227,6 +227,10 @@ class WorkController extends BaseController
         $work->setDateOfIssue($d['dateOfIssue']);
         $work->setPlaceOfIssue($d['placeOfIssue']);
         $work->setDescription(trim($d['description']));
+        $uploadDir = __DIR__ . '/../../public/uploads/works';
+        $filename = uniqid() . '-' . $file->getName();
+        $file->store($uploadDir . '/' . $filename);
+        $work->setImage($filename);
         $work->save();
         return $work;
     }
@@ -346,9 +350,6 @@ class WorkController extends BaseController
 
     public function checkImage($file): bool
     {
-        if ($file->getError() !== UPLOAD_ERR_OK) {
-            return false;
-        }
         $allowedTypes = ['image/jpeg', 'image/png'];
         if (!in_array($file->getType(), $allowedTypes)) {
             return false;
@@ -358,5 +359,23 @@ class WorkController extends BaseController
             return false;
         }
         return true;
+    }
+
+    public function checkImageError($file) : string|null {
+        return $file->getErrorMessage();
+    }
+
+    public function checkImageFull($file, $data) : array
+    {
+        $error = $this->checkImageError($file);
+        if ($error) {
+            return compact('error') +  $data;
+        }
+        if (!$this->checkImage($file)) {
+            $text = 'Filmové údaje obsahujú chyby.';
+            $color = 'danger';
+            return compact('text', 'color') +  $data;
+        }
+        return [];
     }
 }

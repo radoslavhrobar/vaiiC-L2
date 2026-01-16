@@ -55,10 +55,9 @@
     <?php foreach ($works as $i => $work): ?>
         <div class="card mb-1 mx-5 rankingsCard">
             <div class="card-body d-flex gap-3">
-        <!--        <img src="poster.jpg"-->
-        <!--             class="rounded"-->
-        <!--             style="width:70px;height:100px;object-fit:cover;"-->
-        <!--             alt="Plagát">-->
+                <div>
+                    <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded imageRankings " alt="Plagát">
+                </div>
                 <div class="flex-grow-1">
                     <h5 class= "mb-1 fw-bold">
                         <span class="specialColor"><?= $i +1 ?>.</span>

@@ -9,9 +9,9 @@
 ?>
 <div class="row workRow p-4 rounded my-3">
     <div class="col-6 col-md-3 text-center order-1 order-md-1 mb-3 mb-md-0">
-        <img src="<?= $link->asset('images' . $work->getName()) ?>"
+        <img src="<?= $link->asset('uploads/works/' . $work->getImage()) ?>"
              class="img-fluid rounded"
-             alt="Plagát diela">
+             alt="Plagát">
     </div>
     <div class="col-12 col-md-6 order-3 order-md-2">
         <h3 class="fw-bold">

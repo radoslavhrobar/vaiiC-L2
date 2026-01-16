@@ -33,7 +33,12 @@ class SeriesDetailController extends WorkController
         }
         $text = 'Seriál bol úspešne pridaný.';
         $color = 'success';
+        $data = $this->getData();
         if ($this->check($d, $files['image'])) {
+            $result = $this->checkImageFull($files['image'], $data);
+            if (!empty($result)) {
+                return $this->html($result, 'add');
+            }
             $work = parent::workAdd($d, $files['image'], TypesOfWork::Seriál->name);
             $seriesDetail = new SeriesDetail();
             $seriesDetail->setWorkId($work->getId());
@@ -46,7 +51,6 @@ class SeriesDetailController extends WorkController
             $text = 'Seriálové údaje obsahujú chyby.';
             $color = 'danger';
         }
-        $data = $this->getData();
         return $this->html($data + compact( 'text', 'color'), 'add');
     }
 

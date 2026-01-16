@@ -5,6 +5,9 @@ function checkWorkName(workName) {
     if (value === "") {
         return ["red", additionalTexts.get(idElements[0])]
     }
+    if (!firstLetterFormat.test(value.charAt(0))) {
+        return ["red", "Názov musí začínať veľkým písmenom alebo číslicou!"]
+    }
     if (!format.test(value)) {
         return ["red", "Názov musí byť v správnom formáte!"]
     }
@@ -13,9 +16,6 @@ function checkWorkName(workName) {
     }
     if (value.length > 255) {
         return ["red", "Názov nesmie mať viac ako 255 znakov!"]
-    }
-    if (!firstLetterFormat.test(value.charAt(0))) {
-        return ["red", "Názov musí začínať veľkým písmenom alebo číslicou!"]
     }
     return ["lightgreen", ""];
 }
@@ -26,14 +26,29 @@ function checkDescription(description) {
     if (value === "") {
         return ["red", additionalTexts.get(idElements[1])]
     }
+    if (!firstLetterFormat.test(value.charAt(0))) {
+        return ["red", "Popis musí začínať veľkým písmenom alebo číslicou!"]
+    }
     if (value.length < 3) {
         return ["red", "Popis nesmie mať menej ako 3 znaky!"]
     }
     if (value.length > 1000) {
         return ["red", "Popis nesmie mať viac ako 1000 znakov!"]
     }
-    if (!firstLetterFormat.test(value.charAt(0))) {
-        return ["red", "Popis musí začínať veľkým písmenom alebo číslicou!"]
+    return ["lightgreen", ""];
+}
+
+function checkImage(workImage) {
+    if (!workImage.files[0]) {
+        return ["red", "Náhľad je povinný!"];
+    }
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+    if (!allowedExtensions.exec(workImage.files[0].name)) {
+        return ["red", "Obrázok musí byť vo formáte .jpg, .jpeg, .png alebo .gif!"];
+    }
+    const maxSizeInBytes = 5 * 1024 * 1024;
+    if (workImage.files[0].size > maxSizeInBytes) {
+        return ["red", "Obrázok nesmie byť väčší ako 5 MB!"];
     }
     return ["lightgreen", ""];
 }
@@ -45,6 +60,9 @@ function checkProdCompany(prodCompany, additionalTexts, work) {
     if (value === "") {
         return ["red", additionalTexts.get(work)]
     }
+    if (!firstLetterFormat.test(value.charAt(0))) {
+        return ["red", "Produkčná spoločnosť musí začínať veľkým písmenom alebo číslicou!"]
+    }
     if (value.length > 255) {
         return ["red", "Produkčná spoločnosť nesmie mať viac ako 255 znakov!"]
     }
@@ -53,9 +71,6 @@ function checkProdCompany(prodCompany, additionalTexts, work) {
     }
     if (!format.test(value)) {
         return ["red", "Produkčná spoločnosť musí byť v správnom formáte!"]
-    }
-    if (!firstLetterFormat.test(value.charAt(0))) {
-        return ["red", "Produkčná spoločnosť musí začínať veľkým písmenom alebo číslicou!"]
     }
     return ["lightgreen", ""];
 }
@@ -67,6 +82,9 @@ function checkDirector(director, additionalTexts, work) {
     if (value === "") {
         return ["red", additionalTexts.get(work)]
     }
+    if (!firstLetterFormat.test(value.charAt(0))) {
+        return ["red", "Režisér musí začínať veľkým písmenom!"]
+    }
     if (value.length > 255) {
         return ["red", "Režisér nesmie mať viac ako 255 znakov!"]
     }
@@ -75,9 +93,6 @@ function checkDirector(director, additionalTexts, work) {
     }
     if (!format.test(value)) {
         return ["red", "Režisér musí byť v správnom formáte!"]
-    }
-    if (!firstLetterFormat.test(value.charAt(0))) {
-        return ["red", "Režisér musí začínať veľkým písmenom!"]
     }
     return ["lightgreen", ""];
 }
@@ -89,6 +104,9 @@ function checkPublishers(publishers) {
     if (value === "") {
         return ["red", additionalTextsBook.get(idElementsBook[0])]
     }
+    if (!firstLetterFormat.test(value.charAt(0))) {
+        return ["red", "Vydavateľstvo musí začínať veľkým písmenom alebo číslicou!"]
+    }
     if (value.length > 255) {
         return ["red", "Vydavateľstvo nesmie mať viac ako 255 znakov!"]
     }
@@ -97,9 +115,6 @@ function checkPublishers(publishers) {
     }
     if (!format.test(value)) {
         return ["red", "Vydavateľstvo musí byť v správnom formáte!"]
-    }
-    if (!firstLetterFormat.test(value.charAt(0))) {
-        return ["red", "Vydavateľstvo musí začínať veľkým písmenom alebo číslicou!"]
     }
     return ["lightgreen", ""];
 }
@@ -111,6 +126,9 @@ function checkAuthor(author) {
     if (value === "") {
         return ["red", additionalTextsBook.get(idElementsBook[1])]
     }
+    if (!firstLetterFormat.test(value.charAt(0))) {
+        return ["red", "Autor musí začínať veľkým písmenom!"]
+    }
     if (value.length > 255) {
         return ["red", "Autor nesmie mať viac ako 255 znakov!"]
     }
@@ -120,9 +138,6 @@ function checkAuthor(author) {
     if (!format.test(value)) {
         return ["red", "Autor musí byť v správnom formáte!"]
     }
-    if (!firstLetterFormat.test(value.charAt(0))) {
-        return ["red", "Autor musí začínať veľkým písmenom!"]
-    }
     return ["lightgreen", ""];
 }
 
@@ -131,8 +146,14 @@ function checkForm() {
 
     const workName = document.getElementById(idElements[0]);
     const description = document.getElementById(idElements[1]);
+    const workImage = document.getElementById(idElements[2]);
     const resultWorkName = checkWorkName(workName);
     const resultDescription = checkDescription(description);
+    const resultWorkImage = checkImage(workImage);
+    document.getElementById(idMessages[2]).textContent = resultWorkImage[1];
+    if (resultWorkImage[0] === "red") {
+        valid = false;
+    }
 
     const resultElements = [resultWorkName, resultDescription];
 

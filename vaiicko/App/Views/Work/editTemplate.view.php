@@ -56,6 +56,6 @@
     <label class="col-sm-3" for="workImage">Náhľad:
         <span class="imp">*</span>
     </label>
-    <input class="col-sm-6" type="file" name="image" id="workImage" value="<?= $work->getImage() ?>">
+    <input class="col-sm-6" type="file" name="image" id="workImage">
     <strong id="workImageMessage"></strong>
 </div>

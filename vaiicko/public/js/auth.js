@@ -16,14 +16,14 @@ async function checkUsername(username) {
     if (username.value === "") {
         return ["red", additionalTexts.get(idElements[1])]
     }
-    if (username.value.length < 3 || username.value.length > 30) {
-        return ["red", "Používateľské meno musí byť dlhé v rozmedzí od 3 do 30 znakov!"]
-    }
     if (!isNaN(username.value.charAt(0))) {
         return ["red", "Prvý znak v používateľskom mene niesme byť číslica!"]
     }
     if (/[^a-zA-Z0-9]/.test(username.value)) {
         return ["red", "Používateľské meno môže obsahovať len alfanumerické znaky a musí byť bez medzier!"]
+    }
+    if (username.value.length < 3 || username.value.length > 30) {
+        return ["red", "Používateľské meno musí byť dlhé v rozmedzí od 3 do 30 znakov!"]
     }
     const exists = await serverCheckUsername(username.value);
     if (exists) {
