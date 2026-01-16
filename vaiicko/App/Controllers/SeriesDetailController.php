@@ -72,9 +72,17 @@ class SeriesDetailController extends WorkController
         }
         $text = 'Seriál bol úspešne upravený.';
         $color = 'success';
+        $data2 = $this->getData();
         if ($this->check($d, $files['image'])) {
             $work = $data['work'];
             $seriesDetail = $data['seriesDetail'];
+            if ($files['image']->getError() !== UPLOAD_ERR_NO_FILE) {
+                $result = $this->checkImageFull($files['image'], $this->getData());
+                if (!empty($result)) {
+                    return $this->html($data + $data2 + $result, 'edit');
+                }
+                $this->changeImage($work, $files['image']);
+            }
             parent::workEdit($d, $files['image'], $work);
             $seriesDetail->setNumOfSeasons((int)$d['numOfSeasons']);
             $seriesDetail->setNumOfEpisodes((int)$d['numOfEpisodes']);
@@ -85,7 +93,6 @@ class SeriesDetailController extends WorkController
             $text = 'Seriálové údaje obsahujú chyby.';
             $color = 'danger';
         }
-        $data2 = $this->getData();
         return $this->html($data + $data2 + compact( 'text', 'color'), 'edit');
     }
 

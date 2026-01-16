@@ -1,4 +1,5 @@
 <?php
+/** @var Framework\Support\LinkGenerator $link */
 /** @var \App\Models\Country[] $countries */
 /** @var \App\Models\Genre[] $genres */
 /** @var \App\Models\Work $work */
@@ -53,9 +54,14 @@
     <strong id="descriptionMessage"></strong>
 </div>
 <div class="row">
+    <label class="col-sm-3" for="previousImage">Aktuálny náhľad:</label>
+    <div class="col-sm-6" >
+    <img id="previousImage" src="<?= $link->asset('uploads/works/' . $work->getImage()) ?>" alt="Aktuálny náhlaď" class="previousImage">
+    </div>
+</div>
+<div class="row">
     <label class="col-sm-3" for="workImage">Náhľad:
-        <span class="imp">*</span>
     </label>
-    <input class="col-sm-6" type="file" name="image" id="workImage">
+    <input class="col-sm-6" type="file" name="image" id="workImage" accept="image/jpeg,image/png">
     <strong id="workImageMessage"></strong>
 </div>

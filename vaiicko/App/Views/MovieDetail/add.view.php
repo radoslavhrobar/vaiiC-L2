@@ -2,7 +2,7 @@
 /** @var \Framework\Support\LinkGenerator $link*/
 ?>
 
-<form id="movieForm" class="forms formsOrganized" action="<?= $link->url("movieDetail.addMovie") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
+<form id="movieAdd" class="forms formsOrganized" action="<?= $link->url("movieDetail.addMovie") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
     <?php require __DIR__ . '/../Work/adding.view.php' ?>
     <h4 class="titleName mt-4">Pridanie filmu</h4>
     <?php require __DIR__ . '/../Work/addTemplate.view.php' ?>

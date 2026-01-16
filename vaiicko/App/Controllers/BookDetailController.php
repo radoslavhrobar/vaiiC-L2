@@ -69,9 +69,17 @@ class BookDetailController extends WorkController
         }
         $text = 'Kniha bola úspešne upravená.';
         $color = 'success';
+        $data2 = $this->getData();
         if ($this->check($d, $files['image'])) {
             $work = $data['work'];
             $bookDetail = $data['bookDetail'];
+            if ($files['image']->getError() !== UPLOAD_ERR_NO_FILE) {
+                $result = $this->checkImageFull($files['image'], $this->getData());
+                if (!empty($result)) {
+                    return $this->html($data + $data2 + $result, 'edit');
+                }
+                $this->changeImage($work, $files['image']);
+            }
             parent::workEdit($d, $files['image'], $work);
             $bookDetail->setNumOfPages((int)$d['numOfPages']);
             $bookDetail->setPublishers(trim($d['publishers']));
@@ -81,7 +89,6 @@ class BookDetailController extends WorkController
             $text = 'Knižné údaje obsahujú chyby.';
             $color = 'danger';
         }
-        $data2 = $this->getData();
         return $this->html($data + $data2 + compact( 'text', 'color'), 'edit');
     }
 

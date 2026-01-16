@@ -38,13 +38,12 @@ function checkDescription(description) {
     return ["lightgreen", ""];
 }
 
-function checkImage(workImage) {
+function checkImage(workImage, isEdit) {
+    if (isEdit && !workImage.files[0]) {
+        return ["lightgreen", ""];
+    }
     if (!workImage.files[0]) {
         return ["red", "Náhľad je povinný!"];
-    }
-    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
-    if (!allowedExtensions.exec(workImage.files[0].name)) {
-        return ["red", "Obrázok musí byť vo formáte .jpg, .jpeg, .png alebo .gif!"];
     }
     const maxSizeInBytes = 5 * 1024 * 1024;
     if (workImage.files[0].size > maxSizeInBytes) {
@@ -143,13 +142,14 @@ function checkAuthor(author) {
 
 function checkForm() {
     let valid = true;
+    const isEdit = document.getElementById('movieEdit') !== null || document.getElementById('bookEdit') !== null || document.getElementById('seriesEdit') !== null;
 
     const workName = document.getElementById(idElements[0]);
     const description = document.getElementById(idElements[1]);
     const workImage = document.getElementById(idElements[2]);
     const resultWorkName = checkWorkName(workName);
     const resultDescription = checkDescription(description);
-    const resultWorkImage = checkImage(workImage);
+    const resultWorkImage = checkImage(workImage, isEdit);
     document.getElementById(idMessages[2]).textContent = resultWorkImage[1];
     if (resultWorkImage[0] === "red") {
         valid = false;
@@ -247,7 +247,9 @@ function apply(idElement, idMessage, controlFunction, input, focusout) {
 }
 
 window.addEventListener('DOMContentLoaded', function() {
-    const sending = document.getElementById('movieForm') || document.getElementById('bookForm') || document.getElementById('seriesForm');
+    const sending = document.getElementById('movieAdd') || document.getElementById('bookAdd') || document.getElementById('seriesAdd')
+    || document.getElementById('movieEdit') || document.getElementById('bookEdit') || document.getElementById('seriesEdit');
+
     if (sending) {
         sending.addEventListener('submit',  function (event) {
             event.preventDefault();

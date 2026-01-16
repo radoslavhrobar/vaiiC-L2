@@ -12,7 +12,7 @@
     <strong id="workNameMessage"></strong>
 </div>
 <div class="row">
-    <label class="col-sm-3" for="genre">Žáner:
+    <label class="col-sm-3" for="genreTemplate">Žáner:
         <span class="imp">*</span>
     </label>
     <select class="col-sm-6" name="genre" id="genreTemplate">
@@ -54,6 +54,6 @@
     <label class="col-sm-3" for="workImage">Náhľad:
         <span class="imp">*</span>
     </label>
-    <input class="col-sm-6" type="file" name="image" id="workImage">
+    <input class="col-sm-6" type="file" name="image" id="workImage" accept="image/jpeg,image/png">
     <strong id="workImageMessage"></strong>
 </div>

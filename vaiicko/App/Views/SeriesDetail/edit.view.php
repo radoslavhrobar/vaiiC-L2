@@ -5,7 +5,7 @@
 /** @var string $color */
 ?>
 
-<form id="seriesForm" class="forms formsOrganized" action="<?= $link->url("seriesDetail.editSeries") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
+<form id="seriesEdit" class="forms formsOrganized" action="<?= $link->url("seriesDetail.editSeries") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
     <h4 class="titleName mt-4">Upravenie seriálu</h4>
     <?php require __DIR__ . '/../Work/editTemplate.view.php' ?>
     <div class="row">
@@ -36,9 +36,7 @@
         <input class="col-sm-6" type="text" name="director" id="director" value="<?= $seriesDetail->getDirector() ?>">
         <strong id="directorMessage"></strong>
     </div>
-    <div class="text-center">
-        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
-    </div>
+    <?php require __DIR__ . '/../Work/errors.view.php' ?>
     <div class="text-center">
         <input class="btn-brown" type="submit" value="Upraviť seriál">
     </div>

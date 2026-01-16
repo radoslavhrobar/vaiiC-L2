@@ -245,6 +245,18 @@ class WorkController extends BaseController
         $work->save();
     }
 
+    public function changeImage(Work $work, $file): void
+    {
+        $uploadDir = __DIR__ . '/../../public/uploads/works';
+        $filename = uniqid() . '-' . $file->getName();
+        $file->store($uploadDir . '/' . $filename);
+        $old = $work->getImage();
+        if (file_exists($uploadDir . '/' . $old)) {
+            unlink($uploadDir . '/' . $old);
+        }
+        $work->setImage($filename);
+    }
+
     public function form(Request $request) : Response
     {
         return $this->html();

@@ -2,7 +2,7 @@
 /** @var \Framework\Support\LinkGenerator $link*/
 ?>
 
-<form id="seriesForm" class="forms formsOrganized" action="<?= $link->url("seriesDetail.addSeries") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
+<form id="seriesAdd" class="forms formsOrganized" action="<?= $link->url("seriesDetail.addSeries") ?>" enctype="multipart/form-data" method="post" autocomplete="on">
     <?php require __DIR__ . '/../Work/adding.view.php' ?>
     <h4 class="titleName mt-4">Pridanie seriálu</h4>
     <?php require __DIR__ . '/../Work/addTemplate.view.php' ?>
