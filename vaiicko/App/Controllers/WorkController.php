@@ -33,20 +33,9 @@ class WorkController extends BaseController
         $data = $request->post();
         $genres = Genre::getAll();
         $types = TypesOfWork::cases();
-        $sql = '
-            SELECT 
-                w.id, w.name, w.type, w.date_of_issue, w.description, w.image,
-                g.name AS genre, c.name AS country, 
-                AVG(r.rating) AS avg_rating, 
-                COUNT(r.rating) AS rating_count, 
-                COUNT(fw.work_id) AS favorites_count
-            FROM works w
-            JOIN countries c ON w.place_of_issue_id = c.id
-            JOIN genres g ON w.genre_id = g.id
-            LEFT JOIN reviews r ON r.work_id = w.id
-            LEFT JOIN favoriteworks fw ON fw.work_id = w.id
-        ';
+        $sql = self::getBaseSqlForRankedWorks();
         $ok = true;
+        $params = [];
         if ($data) {
             if (!isset($data['type'], $data['genre'], $data['yearTo'], $data['yearFrom'], $data['order'])) {
                 throw new \Exception('Nedostatočné údaje pre filtrovanie.');
@@ -76,10 +65,30 @@ class WorkController extends BaseController
         $sql .= ' GROUP BY w.id, w.name, w.type, w.date_of_issue, g.name, c.name';
         $orderBy = $this->whichOrderBy($data['order'] ?? '');
         $sql .= ' ORDER BY ' . $orderBy;
+        $works = self::executeDatabase($sql, $params);
+        return $this->html(compact('genres', 'types', 'works', 'ok'));
+    }
+
+    public static function executeDatabase($sql, $params) : array {
         $stmt = Connection::getInstance()->prepare($sql);
         $stmt->execute($params ?? null);
-        $works = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        return $this->html(compact('genres', 'types', 'works', 'ok'));
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function getBaseSqlForRankedWorks() : string {
+        return '
+            SELECT 
+                w.id, w.name, w.type, w.date_of_issue, w.description, w.image,
+                g.name AS genre, c.name AS country, 
+                AVG(r.rating) AS avg_rating, 
+                COUNT(r.rating) AS rating_count, 
+                COUNT(fw.work_id) AS favorites_count
+            FROM works w
+            JOIN countries c ON w.place_of_issue_id = c.id
+            JOIN genres g ON w.genre_id = g.id
+            LEFT JOIN reviews r ON r.work_id = w.id
+            LEFT JOIN favoriteworks fw ON fw.work_id = w.id
+        ';
     }
 
     public function whichOrderBy($order) : string{

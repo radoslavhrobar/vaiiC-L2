@@ -1,11 +1,13 @@
 <?php
-
 /** @var \Framework\Core\IAuthenticator $auth */
 /** @var \Framework\Support\LinkGenerator $link */
+/** @var $best */
+/** @var $favs */
+/** @var $recent */
 ?>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-5">
         <div id="carouselExample" class="carousel slide main-carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -26,7 +28,7 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-7">
         <div class="card registration-info">
             <div class="card-body">
                 <h4 class="card-title mb-4">
@@ -44,7 +46,7 @@
                 <ul class="list-unstyled mb-4">
                     <li class="mb-2">
                         <i class="bi-film me-2"></i>
-                        Prehľad oblasti kinematografie a literatúry
+                        Prehľad rebríčkov diel kinematografie a literatúry
                         <i class="bi bi-book-half ms-2"></i>
                     </li>
                     <li class="mb-2">
@@ -53,9 +55,58 @@
                     </li>
                     <li >
                         <i class="bi-person me-2"></i>
-                        Spoj sa s ľuďmi, ktorí zdieľajú tvoju vášeň pre diela
+                        Preskúmavaj profily iných používateľov
                     </li>
                 </ul>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-sm-6">
+                <div class="card mainPageRankings mx-sm-0 mx-4 mb-3">
+                    <div class="card-body">
+                        <h5 class="text-center mb-3 border-bottom pb-2">
+                            <i class="bi bi-star-fill text-danger"></i> Najlepšie diela
+                        </h5>
+                        <?php foreach ($best as $work): ?>
+                            <div class="d-flex align-items-center justify-content-center mb-3 gap-md-3">
+                                <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded me-3" alt="Plagát">
+                                <div class="text-center d-flex flex-column gap-2" style="width:150px">
+                                    <div class="fw-bold text-center"><?= $work['name'] ?></div>
+                                    <div class="specialBackgroundColor text-white px-3 py-2 rounded fs-4 fw-bold text-center">
+                                            <?= $work['avg_rating'] !== null ? $work['avg_rating'] / 5 * 100 . '%' : '? %' ?>
+                                    </div>
+                                    <div class="text-center text-danger fw-bold">
+                                        <?= $work['rating_count'] ?> hodnotení
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="card mainPageRankings mx-sm-0 mx-4 mb-3">
+                    <div class="card-body">
+                        <h5 class="text-center mb-3 border-bottom pb-2">
+                            ❤️ Najobľúbenejšie diela
+                        </h5>
+                        <?php foreach ($favs as $work): ?>
+                            <div class="d-flex align-items-center justify-content-center mb-3 gap-md-3">
+                                <img src="poster4.jpg" class="rounded me-3" alt="Plagát">
+                                <div class="text-center d-flex flex-column gap-2" style="width:150px">
+                                    <div class="fw-bold text-center"><?= $work['name'] ?></div>
+                                    <div class="specialBackgroundColor text-white px-3 py-2 rounded">
+                                        <div class="fs-4 text-center fw-bold">
+                                            <?= $work['favorites_count'] ?>❤️
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

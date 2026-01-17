@@ -75,6 +75,10 @@ body {
     background-color: blanchedalmond;
 }
 
+.border-bottom {
+    border-bottom: 2px solid saddlebrown !important;
+}
+
 .titleName {
     text-align: center;
     margin-top: 20px;
@@ -140,6 +144,10 @@ body {
     color: #5b3a29;
 }
 
+.specialColor2 {
+    color: #c98238;
+}
+
 .rankingsCard .card-body {
     background-color: burlywood;
 }
@@ -156,6 +164,10 @@ body {
 
 .userInfoCol {
     border: 2px solid saddlebrown;
+}
+
+.mainPageRankings {
+    border: 4px double saddlebrown;
 }
 
 .btnUserPage {

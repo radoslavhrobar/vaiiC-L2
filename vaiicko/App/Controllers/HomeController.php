@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use Framework\Core\BaseController;
+use Framework\DB\Connection;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 
@@ -40,7 +41,23 @@ class HomeController extends BaseController
      */
     public function index(Request $request): Response
     {
-        return $this->html();
+        $sql = WorkController::getBaseSqlForRankedWorks();
+        $sql .= ' GROUP BY w.id, w.name, w.type, w.date_of_issue, g.name, c.name';
+        $sqlBest = $sql . ' ORDER BY avg_rating DESC LIMIT 3';
+        $sqlFavs = $sql . ' ORDER BY favorites_count DESC LIMIT 3';
+        $best = WorkController::executeDatabase($sqlBest, null);
+        $favs = WorkController::executeDatabase($sqlFavs, null);
+        $sqlMostRecent = $this->getSqlForMostRecentWorks();
+        $recent = WorkController::executeDatabase($sqlMostRecent, null);
+        return $this->html(compact('best', 'favs', 'recent'));
+    }
+
+    public function getSqlForMostRecentWorks() : string
+    {
+        return 'SELECT 
+                w.id, w.name, w.type, w.image
+            FROM works w 
+            ORDER BY w.date_of_issue DESC LIMIT 10';
     }
 
     public function kino(Request $request): Response
