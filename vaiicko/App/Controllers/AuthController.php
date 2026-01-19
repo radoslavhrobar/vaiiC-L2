@@ -174,9 +174,7 @@ class AuthController extends BaseController
                 throw new Exception("Cieľový používateľ nenájdený.");
             }
             $target->delete();
-            $users = User::getAll();
-            $isAdmin = $this->checkAdmin();
-            return $this->html(compact('users', 'isAdmin'), 'all');
+            return $this->redirect($this->url("auth.all"));
         }
         $user->delete();
         $this->app->getAuth()->logout();
@@ -284,10 +282,14 @@ class AuthController extends BaseController
                 (SELECT COUNT(*) FROM reviews r WHERE r.user_id = u.id) AS rating_count,
                 (SELECT COUNT(*) FROM favoriteworks fw WHERE fw.user_id = u.id) AS fav_count
             FROM users u
-            ORDER BY review_count DESC, rating_count DESC, fav_count DESC
         ';
+        if ($this->app->getAuth()->isLogged()) {
+            $sql.= ' WHERE u.id != ? ';
+            $params[] = $this->app->getAuth()->getUser()->getId();
+        }
+        $sql .= ' ORDER BY review_count DESC, rating_count DESC, fav_count DESC ';
         $stmt = Connection::getInstance()->prepare($sql);
-        $stmt->execute();
+        $stmt->execute($params ?? null);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 

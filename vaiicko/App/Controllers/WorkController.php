@@ -97,14 +97,22 @@ class WorkController extends BaseController
             SELECT 
                 w.id, w.name, w.type, w.date_of_issue, w.description, w.image,
                 g.name AS genre, c.name AS country, 
-                AVG(r.rating) AS avg_rating, 
-                COUNT(r.rating) AS rating_count, 
-                COUNT(fw.work_id) AS favorites_count
+                r.avg_rating,
+                r.rating_count,
+                f.favorites_count
             FROM works w
             JOIN countries c ON w.place_of_issue_id = c.id
             JOIN genres g ON w.genre_id = g.id
-            LEFT JOIN reviews r ON r.work_id = w.id
-            LEFT JOIN favoriteworks fw ON fw.work_id = w.id
+            LEFT JOIN (
+                SELECT work_id, AVG(rating) AS avg_rating, COUNT(*) AS rating_count
+                FROM reviews
+                GROUP BY work_id
+            ) r ON r.work_id = w.id
+            LEFT JOIN (
+                SELECT work_id, COUNT(*) AS favorites_count
+                FROM favoriteworks
+                GROUP BY work_id
+            ) f ON f.work_id = w.id 
         ';
     }
 
@@ -188,16 +196,15 @@ class WorkController extends BaseController
         }
         $genreByWorkId = Genre::getOne($work->getGenre());
         $countryByWorkId = Country::getOne($work->getPlaceOfIssue());
-        $reviews = Review::getAll('work_id = ?', [$work->getId()], 'created_at DESC');
-        $avgRating = $this->getAverageRating($reviews)/5*100;
-        $reviewsFiltered  = Review::getAll('(`work_id` = ? AND `body` IS NOT NULL)', [$work->getId()], 'created_at DESC');
-        $users = $this->getUsersByIds($reviewsFiltered);
+        $ratings = Review::getAll(whereClause: '`work_id` = ?', whereParams: [$work->getId()]);
+        $avgRating = $this->getAverageRating($ratings);
+        $data = $this->getUsersReviews($work->getId());
         $myReview = null;
-        $hasReview = $this->hasReview($reviews, $this->app->getAuth()->getUser(), $myReview);
+        $hasReview = $this->hasReview($ratings, $this->app->getAuth()->getUser(), $myReview);
         $isFavorite  = $this->isFavorite($work, $this->app->getAuth()->getUser());
         $text = $request->value('text');
         $color = $request->value('color');
-        return compact('work', 'genreByWorkId', 'countryByWorkId', 'reviews', 'reviewsFiltered', 'users', 'hasReview', 'myReview', 'text', 'color', 'isFavorite', 'avgRating');
+        return compact('work','ratings', 'hasReview', 'myReview', 'text', 'color', 'isFavorite', 'avgRating', 'genreByWorkId', 'countryByWorkId', 'data');
     }
 
     public function getAverageRating($reviews): float {
@@ -222,12 +229,13 @@ class WorkController extends BaseController
         return false;
     }
 
-    public function getUsersByIds(array $reviews) : array {
-        $users = [];
-        foreach ($reviews as $i => $review) {
-            $users[$i] = User::getOne($review->getUserId());
-        }
-        return $users;
+    public function getUsersReviews($workId) : array {
+        $sql = 'SELECT r.id, u.username, r.rating, r.body FROM users u
+                JOIN reviews r ON u.id = r.user_id
+                WHERE r.body IS NOT NULL 
+                AND r.work_id = ?
+                ORDER BY r.created_at DESC';
+        return self::executeDatabase($sql, [$workId]);
     }
 
     public function hasReview(array $reviews, ?User $user, ?Review &$myReview): bool

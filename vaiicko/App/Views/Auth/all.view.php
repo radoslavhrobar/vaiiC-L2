@@ -10,9 +10,6 @@ use App\Helpers\Role;
 <h3 class="titleName">Zoznam používateľov</h3>
 <div class="user-list">
 <?php foreach ($data as $i => $d): ?>
-    <?php if ($auth->getUser() && $d['id'] !== $auth->getUser()->getId()):
-        continue; ?>
-    <?php else: ?>
         <div class="card user-card">
             <div class="card-header">
                 <form action="<?= $link->url('auth.page') ?>" method="post">
@@ -30,7 +27,7 @@ use App\Helpers\Role;
                             </div>
                         <?php endif; ?>
                         <div>
-                            📝  <?= $d['review_count'] ?> recenzií
+                            📝 <?= $d['review_count'] ?> recenzií
                         </div>
                         <div class="ms-1">
                             <i class="bi bi-star-fill text-danger"></i> <?= $d['rating_count'] ?> hodnotení
@@ -40,14 +37,14 @@ use App\Helpers\Role;
                         </div>
                     </div>
                     <?php if ($isAdmin && $d['role'] !== Role::Admin->name): ?>
-                        <form method="post" action="<?= $link->url('auth.delete') ?>" onsubmit="return confirm('Odstrániť používateľa <?= addslashes($d['username']) ?>?');">
+                        <form method="post" action="<?= $link->url('auth.delete') ?>"
+                              onsubmit="return confirm('Odstrániť používateľa <?= addslashes($d['username']) ?>?');">
                             <input type="hidden" name="id" value="<?= $d['id'] ?>">
-                            <button type="submit" class="btn-delete">Odstrániť</button>
+                            <button type="submit" class="bg-danger btn-delete">Odstrániť</button>
                         </form>
                     <?php endif; ?>
                 </div>
             </div>
         </div>
-    <?php endif; ?>
 <?php endforeach; ?>
 </div>

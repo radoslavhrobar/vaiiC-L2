@@ -1,9 +1,8 @@
 <?php
 /** @var Framework\Support\LinkGenerator $link */
 /** @var \App\Models\Work $work */
-/** @var \App\Models\Review[] $reviews */
-/** @var \App\Models\Review[] $reviewsFiltered */
-/** @var \App\Models\User[] $users */
+/** @var \App\Models\Review[] $ratings */
+/** @var $data */
 /** @var bool $hasReview */
 /** @var \App\Models\Review $myReview */
 /** @var bool $isFavorite */
@@ -29,23 +28,23 @@
 <div class="pageParts p-4 rounded mb-5">
     <h4 class="fw-bold mb-4">
         Recenzie
-        <span class="text-secondary">(<?= count($reviewsFiltered) ?>)</span>
+        <span class="text-secondary">(<?= count($data) ?>)</span>
     </h4>
 
-    <?php foreach ($reviewsFiltered as $i => $review):
-        if (!$myReview || $review->getId() !== $myReview->getId()):?>
+    <?php foreach ($data as $i => $d):
+        if (!$myReview || $d['id'] !== $myReview->getId()):?>
             <div class="card pageParts mb-3">
                 <div class="card-body">
                     <div>
-                        <strong class="fw-bold fs-5"><?= $users[$i]->getUsername() ?></strong>
+                        <strong class="fw-bold fs-5"><?= $d['username'] ?></strong>
                         <span class="userRating fw-normal">
-                            <?php for ($j = 0; $j < $review->getRating(); $j++): ?>
+                            <?php for ($j = 0; $j < $d['rating']; $j++): ?>
                                 ★
                             <?php endfor; ?>
                         </span>
                     </div>
                     <p class="mb-0 mt-2">
-                        <?= $review->getBody() ?: ''  ?>
+                        <?= $d['body'] ?: ''  ?>
                     </p>
                 </div>
             </div>

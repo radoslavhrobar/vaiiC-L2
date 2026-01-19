@@ -77,19 +77,26 @@
                 </div>
                 <div class="text-center d-flex flex-column justify-content-center">
                     <?php if ((isset($_REQUEST['order']) && $_REQUEST['order'] !== 'favorite') ||  !isset($_REQUEST['order'])): ?>
-                        <div class="specialBackgroundColor text-white fw-bold fs-5 px-3 py-2 rounded">
+                        <div class="text-white fw-bold fs-5 px-3 py-2 rounded
+                        <?= $work['avg_rating'] >= 4.5
+                            ? 'first'
+                            : ($work['avg_rating'] >= 3.5
+                                ? 'second'
+                                : ($work['avg_rating'] >= 2.5
+                                    ? 'third'
+                                    : 'last'
+                                )
+                            )
+                        ?>">
                             <?= $work['avg_rating'] !== null ? $work['avg_rating'] / 5 * 100 . '%' : '? %' ?>
                         </div>
                         <div class="text-secondary mt-1">
-                            <?= $work['rating_count'] ?> hodnotení
+                            <?= $work['rating_count'] ?? '0' ?> hodnotení
                         </div>
                     <?php else: ?>
                     <div class="specialBackgroundColor text-white fw-bold px-3 py-2 rounded">
                         <div class="fs-4">
-                            <?= $work['favorites_count'] ?>
-                        </div>
-                        <div class="text-secondary">
-                            fanúšikov
+                            <?= $work['favorites_count'] ?? '0' ?>  ❤️
                         </div>
                     </div>
                     <?php endif; ?>

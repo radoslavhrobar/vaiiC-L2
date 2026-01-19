@@ -124,11 +124,9 @@ body {
 }
 
 .btn-delete {
-    background-color: saddlebrown;
     padding: 8px 14px;
     border-radius: 6px;
     font-weight: bold;
-    margin-top: 10px;
 }
 
 .form-control:focus {
@@ -264,6 +262,22 @@ body {
 .list-group-item {
     background-color: burlywood;
     border-color: #5b3a29;
+}
+
+.first {
+    background-color: #6b4431;
+}
+
+.second {
+    background-color: #9e6c3d;
+}
+
+.third {
+    background-color: #d69a36;
+}
+
+.last {
+    background-color: black;
 }
 
 
