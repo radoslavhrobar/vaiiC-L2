@@ -5,7 +5,7 @@ async function serverSearchWorks() {
     if (!inputE || !results) return;
     const text = inputE.value.trim();
     if (text.length < 2) {
-        results.innerHTML = "";
+        results.innerHTML = "";y
         return;
     }
 
@@ -27,7 +27,7 @@ async function serverSearchWorks() {
         item.className = "list-group-item list-group-item-action";
         item.innerHTML = `
                         <strong>${work.name}</strong>
-                        <span class="text-muted">(${work.type})</span>
+                        <span class="text-muted">(${work.year}) (${work.type})</span>
                     `;
         results.appendChild(item);
     });

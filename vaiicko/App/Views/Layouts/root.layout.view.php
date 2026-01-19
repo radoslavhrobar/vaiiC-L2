@@ -57,7 +57,7 @@
                     <form class="d-flex" role="search">
                         <div class="position-relative">
                             <input id="searchInput" class="form-control me-2" type="search" placeholder="Hľadať dielo..." autocomplete="off">
-                            <div id="searchResults" class="list-group position-absolute w-100 mt-1" style="z-index:1000"></div>
+                            <div id="searchResults" class="list-group position-absolute w-100 mt-1"></div>
                         </div>
                     </form>
                 </div>

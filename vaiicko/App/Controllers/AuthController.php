@@ -185,11 +185,9 @@ class AuthController extends BaseController
 
     public function all(Request $request): Response
     {
-        $users = User::getAll(orderBy: '`username` DESC');
+        $data = $this->getUsersReviewRatingFavCounts();
         $isAdmin = $this->checkAdmin();
-        $reviewCounts = $this->getReviewCountsByIds($users);
-        $ratingCounts = $this->getRatingCountsByIds($users);
-        return $this->html(compact('users', 'isAdmin', 'reviewCounts', 'ratingCounts'));
+        return $this->html(compact('isAdmin', 'data'));
     }
 
     public function page(Request $request): Response
@@ -279,28 +277,26 @@ class AuthController extends BaseController
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public function getUsersReviewRatingFavCounts() : array {
+        $sql = '
+            SELECT u.id, u.username, u.name, u.surname, u.role,
+                (SELECT COUNT(*) FROM reviews r WHERE r.user_id = u.id AND r.body IS NOT NULL) AS review_count,
+                (SELECT COUNT(*) FROM reviews r WHERE r.user_id = u.id) AS rating_count,
+                (SELECT COUNT(*) FROM favoriteworks fw WHERE fw.user_id = u.id) AS fav_count
+            FROM users u
+            ORDER BY review_count DESC, rating_count DESC, fav_count DESC
+        ';
+        $stmt = Connection::getInstance()->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function calculatePercentages($favGenres, $max) : array {
         $percentages = [];
         foreach ($favGenres as $i => $genre) {
             $percentages[$i] = ($max > 0) ? ($genre['count'] / $max) * 100 : 0;
         }
         return $percentages;
-    }
-
-    public function getReviewCountsByIds(array $users) : array {
-        $counts = [];
-        foreach ($users as $i => $user) {
-            $counts[$i] = count(Review::getAll(whereClause: '`user_id` = ? AND `body` IS NOT NULL', whereParams: [$user->getId()]));
-        }
-        return $counts;
-    }
-
-    public function getRatingCountsByIds(array $users) : array {
-        $counts = [];
-        foreach ($users as $i => $user) {
-            $counts[$i] = count(Review::getAll(whereClause: '`user_id` = ?', whereParams: [$user->getId()]));
-        }
-        return $counts;
     }
 
     public function checkAdmin(): bool

@@ -30,13 +30,23 @@ class WorkController extends BaseController
     }
 
     public function rankings(Request $request): Response {
-        $data = $request->post();
-        $genres = Genre::getAll();
         $types = TypesOfWork::cases();
         $sql = self::getBaseSqlForRankedWorks();
         $ok = true;
         $params = [];
-        if ($data) {
+        $page = $request->value('page');
+        $get = true;
+        $genres = Genre::getAll();
+        if ($page) {
+            $data = $request->get();
+        } else {
+            $data = $request->post();
+            if ($data) {
+                $genres = $this->chooseGenres($data['type'] ?? '');
+            }
+            $get = false;
+        }
+        if (($get && count($data) > 3) || (!$get && $data)) {
             if (!isset($data['type'], $data['genre'], $data['yearTo'], $data['yearFrom'], $data['order'])) {
                 throw new \Exception('Nedostatočné údaje pre filtrovanie.');
             }
@@ -66,7 +76,14 @@ class WorkController extends BaseController
         $orderBy = $this->whichOrderBy($data['order'] ?? '');
         $sql .= ' ORDER BY ' . $orderBy;
         $works = self::executeDatabase($sql, $params);
-        return $this->html(compact('genres', 'types', 'works', 'ok'));
+
+        $perPage = 10;
+        $currentPage = isset($page) ? (int)$page : 1;
+        $totalWorks = count($works);
+        $totalPages = ceil((float)$totalWorks / $perPage);
+        $start = ($currentPage - 1) * $perPage;
+        $worksToShow = array_slice($works, $start, $perPage);
+        return $this->html(compact('genres', 'types', 'works', 'ok', 'worksToShow', 'currentPage', 'totalPages', 'start'));
     }
 
     public static function executeDatabase($sql, $params) : array {
@@ -159,7 +176,7 @@ class WorkController extends BaseController
             'Film', 'Seriál' => Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kino', 'Obidva']),
             'Kniha' => Genre::getAll(whereClause: '(`type` = ? OR `type` = ?)', whereParams: ['Kniha', 'Obidva']),
             'všetky' => Genre::getAll(),
-            default => [],
+            default => throw new \Exception('Neplatný typ diela.')
         };
     }
     public function initialPage(Request $request): array
@@ -304,7 +321,7 @@ class WorkController extends BaseController
         if (empty($id)) {
             return false;
         }
-        $genre = Genre::getOne($id);
+        $genre = Genre::getOne((int)$id);
         if (empty($genre)) {
             return false;
         }
@@ -324,7 +341,7 @@ class WorkController extends BaseController
         if (empty($id)) {
             return false;
         }
-        $country = Country::getOne($id);
+        $country = Country::getOne((int)$id);
         if (empty($country)) {
             return false;
         }

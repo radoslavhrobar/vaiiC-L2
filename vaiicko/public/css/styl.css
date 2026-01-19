@@ -1,8 +1,14 @@
+@media (min-width: 576px) {
+    .user-card { margin: 0 100px 10px !important; }
+}
 @media (min-width: 768px) {
-    .user-card {
-        margin-left: 200px;
-        margin-right: 200px;
-    }
+    .user-card { margin: 0 180px 10px !important; }
+}
+@media (min-width: 992px) {
+    .user-card { margin: 0 240px 10px !important; }
+}
+@media (min-width: 1200px) {
+    .user-card { margin: 0 200px 10px !important; }
 }
 
 body {
@@ -247,6 +253,18 @@ body {
     border-radius: 0.5rem;
 }
 
+.list-group {
+    z-index: 1;
+}
+
+.list-group-item:hover {
+    background-color: #855a35;
+}
+
+.list-group-item {
+    background-color: burlywood;
+    border-color: #5b3a29;
+}
 
 
 
