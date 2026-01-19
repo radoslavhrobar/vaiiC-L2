@@ -92,6 +92,18 @@ class BookDetailController extends WorkController
         return $this->html($data + $data2 + compact( 'text', 'color'), 'edit');
     }
 
+    public function delete(Request $request): Response
+    {
+        $data = $this->checkForExistence($request);
+        $work = $data['work'];
+        $bookDetail = $data['bookDetail'];
+        $bookDetail->delete();
+        parent::workDelete($work);
+        $text = 'Kniha bola úspešne zmazaná.';
+        $color = 'success';
+        return $this->redirect($this->url('home.index', compact('text', 'color')));
+    }
+
     public function checkForExistence(Request $request): array
     {
         $workId = (int)$request->value('id');

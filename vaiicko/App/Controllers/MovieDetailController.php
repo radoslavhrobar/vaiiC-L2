@@ -92,6 +92,18 @@ class MovieDetailController extends WorkController
         return $this->html($data + $data2 + compact('text', 'color'), 'edit');
     }
 
+    public function delete(Request $request): Response
+    {
+        $data = $this->checkForExistence($request);
+        $work = $data['work'];
+        $movieDetail = $data['movieDetail'];
+        $movieDetail->delete();
+        parent::workDelete($work);
+        $text = 'Film bol úspešne zmazaný.';
+        $color = 'success';
+        return $this->redirect($this->url('home.index', compact('text', 'color')));
+    }
+
     public function checkForExistence(Request $request): array
     {
         $workId = (int)$request->value('id');

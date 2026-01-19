@@ -207,6 +207,7 @@ class WorkController extends BaseController
         return compact('work','ratings', 'hasReview', 'myReview', 'text', 'color', 'isFavorite', 'avgRating', 'genreByWorkId', 'countryByWorkId', 'data');
     }
 
+
     public function getAverageRating($reviews): float {
         if (count($reviews) === 0) {
             return 0;
@@ -423,5 +424,15 @@ class WorkController extends BaseController
             return compact('text', 'color') +  $data;
         }
         return [];
+    }
+
+    public function workDelete(mixed $work)
+    {
+        $uploadDir = __DIR__ . '/../../public/uploads/works';
+        $old = $work->getImage();
+        if (file_exists($uploadDir . '/' . $old)) {
+            unlink($uploadDir . '/' . $old);
+        }
+        $work->delete();
     }
 }

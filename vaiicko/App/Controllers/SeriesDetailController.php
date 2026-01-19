@@ -96,6 +96,18 @@ class SeriesDetailController extends WorkController
         return $this->html($data + $data2 + compact( 'text', 'color'), 'edit');
     }
 
+    public function delete(Request $request): Response
+    {
+        $data = $this->checkForExistence($request);
+        $work = $data['work'];
+        $seriesDetail = $data['seriesDetail'];
+        $seriesDetail->delete();
+        parent::workDelete($work);
+        $text = 'Seriál bol úspešne zmazaný.';
+        $color = 'success';
+        return $this->redirect($this->url('home.index', compact('text', 'color')));
+    }
+
     public function checkForExistence(Request $request): array
     {
         $workId = (int)$request->value('id');

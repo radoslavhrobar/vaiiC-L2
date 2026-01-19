@@ -4,9 +4,14 @@
 /** @var $best */
 /** @var $favs */
 /** @var $recent */
+/** @var $text */
+/** @var $color */
 ?>
 
 <div class="row">
+    <div class="text-center mt-2">
+        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
+    </div>
     <div class="col-md-5">
         <div id="carouselExample" class="carousel slide main-carousel">
             <div class="carousel-inner">

@@ -61,7 +61,12 @@
         Upraviť detaily knihy
 </div>
 <div class="text-center">
-    <button onclick="window.location.href='<?= $link->url("bookDetail.delete", ['id' => $work->getId()]) ?>'" type="submit" class="bg-danger btn-delete">
+    <button
+            type="button"
+            class="bg-danger btn-delete"
+            onclick="return confirm('Odstrániť knihu <?= addslashes($work->getName()) ?>?')
+                    && (window.location.href='<?= $link->url("bookDetail.delete", ['id' => $work->getId()]) ?>');">
         Odstrániť knihu
+    </button>
 </div>
 </div>

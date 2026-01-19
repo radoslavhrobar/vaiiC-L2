@@ -65,7 +65,12 @@
             Upraviť detaily seriálu
     </div>
     <div class="text-center">
-        <button onclick="window.location.href='<?= $link->url("seriesDetail.delete", ['id' => $work->getId()]) ?>'" type="submit" class="bg-danger btn-delete">
+        <button
+                type="button"
+                class="bg-danger btn-delete"
+                onclick="return confirm('Odstrániť seriál <?= addslashes($work->getName()) ?>?')
+                        && (window.location.href='<?= $link->url("seriesDetail.delete", ['id' => $work->getId()]) ?>');">
             Odstrániť seriál
+        </button>
     </div>
 </div>

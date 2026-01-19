@@ -41,6 +41,13 @@ class HomeController extends BaseController
      */
     public function index(Request $request): Response
     {
+        $text = $request->value('text');
+        if ($text) {
+            $color = $request->value('color');
+        } else {
+            $text = null;
+            $color = null;
+        }
         $sql = WorkController::getBaseSqlForRankedWorks();
         $sql .= ' GROUP BY w.id, w.name, w.type, w.date_of_issue, g.name, c.name';
         $sqlBest = $sql . ' ORDER BY avg_rating DESC LIMIT 3';
@@ -49,7 +56,7 @@ class HomeController extends BaseController
         $favs = WorkController::executeDatabase($sqlFavs, null);
         $sqlMostRecent = $this->getSqlForMostRecentWorks();
         $recent = WorkController::executeDatabase($sqlMostRecent, null);
-        return $this->html(compact('best', 'favs', 'recent'));
+        return $this->html(compact('best', 'favs', 'recent', 'text', 'color'));
     }
 
     public function getSqlForMostRecentWorks() : string
