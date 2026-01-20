@@ -166,16 +166,19 @@ class WorkController extends BaseController
             throw new \Exception('Používateľ nie je prihlásený.');
         }
         $isFavorite = $this->isFavorite($work, $user);
+        $adding = true;
         if ($isFavorite) {
             $isFav = FavoriteWork::getAll(whereClause: '(`user_id` = ? AND `work_id` = ?)', whereParams: [$user->getId(), $work->getId()]);
             $isFav[0]->delete();
-            return $this->json(['adding' => false]);
+            $adding = false;
+        } else {
+            $favWork = new FavoriteWork();
+            $favWork->setUserId($user->getId());
+            $favWork->setWorkId($work->getId());
+            $favWork->save();
         }
-        $favWork = new FavoriteWork();
-        $favWork->setUserId($user->getId());
-        $favWork->setWorkId($work->getId());
-        $favWork->save();
-        return $this->json(['adding' => true]);
+        $count = count(FavoriteWork::getAll(whereClause: '`work_id` = ?', whereParams: [$work->getId()]));
+        return $this->json(['adding' => $adding, 'countFav' => $count]);
     }
 
     public function chooseGenres(string $typeOfWork): array

@@ -53,13 +53,13 @@
                 )
             )
         ?>">
-            <?= $avgRating/5*100 ?>%
+            <?= $avgRating !== 0 ? $avgRating/5*100 : '? ' ?>%
         </div>
         <div class="text-secondary fw-bold mt-2 ">
             <?= count($ratings) ?> hodnotení
         </div>
         <div class="text-secondary fw-bold mt-2">
-            <?= $favCount ?> ❤️
+            <span id="favoriteCount" ><?= $favCount ?></span> ❤️
         </div>
     </div>
 </div>

@@ -1,5 +1,6 @@
 <?php
 /** @var Framework\Support\LinkGenerator $link */
+/** @var \Framework\Core\IAuthenticator $auth */
 /** @var \App\Models\User $user */
 /** @var $favGenres */
 /** @var $percentages */
@@ -36,8 +37,12 @@
                     </div>
                 <?php endforeach; ?>
             </div>
-        <?php else: ?>
-            <p class="text-muted">Používateľ zatiaľ nemá obľúbené žánre.</p>
+        <?php else:
+            if ($auth->isLogged() && $auth->getUser()->getId() == $user->getId()) : ?>
+                <p class="text-muted">Zatiaľ nemáš žiadne obľúbené žánre.</p>
+            <?php else : ?>
+                <p class="text-muted">Používateľ zatiaľ nemá obľúbené žánre.</p>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>

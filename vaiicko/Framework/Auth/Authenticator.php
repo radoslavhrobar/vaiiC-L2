@@ -23,7 +23,7 @@ class Authenticator implements IAuthenticator
     {
         $users = User::getAll(whereClause: '`username` = ?', whereParams: [$username]);
         $user = $users[0] ?? null;
-        if ($user && $password === $user->getPassword()) {
+        if ($user && password_verify($password, $user->getPassword())) {
             $this->user = $user;
             $this->session->set('user_id', $user->getId());
             return true;

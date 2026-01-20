@@ -76,9 +76,18 @@
                         <?php foreach ($best as $work): ?>
                             <div class="d-flex align-items-center justify-content-center mb-3 gap-md-3">
                                 <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded me-3" alt="Plagát">
-                                <div class="text-center d-flex flex-column gap-2" style="width:150px">
+                                <div class="text-center d-flex flex-column gap-1" style="width:150px">
                                     <div class="fw-bold text-center"><?= $work['name'] ?></div>
-                                    <div class="specialBackgroundColor text-white px-3 py-2 rounded fs-4 fw-bold text-center">
+                                    <div class="text-white px-3 py-2 rounded fs-4 fw-bold text-center <?= $work['avg_rating'] >= 4.5
+                                        ? 'first'
+                                        : ($work['avg_rating'] >= 3.5
+                                            ? 'second'
+                                            : ($work['avg_rating'] >= 2.5
+                                                ? 'third'
+                                                : 'last'
+                                            )
+                                        )
+                                    ?>">
                                             <?= $work['avg_rating'] !== null ? $work['avg_rating'] / 5 * 100 . '%' : '? %' ?>
                                     </div>
                                     <div class="text-center text-danger fw-bold">
@@ -100,7 +109,7 @@
                         <?php foreach ($favs as $work): ?>
                             <div class="d-flex align-items-center justify-content-center mb-3 gap-md-3">
                                 <img src="poster4.jpg" class="rounded me-3" alt="Plagát">
-                                <div class="text-center d-flex flex-column gap-2" style="width:150px">
+                                <div class="text-center d-flex flex-column gap-1" style="width:150px">
                                     <div class="fw-bold text-center"><?= $work['name'] ?></div>
                                     <div class="specialBackgroundColor text-white px-3 py-2 rounded">
                                         <div class="fs-4 text-center fw-bold">

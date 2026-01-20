@@ -140,6 +140,22 @@ function checkAuthor(author) {
     return ["lightgreen", ""];
 }
 
+function checkSeasonsEpisodesNumLogic(numOfSeasons, numOfEpisodes) {
+    const seasons = parseInt(numOfSeasons.value, 10);
+    const episodes = parseInt(numOfEpisodes.value, 10);
+    if (Number.isNaN(seasons) || Number.isNaN(episodes)) {
+        return ["gray", ""];
+    }
+    const avgEpisodes = episodes / seasons;
+    if (avgEpisodes < 1) {
+        return ["red", "Počet epizód musí byť väčší alebo rovný počtu sezón!"];
+    }
+    if (avgEpisodes > 50) {
+        return ["red", "Priemerný počet epizód na sezónu nesmie byť väčší ako 50!"];
+    }
+    return ["lightgreen", ""];
+}
+
 function checkForm() {
     let valid = true;
     const isEdit = document.getElementById('movieEdit') !== null || document.getElementById('bookEdit') !== null || document.getElementById('seriesEdit') !== null;
@@ -168,7 +184,7 @@ function checkForm() {
     })
 
     const movieLength = document.getElementById('movieLength');
-    const numOfSeasons = document.getElementById('numOfSeasons');
+    const numOfSeasons = document.getElementById(idElementsSeries[2]);
     const numOfPages = document.getElementById('numOfPages');
 
     let isMovie = movieLength !== null;
@@ -191,6 +207,12 @@ function checkForm() {
     } else if (isSeries) {
         const resultProdCompany = checkProdCompany(document.getElementById(idElementsSeries[0]), additionalTextsSeries, idElementsSeries[0]);
         const resultDirector = checkDirector(document.getElementById(idElementsSeries[1]), additionalTextsSeries, idElementsSeries[1]);
+        const resultSeasonsEpisodesLogic = checkSeasonsEpisodesNumLogic(numOfSeasons, document.getElementById(idElementsSeries[3]));
+        updateOutput(document.getElementById(idElementsSeries[3]), document.getElementById(idMessagesSeries[3]), resultSeasonsEpisodesLogic[0], resultSeasonsEpisodesLogic[1]);
+        if (resultSeasonsEpisodesLogic[0] === "red") {
+            valid = false;
+        }
+
         const resultElementsSeries = [resultProdCompany, resultDirector];
         resultElementsSeries.forEach(function(result, i) {
             const element = document.getElementById(idElementsSeries[i]);
@@ -236,6 +258,9 @@ function apply(idElement, idMessage, controlFunction, input, focusout) {
             result = controlFunction(element, additionalTextsSeries, idElementsSeries[0]);
         } else if (idElement === idElementsSeries[1]) {
             result = controlFunction(element, additionalTextsSeries, idElementsSeries[1]);
+        } else if (idElement === idElementsSeries[3]) {
+            const numOfSeasons = document.getElementById(idElementsSeries[2]);
+            result = checkSeasonsEpisodesNumLogic(numOfSeasons, element);
         } else {
             result = controlFunction(element);
         }
@@ -268,6 +293,7 @@ window.addEventListener('DOMContentLoaded', function() {
     apply(idElementsSeries[1], idMessagesSeries[1], checkDirector, true, true);
     apply(idElementsBook[0], idMessagesBook[0], checkPublishers, true, true);
     apply(idElementsBook[1], idMessagesBook[1], checkAuthor, true, true);
+    apply(idElementsSeries[3], idMessagesSeries[3], checkSeasonsEpisodesNumLogic, true, true);
 });
 
 function updateOutput(element, elementMessage, color, message) {
@@ -277,11 +303,11 @@ function updateOutput(element, elementMessage, color, message) {
 
 const idElements = ["workName", "description", "workImage"];
 const idElementsMovie = ["prodCompany", "director"];
-const idElementsSeries = ["prodCompany", "director"];
+const idElementsSeries = ["prodCompany", "director", "numOfSeasons", "numOfEpisodes"];
 const idElementsBook = ["publishers", "author"];
 const idMessages = ["workNameMessage", "descriptionMessage", "workImageMessage"];
 const idMessagesMovie = ["prodCompanyMessage", "directorMessage"];
-const idMessagesSeries = ["prodCompanyMessage", "directorMessage"];
+const idMessagesSeries = ["prodCompanyMessage", "directorMessage", "numOfSeasonsMessage", "numOfEpisodesMessage"];
 const idMessagesBook = ["publishersMessage", "authorMessage"];
 const additionalTexts = new Map([[idElements[0], "Zadaj názov."], [idElements[1], "Zadaj popis."]]);
 const additionalTextsMovie = new Map([[idElementsMovie[0],"Zadaj produkčnú spoločnosť."], [idElementsMovie[1], "Zadaj režiséra."]]);

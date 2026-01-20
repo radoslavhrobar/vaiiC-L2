@@ -19,6 +19,8 @@ async function serverUpdateFav() {
         heart.classList.add("bi-heart", "text-secondary");
         heart.classList.remove("bi-heart-fill", "text-danger");
     }
+    const favCountElement = document.getElementById("favoriteCount");
+    favCountElement.textContent = json.countFav;
 }
 
 window.addEventListener('DOMContentLoaded', () => {

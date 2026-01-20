@@ -93,7 +93,10 @@ class AuthController extends BaseController
             $user = new User();
             $user->setEmail($d['email']);
             $user->setUsername($d['username']);
-            $user->setPassword($d['password']);
+
+            $hashedPassword = password_hash($d['password'], PASSWORD_DEFAULT);
+            $user->setPassword($hashedPassword);
+
             if (!empty($d['name'])) {
                 $user->setName($d['name']);
             }
@@ -135,7 +138,8 @@ class AuthController extends BaseController
             $user->setEmail($d['email']);
             $user->setUsername($d['username']);
             if (!empty($d['password'])) {
-                $user->setPassword($d['password']);
+                $hashedPassword = password_hash($d['password'], PASSWORD_DEFAULT);
+                $user->setPassword($hashedPassword);
             }
             if (empty($d['name'])) {
                 $user->setName(null);
