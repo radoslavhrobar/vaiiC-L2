@@ -6,6 +6,8 @@
 /** @var \App\Models\Country $countryByWorkId */
 /** @var \App\Models\Review[] $ratings */
 /** @var $avgRating */
+/** @var $favCount */
+/** @var \Framework\Core\IAuthenticator $auth */
 ?>
 <div class="row baseInfoRow p-4 rounded my-3">
     <div class="col-6 col-md-3 text-center order-1 order-md-1 mb-3 mb-md-0">
@@ -52,21 +54,26 @@
         <div class="text-secondary fw-bold mt-2">
             <?= count($ratings) ?> hodnotení
         </div>
+        <div class="text-secondary fw-bold mt-2">
+            <?= $favCount ?> ❤️
+        </div>
     </div>
 </div>
 <?php require __DIR__ . '/../Work/pageTemplate.view.php' ?>
-<div class="d-flex gap-4 mb-4 justify-content-center align-items-center">
-<div class="text-center">
-    <button onclick="window.location.href='<?= $link->url("bookDetail.edit", ['id' => $work->getId()]) ?>'" type="submit" class="btn-brown">
-        Upraviť detaily knihy
-</div>
-<div class="text-center">
-    <button
-            type="button"
-            class="bg-danger btn-delete"
-            onclick="return confirm('Odstrániť knihu <?= addslashes($work->getName()) ?>?')
-                    && (window.location.href='<?= $link->url("bookDetail.delete", ['id' => $work->getId()]) ?>');">
-        Odstrániť knihu
-    </button>
-</div>
-</div>
+<?php if ($auth->isLogged() && $auth->getUser()->getRole() === 'Admin'): ?>
+    <div class="d-flex gap-4 mb-4 justify-content-center align-items-center">
+        <div class="text-center">
+            <button onclick="window.location.href='<?= $link->url("bookDetail.edit", ['id' => $work->getId()]) ?>'" type="submit" class="btn-brown">
+                Upraviť detaily knihy
+        </div>
+        <div class="text-center">
+            <button
+                    type="button"
+                    class="bg-danger btn-delete"
+                    onclick="return confirm('Odstrániť knihu <?= addslashes($work->getName()) ?>?')
+                            && (window.location.href='<?= $link->url("bookDetail.delete", ['id' => $work->getId()]) ?>');">
+                Odstrániť knihu
+            </button>
+        </div>
+    </div>
+<?php endif; ?>

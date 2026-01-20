@@ -74,6 +74,34 @@ class ReviewController extends BaseController
         return $this->redirectToWork($dataGet['workId'], $text, $color);
     }
 
+    public function delete(Request $request): Response
+    {
+        $id = (int)$request->value('id');
+        $review = Review::getOne($id);
+        if (!$review) {
+            throw new Exception("Recenzia nebola nájdená.");
+        }
+        $workId = $review->getWorkId();
+        $review->delete();
+        $text = 'Recenzia bola zmazaná.';
+        $color = 'success';
+        return $this->redirectToWork($workId, $text, $color);
+    }
+
+    public function adminDelete(Request $request): Response
+    {
+        $id = (int)$request->value('id');
+        $review = Review::getOne($id);
+        if (!$review) {
+            throw new Exception("Recenzia nebola nájdená.");
+        }
+        $userId = $review->getUserId();
+        $review->delete();
+        $text = 'Recenzia bola zmazaná.';
+        $color = 'success';
+        return $this->redirect($this->url("auth.page", ['text' => $text, 'color' => $color, 'id' => $userId]));
+    }
+
     public function redirectToWork($workId, string $text, string $color): \Framework\Http\Responses\RedirectResponse
     {
         $work = Work::getOne($workId);

@@ -217,7 +217,9 @@ class AuthController extends BaseController
             return $this->html(compact('user', 'favGenres', 'percentages', 'whichActive', 'favoriteWorks'), 'favSection');
         }
         $worksReviews = $this->getWorksReviews($user->getId());
-        return $this->html(compact('user', 'favGenres', 'percentages', 'whichActive', 'worksReviews',), 'reviewSection');
+        $text = $request->hasValue('text') ? $request->value('text') : null;
+        $color = $request->hasValue('color') ? $request->value('color') : null;
+        return $this->html(compact('user', 'favGenres', 'percentages', 'whichActive', 'worksReviews', 'text', 'color'), 'reviewSection');
     }
 
     public function getFavoriteGenres($userId): array {
@@ -238,7 +240,7 @@ class AuthController extends BaseController
 
     public function getWorksReviews($userId): array {
         $sql  = '
-            SELECT w.name, w.id, w.date_of_issue, w.type, r.rating, r.body, r.created_at, r.updated_at
+            SELECT w.name, w.id, w.date_of_issue, w.type, r.rating, r.body, r.created_at, r.updated_at, r.id as review_id
             FROM reviews r
             JOIN works w ON r.work_id = w.id
             WHERE r.user_id = ?

@@ -118,7 +118,7 @@ class WorkController extends BaseController
 
     public function whichOrderBy($order) : string{
         return match ($order) {
-            'worst' => 'avg_rating ASC',
+            'worst' => 'avg_rating IS NULL, avg_rating ASC',
             'favorite' => 'favorites_count DESC',
             'newest' => 'w.date_of_issue DESC',
             default => 'avg_rating DESC',
@@ -197,6 +197,7 @@ class WorkController extends BaseController
         $genreByWorkId = Genre::getOne($work->getGenre());
         $countryByWorkId = Country::getOne($work->getPlaceOfIssue());
         $ratings = Review::getAll(whereClause: '`work_id` = ?', whereParams: [$work->getId()]);
+        $favCount = count(FavoriteWork::getAll(whereClause: '`work_id` = ?', whereParams: [$work->getId()]));
         $avgRating = $this->getAverageRating($ratings);
         $data = $this->getUsersReviews($work->getId());
         $myReview = null;
@@ -204,7 +205,7 @@ class WorkController extends BaseController
         $isFavorite  = $this->isFavorite($work, $this->app->getAuth()->getUser());
         $text = $request->value('text');
         $color = $request->value('color');
-        return compact('work','ratings', 'hasReview', 'myReview', 'text', 'color', 'isFavorite', 'avgRating', 'genreByWorkId', 'countryByWorkId', 'data');
+        return compact('work','ratings', 'hasReview', 'myReview', 'text', 'color', 'isFavorite', 'avgRating', 'genreByWorkId', 'countryByWorkId', 'data', 'favCount');
     }
 
 
@@ -432,6 +433,14 @@ class WorkController extends BaseController
         $old = $work->getImage();
         if (file_exists($uploadDir . '/' . $old)) {
             unlink($uploadDir . '/' . $old);
+        }
+        $favWork = FavoriteWork::getAll(whereClause: '`work_id` = ?', whereParams: [$work->getId()]);
+        foreach ($favWork as $fw) {
+            $fw->delete();
+        }
+        $reviews = Review::getAll(whereClause: '`work_id` = ?', whereParams: [$work->getId()]);
+        foreach ($reviews as $rev) {
+            $rev->delete();
         }
         $work->delete();
     }

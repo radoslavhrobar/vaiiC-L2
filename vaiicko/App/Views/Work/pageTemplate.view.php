@@ -6,8 +6,8 @@
 /** @var bool $hasReview */
 /** @var \App\Models\Review $myReview */
 /** @var bool $isFavorite */
-/** @var string $text */
-/** @var string $color */
+/** @var $text */
+/** @var $color */
 /** @var \Framework\Core\IAuthenticator $auth */
 ?>
 
@@ -50,11 +50,10 @@
             </div>
         <?php endif; ?>
     <?php endforeach; ?>
-
+    <div class="text-center">
+        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
+    </div>
     <?php if ($myReview): ?>
-        <div class="text-center">
-            <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
-        </div>
         <h4 class="fw-bold mb-4">
             <?php if ($myReview->getBody() === null): ?>
                 Moje Hodnotenie
@@ -65,17 +64,19 @@
 
         <div class="card pageParts mb-3">
             <div class="card-body">
-                <div>
-                    <strong class="fw-bold fs-5"><?= $auth->getUser()->getUsername() ?></strong>
-                    <span class="userRating fw-normal">
-                                <?php for ($j = 0; $j < $myReview->getRating(); $j++): ?>
-                                    ★
-                                <?php endfor; ?>
-                            </span>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="fw-bold fs-5"><?= $auth->getUser()->getUsername() ?></strong>
+                        <span class="userRating fw-normal">
+                                    <?php for ($j = 0; $j < $myReview->getRating(); $j++): ?>
+                                        ★
+                                    <?php endfor; ?>
+                                </span>
+                        <p class="mb-0 mt-2">
+                            <?= $myReview->getBody() ?: '' ?>
+                        </p>
+                    </div>
                 </div>
-                <p class="mb-0 mt-2">
-                    <?= $myReview->getBody() ?: '' ?>
-                </p>
             </div>
         </div>
     <?php endif; ?>
@@ -130,8 +131,8 @@
                     </div>
                 </div>
                 <span>Hodnotenie:</span>
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
-                    <div class="starRating">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                    <div class="starRating flex-grow-1">
                         <input type="hidden" id="noStar" name="rating" value="">
                         <input type="radio" id="star5" name="rating" value="5" <?=  $myReview->getRating() === 5 ? 'checked' : '' ?>>
                         <label for="star5">★★★★★</label>
@@ -146,6 +147,13 @@
                     </div>
                     <button type="submit" class="btn-brown">
                         Upraviť
+                    </button>
+                    <button
+                            type="button"
+                            class="bg-danger btn-delete"
+                            onclick="return confirm('Odstrániť recenziu ku dielu <?= addslashes($work->getName()) ?>?')
+                                    && (window.location.href='<?= $link->url("review.delete", ['id' => $myReview->getId()]) ?>');">
+                        Odstrániť
                     </button>
                 </div>
             </form>

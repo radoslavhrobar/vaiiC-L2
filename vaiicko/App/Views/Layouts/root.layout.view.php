@@ -32,9 +32,11 @@
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="<?= $link->url("auth.all") ?>">Používatelia</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="<?= $link->url("movieDetail.add") ?>">Pridanie diela</a>
-                        </li>
+                        <?php if ($auth->isLogged() && $auth->getUser()->getRole() === 'Admin') : ?>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="<?= $link->url("movieDetail.add") ?>">Pridanie diela</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                     <div class="nav-item dropdown me-2 mb-2 mb-md-0">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

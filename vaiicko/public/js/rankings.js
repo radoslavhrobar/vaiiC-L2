@@ -1,5 +1,9 @@
 let year = 0;
 async function serverCheckTypeOfWork() {
+    const btn = document.getElementById('rankingsBtn');
+    if (!btn) return;
+    btn.disabled = true;
+
     const typeSelect = document.getElementById('typeOfWork');
     const genreSelect = document.getElementById('genreRankings');
     const yearFrom = document.getElementById('yearFrom');
@@ -29,6 +33,7 @@ async function serverCheckTypeOfWork() {
     }
     yearFrom.min = json.yearFrom;
     yearTo.min = json.yearFrom;
+    btn.disabled = false;
 }
 
 window.addEventListener('DOMContentLoaded', () => {

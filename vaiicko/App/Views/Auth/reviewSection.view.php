@@ -1,6 +1,10 @@
 <?php
 /** @var Framework\Support\LinkGenerator $link */
+/** @var \App\Models\User $user */
 /** @var array $worksReviews */
+/** @var \Framework\Core\IAuthenticator $auth */
+/** @var $text */
+/** @var $color */
 ?>
 <?php require __DIR__ . '/page.view.php' ?>
 <div class="pageParts p-4 rounded mb-5">
@@ -8,11 +12,12 @@
         Recenzie
         <span class="text-secondary">(<?= count($worksReviews) ?>)</span>
     </h4>
+    <div class="text-center mb-2">
+        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
+    </div>
     <?php foreach ($worksReviews as $i => $workReview): ?>
         <div class="card pageParts mb-3">
             <div class="card-body d-flex flex-row">
-                <div>
-                </div>
                 <div class="w-100">
                     <div class="d-flex flex-row justify-content-between mb-2">
                         <div>
@@ -31,6 +36,16 @@
                     <div>
                         <?= $workReview['body'] ?>
                     </div>
+                    <?php if ($auth->isLogged() && $auth->getUser()->getRole() === 'Admin' && $auth->getUser()->getId() !== $user->getId()
+                    && $user->getRole() !== 'Admin'): ?>
+                        <button
+                                type="button"
+                                class="bg-danger mt-3 btn-delete"
+                                onclick="return confirm('Odstrániť recenziu ku dielu <?= addslashes($workReview['name']) ?>?')
+                                        && (window.location.href='<?= $link->url("review.adminDelete", ['id' => $workReview['review_id']]) ?>');">
+                            Odstrániť recenziu
+                        </button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

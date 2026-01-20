@@ -47,7 +47,7 @@
         </select>
     </div>
     <div class="text-center mt-4">
-        <input class="btn-brown" type="submit" value="Zobraziť">
+        <input id="rankingsBtn" class="btn-brown" type="submit" value="Zobraziť">
     </div>
 </form>
 <?php if (!$ok) : ?>
