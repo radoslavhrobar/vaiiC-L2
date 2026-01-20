@@ -11,8 +11,9 @@
     <div class="card pageParts">
         <div class="card-body d-flex flex-row p-3">
             <?php foreach ($favoriteWorks as $i => $favWork): ?>
-                 <div>
+                 <div class="d-flex flex-column align-items-center mx-3">
                     <div>
+                        <img src="<?= $link->asset('uploads/works/' . $favWork['image']) ?>" class="rounded imageRankings" alt="Plagát">
                     </div>
                     <div>
                         <a class="listLink" href="<?= $favWork['type'] === 'Film' ? $link->url("movieDetail.page", ['id' => $favWork['id']]) : ($favWork['type'] === 'Kniha' ? $link->url("bookDetail.page", ['id' => $favWork['id']]) : ($favWork['type'] === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $favWork['id']]) : '#')); ?>"><?= $favWork['name'] ?> </a>

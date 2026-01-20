@@ -3,10 +3,15 @@
 /** @var $data */
 /** @var  bool $isAdmin */
 /** @var \Framework\Support\LinkGenerator $link */
+/** @var $text */
+/** @var $color */
 use App\Helpers\Role;
 
 ?>
 
+<div class="text-center my-2">
+    <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
+</div>
 <h3 class="titleName">Zoznam používateľov</h3>
 <div class="user-list">
 <?php foreach ($data as $i => $d): ?>

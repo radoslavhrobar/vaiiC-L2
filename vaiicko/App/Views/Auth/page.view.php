@@ -22,7 +22,7 @@
             Na C&L od: <strong><?= (new DateTime($user->getCreatedAt()))->format('Y-m-d') ?></strong>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 mt-md-0 mt-3">
         <h5 class="fw-bold">Najobľúbenejšie žánre:</h5>
         <?php if (!empty($favGenres)): ?>
             <div class="d-flex flex-column gap-2">

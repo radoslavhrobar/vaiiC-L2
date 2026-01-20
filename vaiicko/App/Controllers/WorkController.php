@@ -23,6 +23,14 @@ use Framework\Support\LinkGenerator;
 
 class WorkController extends BaseController
 {
+    public function authorize(Request $request, string $action): bool
+    {
+        return match ($action) {
+            'rankings', 'ajaxCheckTypeOfWork', 'ajaxSearchWorks' => true,
+            'ajaxUpdateFav' => $this->app->getAuth()->isLogged(),
+            default => false,
+        };
+    }
 
     public function index(Request $request): Response
     {
@@ -296,10 +304,6 @@ class WorkController extends BaseController
         $work->setImage($filename);
     }
 
-    public function form(Request $request) : Response
-    {
-        return $this->html();
-    }
     public function check($data, $file): bool
     {
         if (!$this->checkWorkName($data['workName']) || !$this->checkGenre($data['genre']) ||

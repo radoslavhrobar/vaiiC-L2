@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Helpers\Role;
 use App\Helpers\TypesOfWork;
 use App\Models\Country;
 use App\Models\Genre;
@@ -13,6 +14,14 @@ use Framework\Http\Responses\Response;
 
 class MovieDetailController extends WorkController
 {
+    public function authorize(Request $request, string $action): bool
+    {
+        return match ($action) {
+            'page' => true,
+            'add', 'addMovie', 'edit', 'editMovie', 'delete'=> $this->app->getAuth()->isLogged() &&  $this->app->getAuth()->getUser()->getRole() === Role::Admin->name,
+            default => false,
+        };
+    }
     public function index(Request $request): Response
     {
         return $this->html();

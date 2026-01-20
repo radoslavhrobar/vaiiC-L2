@@ -10,10 +10,10 @@
 /** @var \Framework\Core\IAuthenticator $auth */
 ?>
 
-<div class="row baseInfoRow p-4 rounded my-3">
+<div class="row baseInfoRow p-4 rounded my-3 align-items-center">
     <div class="col-6 col-md-3 text-center order-1 order-md-1 mb-3 mb-md-0">
-        <img src="<?= $link->asset('images' . $work->getImage()) ?>"
-             class="img-fluid rounded"
+        <img src="<?= $link->asset('uploads/works/' . $work->getImage()) ?>"
+             class="imagePage rounded"
              alt="Plagát diela">
     </div>
     <div class="col-12 col-md-6 order-3 order-md-2">

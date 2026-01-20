@@ -251,6 +251,14 @@ body {
     border-radius: 0.5rem;
 }
 
+.imagePage {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0.5rem;
+}
+
 .list-group {
     z-index: 1;
 }
@@ -278,6 +286,10 @@ body {
 
 .last {
     background-color: black;
+}
+
+.top3 {
+    width: 150px;
 }
 
 

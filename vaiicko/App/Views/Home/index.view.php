@@ -16,10 +16,10 @@
         <div id="carouselExample" class="carousel slide main-carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="<?= $link->asset('images/to.jpg') ?>" class="d-block w-100" alt="">
+                    <img src="<?= $link->asset('images/avatarFire.jpg') ?>" class="d-block w-100" alt="">
                 </div>
                 <div class="carousel-item">
-                    <img src="<?= $link->asset('images/untilDawn.png') ?>" class="d-block w-100" alt="">
+                    <img src="<?= $link->asset('images/peakyBlinders.jpg') ?>" class="d-block w-100" alt="">
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -74,10 +74,11 @@
                             <i class="bi bi-star-fill text-danger"></i> Najlepšie diela
                         </h5>
                         <?php foreach ($best as $work): ?>
-                            <div class="d-flex align-items-center justify-content-center mb-3 gap-md-3">
-                                <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded me-3" alt="Plagát">
-                                <div class="text-center d-flex flex-column gap-1" style="width:150px">
-                                    <div class="fw-bold text-center"><?= $work['name'] ?></div>
+                            <div class="d-flex align-items-center justify-content-center mb-3 gap-3">
+                                <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded imageRankings" alt="Plagát">
+                                <div class="text-center top3 d-flex flex-column gap-1">
+                                    <div class="fw-bold text-center"><a class="listLink" href="<?= $work['type'] === 'Film' ? $link->url("movieDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Kniha' ? $link->url("bookDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $work['id']]) : '#')); ?>">
+                                            <?= $work['name'] ?></a></div>
                                     <div class="text-white px-3 py-2 rounded fs-4 fw-bold text-center <?= $work['avg_rating'] >= 4.5
                                         ? 'first'
                                         : ($work['avg_rating'] >= 3.5
@@ -91,7 +92,7 @@
                                             <?= $work['avg_rating'] !== null ? $work['avg_rating'] / 5 * 100 . '%' : '? %' ?>
                                     </div>
                                     <div class="text-center text-danger fw-bold">
-                                        <?= $work['rating_count'] ?> hodnotení
+                                        <?= $work['rating_count'] ?? '0' ?> hodnotení
                                     </div>
                                 </div>
                             </div>
@@ -108,12 +109,13 @@
                         </h5>
                         <?php foreach ($favs as $work): ?>
                             <div class="d-flex align-items-center justify-content-center mb-3 gap-md-3">
-                                <img src="poster4.jpg" class="rounded me-3" alt="Plagát">
-                                <div class="text-center d-flex flex-column gap-1" style="width:150px">
-                                    <div class="fw-bold text-center"><?= $work['name'] ?></div>
+                                <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded imageRankings" alt="Plagát">
+                                <div class="text-center top3 d-flex flex-column gap-1">
+                                    <div class="fw-bold text-center"><a class="listLink" href="<?= $work['type'] === 'Film' ? $link->url("movieDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Kniha' ? $link->url("bookDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $work['id']]) : '#')); ?>">
+                                            <?= $work['name'] ?></a></div>
                                     <div class="specialBackgroundColor text-white px-3 py-2 rounded">
                                         <div class="fs-4 text-center fw-bold">
-                                            <?= $work['favorites_count'] ?>❤️
+                                            <?= $work['favorites_count'] ?? '0' ?>❤️
                                         </div>
                                     </div>
                                 </div>

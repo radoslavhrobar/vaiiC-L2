@@ -28,6 +28,16 @@ use Framework\Http\Responses\ViewResponse;
  */
 class AuthController extends BaseController
 {
+    public function authorize(Request $request, string $action): bool
+    {
+        return match ($action) {
+            'index', 'login', 'registration', 'register', 'ajaxCheckEmail',
+            'ajaxCheckUsername', 'all', 'page' => true,
+            'delete' => $this->checkAdmin(),
+            'edit', 'update', 'deleteYourself', 'ajaxCheckCurrentPassword', 'logout' => $this->app->getAuth()->isLogged(),
+            default => false,
+        };
+    }
     /**
      * Redirects to the login page.
      *
@@ -118,9 +128,6 @@ class AuthController extends BaseController
     public function edit(Request $request): Response
     {
         $user = $this->app->getAuth()->getUser();
-        if (!$user) {
-            throw new Exception("Používateľ nenájdený.");
-        }
         return $this->html(compact('user'));
     }
 
@@ -166,30 +173,48 @@ class AuthController extends BaseController
 
     public function delete(Request $request): Response
     {
-        $user = $this->app->getAuth()->getUser();
-        if (!$user) {
-            throw new Exception("Používateľ nenájdený.");
-        }
-
         $id = (int)$request->value('id');
-        if (!empty($id)) {
-            $target = User::getOne($id);
-            if (!$target) {
-                throw new Exception("Cieľový používateľ nenájdený.");
-            }
-            $target->delete();
-            return $this->redirect($this->url("auth.all"));
+        $target = User::getOne($id);
+        if (!$target) {
+            throw new Exception("Cieľový používateľ nenájdený.");
         }
+        $this->deleteOther($target);
+        $target->delete();
+        $text = 'Používateľ bol úspešne zmazaný.';
+        $color = 'success';
+        return $this->redirect($this->url("auth.all", ['text' => $text, 'color' => $color]));
+    }
+
+    public function deleteYourself(Request $request): Response
+    {
+        $user = $this->app->getAuth()->getUser();
+        $this->deleteOther($user);
         $user->delete();
         $this->app->getAuth()->logout();
-        return $this->redirect($this->url("home.index"));
+        $text = 'Váš účet bol úspešne zmazaný.';
+        $color = 'success';
+        return $this->redirect($this->url("home.index", ['text' => $text, 'color' => $color]));
+    }
+
+    public function deleteOther($user): void
+    {
+        $favoriteWorks = FavoriteWork::getAll('user_id = ?', [$user->getId()]);
+        foreach ($favoriteWorks as $fav) {
+            $fav->delete();
+        }
+        $reviews = Review::getAll('user_id = ?', [$user->getId()]);
+        foreach ($reviews as $rev) {
+            $rev->delete();
+        }
     }
 
     public function all(Request $request): Response
     {
+        $text = $request->hasValue('text') ? $request->value('text') : null;
+        $color = $request->hasValue('color') ? $request->value('color') : null;
         $data = $this->getUsersReviewRatingFavCounts();
         $isAdmin = $this->checkAdmin();
-        return $this->html(compact('isAdmin', 'data'));
+        return $this->html(compact('isAdmin', 'data', 'text', 'color'));
     }
 
     public function page(Request $request): Response
@@ -271,7 +296,7 @@ class AuthController extends BaseController
 
     public function getFavoriteWorks($userId): array {
         $sql  = '
-            SELECT w.name, w.id, w.type
+            SELECT w.name, w.id, w.type, w.image
             FROM favoriteworks fw
             JOIN works w ON fw.work_id = w.id
             WHERE fw.user_id = ?
@@ -455,11 +480,12 @@ class AuthController extends BaseController
     {
         $currentPassword = $request->value('currentPassword');
         $id = (int)$request->value('id');
+        $user = User::getOne($id);
         $exists = false;
-        $existing = User::getAll(whereClause: '`password` = ?', whereParams: [$currentPassword]);
-        if (!empty($existing) && $this->checkForId($existing, $id)) {
+        if ($user && password_verify($currentPassword, $user->getPassword())) {
             $exists = true;
         }
         return $this->json(['exists' => $exists]);
     }
+
 }

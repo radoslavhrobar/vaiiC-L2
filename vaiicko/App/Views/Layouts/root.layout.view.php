@@ -47,7 +47,7 @@
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.page") ?>">Môj profil</a></li>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.logout") ?>">Odhlásiť sa</a></li>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.edit") ?>">Zmeniť údaje</a></li>
-                                <li><a class="dropdown-item" href="<?= $link->url("auth.delete") ?>"
+                                <li><a class="dropdown-item" href="<?= $link->url("auth.deleteYourself") ?>"
                                        onclick="return confirm('Naozaj chceš zmazať svoj účet?')">Zmazať účet</a></li>
                             <?php } else { ?>
                                 <li><a class="dropdown-item" href="<?= $link->url("auth.index") ?>">Prihlásenie</a></li>

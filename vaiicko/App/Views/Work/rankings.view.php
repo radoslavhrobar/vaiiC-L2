@@ -56,10 +56,10 @@
    </div>
 <?php else: ?>
     <?php foreach ($worksToShow as $i => $work): ?>
-        <div class="card mb-1 mx-5 rankingsCard">
+        <div class="card mb-1 mx-md-5 mx-1 rankingsCard">
             <div class="card-body d-flex gap-3">
                 <div>
-                    <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded imageRankings " alt="Plagát">
+                    <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded imageRankings" alt="Plagát">
                 </div>
                 <div class="flex-grow-1">
                     <h5 class= "mb-1 fw-bold">

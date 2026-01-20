@@ -66,22 +66,4 @@ class HomeController extends BaseController
             FROM works w 
             ORDER BY w.date_of_issue DESC LIMIT 10';
     }
-
-    public function kino(Request $request): Response
-    {
-        return $this->html();
-    }
-
-    /**
-     * Displays the contact page.
-     *
-     * This action serves the HTML view for the contact page, which is accessible to all users without any
-     * authorization.
-     *
-     * @return Response The response object containing the rendered HTML for the contact page.
-     */
-    public function contact(Request $request): Response
-    {
-        return $this->html();
-    }
 }
