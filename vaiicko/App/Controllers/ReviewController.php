@@ -7,6 +7,7 @@ use App\Models\Review;
 use App\Models\Work;
 use Exception;
 use Framework\Core\BaseController;
+use Framework\Http\HttpException;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 
@@ -15,8 +16,8 @@ class ReviewController extends BaseController
     public function authorize(Request $request, string $action): bool
     {
         return match ($action) {
-            'add', 'edit', 'redirectToWork' => $this->app->getAuth()->isLogged(),
-            'delete', 'adminDelete' => $this->app->getAuth()->isLogged() &&  $this->app->getAuth()->getUser()->getRole() === Role::Admin->name,
+            'add', 'edit', 'redirectToWork', 'delete' => $this->app->getAuth()->isLogged(),
+            'adminDelete' => $this->app->getAuth()->isLogged() &&  $this->app->getAuth()->getUser()->getRole() === Role::Admin->name,
             default => false,
         };
     }
@@ -68,6 +69,9 @@ class ReviewController extends BaseController
         $color = 'success';
         if ($this->checkBody($data['body']) && $this->checkRating($data['rating'])) {
             $review = Review::getOne($dataGet['id']);
+            if ($this->app->getAuth()->getUser()->getId() !== $review->getUserId()) {
+                throw new HttpException(403, "Nemáte oprávnenie upraviť túto recenziu.");
+            }
             if (!empty($data['body'])) {
                 $review->setBody($data['body']);
                 $text = 'Recenzia bola upravená.';
@@ -90,6 +94,9 @@ class ReviewController extends BaseController
         $review = Review::getOne($id);
         if (!$review) {
             throw new Exception("Recenzia nebola nájdená.");
+        }
+        if ($this->app->getAuth()->getUser()->getId() !== $review->getUserId()) {
+            throw new HttpException(403, "Nemáte oprávnenie zmazať túto recenziu.");
         }
         $workId = $review->getWorkId();
         $review->delete();

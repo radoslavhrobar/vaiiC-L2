@@ -3,7 +3,6 @@
 /** @var \Framework\Support\LinkGenerator $link */
 /** @var $best */
 /** @var $favs */
-/** @var $recent */
 /** @var $text */
 /** @var $color */
 ?>

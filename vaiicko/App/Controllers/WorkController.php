@@ -170,9 +170,6 @@ class WorkController extends BaseController
             throw new \Exception('Dielo neexistuje.');
         }
         $user = $this->app->getAuth()->getUser();
-        if (empty($user)) {
-            throw new \Exception('Používateľ nie je prihlásený.');
-        }
         $isFavorite = $this->isFavorite($work, $user);
         $adding = true;
         if ($isFavorite) {

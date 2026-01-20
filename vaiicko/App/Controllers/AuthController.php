@@ -13,6 +13,7 @@ use Exception;
 use Framework\Core\BaseController;
 use Framework\Core\Model;
 use Framework\DB\Connection;
+use Framework\Http\HttpException;
 use Framework\Http\Request;
 use Framework\Http\Responses\JsonResponse;
 use Framework\Http\Responses\Response;
@@ -86,7 +87,9 @@ class AuthController extends BaseController
     public function logout(Request $request): Response
     {
         $this->app->getAuth()->logout();
-        return $this->redirect($this->url("home.index"));
+        $text = 'Úspešne ste sa odhlásili.';
+        $color = 'success';
+        return $this->redirect($this->url("home.index", ['text' => $text, 'color' => $color]));
     }
 
     public function registration(Request $request): Response
@@ -134,6 +137,9 @@ class AuthController extends BaseController
     public function update(Request $request): Response
     {
         $id = (int)$request->value('id');
+        if ($this->app->getAuth()->getUser()->getId() !== $id) {
+            throw new HttpException(403, "Nemáte oprávnenie na úpravu tohto používateľa.");
+        }
         $user = User::getOne($id);
         if (!$user) {
             throw new Exception("Používateľ nenájdený.");
