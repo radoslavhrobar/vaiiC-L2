@@ -69,7 +69,9 @@ class AuthController extends BaseController
         if ($request->hasValue('submit')) {
             $logged = $this->app->getAuth()->login($request->value('username'), $request->value('password'));
             if ($logged) {
-                return $this->redirect($this->url("home.index"));
+                $text = 'Úspešne ste sa prihlásili.';
+                $color = 'success';
+                return $this->redirect($this->url("home.index", ['text' => $text, 'color' => $color]));
             }
         }
         $message = $logged === false ? 'Nesprávne používateľské meno alebo heslo.' : null;

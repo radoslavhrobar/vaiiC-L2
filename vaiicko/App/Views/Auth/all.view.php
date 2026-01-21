@@ -10,17 +10,21 @@ use App\Helpers\Role;
 ?>
 
 <div class="text-center my-2">
-    <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
+    <strong class="<?= isset($color) ? "text-" . htmlspecialchars($color, ENT_QUOTES, 'UTF-8') : '' ?>">
+        <?= htmlspecialchars($text ?? '', ENT_QUOTES, 'UTF-8') ?>
+    </strong>
 </div>
 <h3 class="titleName">Zoznam používateľov</h3>
 <div class="user-list">
-<?php foreach ($data as $i => $d): ?>
+    <?php foreach ($data as $i => $d): ?>
         <div class="card user-card">
             <div class="card-header">
                 <form action="<?= $link->url('auth.page') ?>" method="post">
-                    <strong class="specialColor "><?= $i + 1 . '. ' ?></strong>
-                    <input type="hidden" name="id" value="<?= $d['id'] ?>">
-                    <button type="submit" class="listLinkButton"><?= $d['username'] ?></button>
+                    <strong class="specialColor"><?= $i + 1 . '. ' ?></strong>
+                    <input type="hidden" name="id" value="<?= (int)$d['id'] ?>">
+                    <button type="submit" class="listLinkButton">
+                        <?= htmlspecialchars($d['username'], ENT_QUOTES, 'UTF-8') ?>
+                    </button>
                 </form>
             </div>
             <div class="card-body">
@@ -28,23 +32,25 @@ use App\Helpers\Role;
                     <div>
                         <?php if ($d['name'] || $d['surname']): ?>
                             <div class="mb-2">
-                                <strong class="text-secondary"><?= ($d['name'] ?? '') . ' ' . ($d['surname'] ?? '') ?></strong>
+                                <strong class="text-secondary">
+                                    <?= htmlspecialchars(($d['name'] ?? '') . ' ' . ($d['surname'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                                </strong>
                             </div>
                         <?php endif; ?>
                         <div>
-                            📝 <?= $d['review_count'] ?> recenzií
+                            📝 <?= (int)$d['review_count'] ?> recenzií
                         </div>
                         <div class="ms-1">
-                            <i class="bi bi-star-fill text-danger"></i> <?= $d['rating_count'] ?> hodnotení
+                            <i class="bi bi-star-fill text-danger"></i> <?= (int)$d['rating_count'] ?> hodnotení
                         </div>
                         <div>
-                            ❤️ <?= $d['fav_count'] ?> obľúbených
+                            ❤️ <?= (int)$d['fav_count'] ?> obľúbených
                         </div>
                     </div>
                     <?php if ($isAdmin && $d['role'] !== Role::Admin->name): ?>
                         <form method="post" action="<?= $link->url('auth.delete') ?>"
-                              onsubmit="return confirm('Odstrániť používateľa <?= addslashes($d['username']) ?>?');">
-                            <input type="hidden" name="id" value="<?= $d['id'] ?>">
+                              onsubmit="return confirm('Odstrániť používateľa <?= htmlspecialchars($d['username'], ENT_QUOTES, 'UTF-8') ?>?');">
+                            <input type="hidden" name="id" value="<?= (int)$d['id'] ?>">
                             <button type="submit" class="bg-danger btn-delete">Odstrániť</button>
                         </form>
                     <?php endif; ?>
