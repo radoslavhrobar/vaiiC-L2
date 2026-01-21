@@ -47,12 +47,10 @@ class Authenticator implements IAuthenticator
         if ($this->user instanceof IIdentity) {
             return $this->user;
         }
-
         $userId = $this->session->get('user_id');
         if (!$userId) {
             return null;
         }
-
         $records = User::getAll(whereClause: '`id` = ?', whereParams: [$userId]);
         $this->user = $records[0] ?? null;
         return $this->user instanceof IIdentity ? $this->user : null;
