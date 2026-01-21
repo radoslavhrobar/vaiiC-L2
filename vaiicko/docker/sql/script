@@ -1,0 +1,243 @@
+-- Adminer 4.8.1 MySQL 11.5.2-MariaDB-ubu2404 dump
+
+SET NAMES utf8;
+SET time_zone = '+00:00';
+SET foreign_key_checks = 0;
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+
+SET NAMES utf8mb4;
+
+DROP TABLE IF EXISTS `bookdetails`;
+CREATE TABLE `bookdetails` (
+  `work_id` int(11) NOT NULL,
+  `num_of_pages` int(11) NOT NULL,
+  `publishers` varchar(255) NOT NULL,
+  `author` varchar(100) NOT NULL,
+  PRIMARY KEY (`work_id`),
+  CONSTRAINT `bookdetails_ibfk_1` FOREIGN KEY (`work_id`) REFERENCES `works` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+INSERT INTO `bookdetails` (`work_id`, `num_of_pages`, `publishers`, `author`) VALUES
+(45,	300,	'Carina',	'Rachel Reid'),
+(47,	300,	'Carina',	'Radoslav');
+
+DROP TABLE IF EXISTS `countries`;
+CREATE TABLE `countries` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` char(2) NOT NULL,
+  `name` varchar(80) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+INSERT INTO `countries` (`id`, `code`, `name`) VALUES
+(1,	'SK',	'Slovensko'),
+(2,	'CZ',	'Česko'),
+(3,	'PL',	'Poľsko'),
+(4,	'HU',	'Maďarsko'),
+(5,	'AT',	'Rakúsko'),
+(6,	'DE',	'Nemecko'),
+(7,	'CH',	'Švajčiarsko'),
+(8,	'FR',	'Francúzsko'),
+(9,	'IT',	'Taliansko'),
+(10,	'ES',	'Španielsko'),
+(11,	'PT',	'Portugalsko'),
+(12,	'NL',	'Holandsko'),
+(13,	'BE',	'Belgicko'),
+(14,	'DK',	'Dánsko'),
+(15,	'SE',	'Švédsko'),
+(16,	'NO',	'Nórsko'),
+(17,	'FI',	'Fínsko'),
+(18,	'IE',	'Írsko'),
+(19,	'GB',	'Spojené kráľovstvo'),
+(20,	'US',	'USA'),
+(21,	'CA',	'Kanada'),
+(22,	'MX',	'Mexiko'),
+(23,	'BR',	'Brazília'),
+(24,	'AR',	'Argentína'),
+(25,	'CL',	'Čile'),
+(26,	'JP',	'Japonsko'),
+(27,	'KR',	'Južná Kórea'),
+(28,	'CN',	'Čína'),
+(29,	'IN',	'India'),
+(30,	'AU',	'Austrália'),
+(31,	'NZ',	'Nový Zéland'),
+(32,	'RU',	'Rusko'),
+(33,	'UA',	'Ukrajina'),
+(34,	'RO',	'Rumunsko'),
+(35,	'BG',	'Bulharsko'),
+(36,	'HR',	'Chorvátsko'),
+(37,	'RS',	'Srbsko'),
+(38,	'SI',	'Slovinsko'),
+(39,	'GR',	'Grécko'),
+(40,	'TR',	'Turecko'),
+(41,	'IL',	'Izrael'),
+(42,	'EG',	'Egypt'),
+(43,	'ZA',	'Južná Afrika'),
+(44,	'NG',	'Nigéria');
+
+DROP TABLE IF EXISTS `favoriteworks`;
+CREATE TABLE `favoriteworks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `work_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `work_id` (`work_id`),
+  CONSTRAINT `favoriteworks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `favoriteworks_ibfk_2` FOREIGN KEY (`work_id`) REFERENCES `works` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+INSERT INTO `favoriteworks` (`id`, `work_id`, `user_id`) VALUES
+(57,	36,	32),
+(62,	41,	32),
+(63,	42,	32),
+(64,	53,	32),
+(65,	46,	32),
+(66,	42,	34),
+(68,	36,	34);
+
+DROP TABLE IF EXISTS `genres`;
+CREATE TABLE `genres` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(80) NOT NULL,
+  `type` enum('Kino','Kniha','Obidva') NOT NULL DEFAULT 'Obidva',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+INSERT INTO `genres` (`id`, `name`, `type`) VALUES
+(67,	'Román',	'Kniha'),
+(68,	'Poézia',	'Kniha'),
+(69,	'Detektívka',	'Kniha'),
+(70,	'Biografia',	'Kniha'),
+(71,	'Historický',	'Obidva'),
+(72,	'Akčný',	'Kino'),
+(73,	'Komédia',	'Kino'),
+(74,	'Dráma',	'Kino'),
+(75,	'Horor',	'Kino'),
+(76,	'Sci-Fi',	'Obidva'),
+(77,	'Fantasy',	'Obidva'),
+(78,	'Animovaný',	'Kino'),
+(79,	'Dokument',	'Kino'),
+(80,	'Thriller',	'Obidva'),
+(81,	'Romantický',	'Obidva');
+
+DROP TABLE IF EXISTS `moviedetails`;
+CREATE TABLE `moviedetails` (
+  `work_id` int(11) NOT NULL,
+  `length` int(11) NOT NULL,
+  `prod_company` varchar(255) NOT NULL,
+  `director` varchar(100) NOT NULL,
+  PRIMARY KEY (`work_id`),
+  CONSTRAINT `moviedetails_ibfk_1` FOREIGN KEY (`work_id`) REFERENCES `works` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+INSERT INTO `moviedetails` (`work_id`, `length`, `prod_company`, `director`) VALUES
+(36,	130,	'HBO',	'Sam Raimi'),
+(41,	195,	'HBO',	'James Cameron'),
+(42,	150,	'Netflix',	'Andy Muschietti'),
+(43,	100,	'Netflix',	'Radoslav Hrobár'),
+(50,	30,	'Netflix',	'Radoslav'),
+(51,	60,	'Assadsad',	'Rados'),
+(52,	139,	'HBO',	'Radol'),
+(53,	121,	'HBO',	'Sam Raimi'),
+(54,	158,	'Netflix',	'Radko'),
+(55,	142,	'Apple',	'Robert Zemeckis'),
+(56,	188,	'Netflix',	'Radoslav');
+
+DROP TABLE IF EXISTS `reviews`;
+CREATE TABLE `reviews` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `body` text DEFAULT NULL,
+  `rating` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `work_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `work_id` (`work_id`),
+  CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`work_id`) REFERENCES `works` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+INSERT INTO `reviews` (`id`, `body`, `rating`, `user_id`, `work_id`, `created_at`, `updated_at`) VALUES
+(25,	NULL,	5,	32,	36,	'2026-01-21 15:55:42',	'2026-01-21 18:56:55'),
+(29,	'Užasný film',	5,	34,	42,	'2026-01-21 20:18:50',	NULL),
+(30,	'Priemer...',	3,	34,	55,	'2026-01-21 20:19:08',	NULL),
+(31,	'Peteeer parkerrrrr',	2,	34,	36,	'2026-01-21 20:19:43',	NULL);
+
+DROP TABLE IF EXISTS `seriesdetails`;
+CREATE TABLE `seriesdetails` (
+  `work_id` int(11) NOT NULL,
+  `num_of_seasons` int(11) NOT NULL,
+  `num_of_episodes` int(11) NOT NULL,
+  `prod_company` varchar(255) NOT NULL,
+  `director` varchar(100) NOT NULL,
+  PRIMARY KEY (`work_id`),
+  CONSTRAINT `seriesdetails_ibfk_1` FOREIGN KEY (`work_id`) REFERENCES `works` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+INSERT INTO `seriesdetails` (`work_id`, `num_of_seasons`, `num_of_episodes`, `prod_company`, `director`) VALUES
+(46,	6,	36,	'Netflix',	'Otto Bathurst'),
+(48,	1,	10,	'Netflix',	'Radoslav'),
+(49,	1,	6,	'HBO',	'Radoslav');
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL,
+  `username` varchar(30) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('User','Admin') NOT NULL,
+  `name` varchar(80) DEFAULT NULL,
+  `surname` varchar(80) DEFAULT NULL,
+  `gender` enum('Male','Female','Other') DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+INSERT INTO `users` (`id`, `email`, `username`, `password`, `role`, `name`, `surname`, `gender`, `created_at`) VALUES
+(32,	'rdsfdsf@sdgsd.sk',	'rad04',	'$2y$10$iiYvn6F6129JaCCYUClL9uUvghJcRIAakq2jcjcT5OnSUaR8kIKiy',	'Admin',	'Radoslav',	'Hrobár',	'Male',	'2026-01-21 15:09:08'),
+(34,	'hrobar@gmail.com',	'rad00',	'$2y$10$1w8pm6YdyqMKEUJV/1EX1.bHYTwwGYF3X.cM4GxQTxe.0nA.1DreO',	'User',	'Radoslav',	'Hrobár',	'Male',	'2026-01-21 19:46:20'),
+(35,	'hrobarrado@gmail.com',	'rad01',	'$2y$10$6hMcDYvp02k83ggJDL666.5wSI30BOpIeDbQmgGTs2rKCLYtBjKx.',	'User',	'Radko',	'Hrobaris',	'Female',	'2026-01-21 19:47:28'),
+(36,	'hrobar@gmail.comm',	'rad02',	'$2y$10$4XyUKPm8oVwRe3VF2/12EuhYxkY9ZUV2quxSSJE3PnTy46TgG5xIO',	'User',	'Rado',	'Hrobo',	'Male',	'2026-01-21 19:48:04'),
+(37,	'hrobaar@gmail.com',	'rad03',	'$2y$10$LGM0p0mXqCP5u7nZeAGpvuVnllY4TwG3AL5Dx/VOb3zCZPPCRLHPa',	'User',	'Rado',	'Hrobár',	'Male',	'2026-01-21 19:48:37');
+
+DROP TABLE IF EXISTS `works`;
+CREATE TABLE `works` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `type` enum('Film','Seriál','Kniha') NOT NULL,
+  `genre_id` int(11) NOT NULL,
+  `date_of_issue` datetime NOT NULL,
+  `place_of_issue_id` int(11) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `image` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `genre_id` (`genre_id`),
+  KEY `place_of_issue_id` (`place_of_issue_id`),
+  CONSTRAINT `works_ibfk_1` FOREIGN KEY (`genre_id`) REFERENCES `genres` (`id`),
+  CONSTRAINT `works_ibfk_2` FOREIGN KEY (`place_of_issue_id`) REFERENCES `countries` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+INSERT INTO `works` (`id`, `name`, `type`, `genre_id`, `date_of_issue`, `place_of_issue_id`, `description`, `image`) VALUES
+(36,	'Spiderman 2',	'Film',	72,	'2015-01-20 00:00:00',	20,	'Petera Parkera uštipne pavúk a tým sa mu zmení celý život...',	'696fcdaa8ca3a-spiderman2.jpg'),
+(41,	'Avatar: Oheň a popol',	'Film',	76,	'2025-03-20 00:00:00',	20,	'V treťom pokračovaní filmu Avatar sa príbeh zameriava na zmiešanú rodinu Sullyov..',	'696fd3a331f20-avatarFire.jpg'),
+(42,	'To',	'Film',	75,	'2017-01-29 00:00:00',	20,	'Derry nie je obyčajným americkým malomestom. Pod jeho povrchom spí prastaré zlo. Vždy keď sa prebudí, na niekoľko rokov rozpúta v Derry a okolí smršť neopísateľných hrôz.',	'69712e4672ab5-it.jpg'),
+(43,	'Vývoj aplikácií',	'Film',	72,	'2026-01-21 00:00:00',	1,	'Zaujímavý predmet....',	'69712dca1364b-darkKnight.jpg'),
+(45,	'Heated Rivalry',	'Kniha',	67,	'2026-01-01 00:00:00',	20,	'Kniha Heated Rivalry je príbehom o vzťahu, ktorý musí existovať potichu.',	'69712f5dbf260-heatedRivalry.jpg'),
+(46,	'Gangy z Birminghamu',	'Seriál',	71,	'2013-01-21 00:00:00',	19,	'Pravá britská gangsterská sága z produkcie BBC je zasadená do Birminghamu 20. rokov 20. storočia.',	'69712fb8f1601-peakyBlinders.jpg'),
+(47,	'Vajko',	'Kniha',	76,	'2024-05-21 00:00:00',	1,	'Nebezpečná kniha',	'69713054a87c0-darkKnight.jpg'),
+(48,	'To',	'Seriál',	74,	'2023-01-21 00:00:00',	20,	'AEFFSDFSDFDSFSDF',	'697130a369ec2-it.jpg'),
+(49,	'Černobyľ',	'Seriál',	71,	'2019-03-21 00:00:00',	33,	'Prichádza k výbuchu reaktora. Pracovníci sa snažia zistiť, čo sa skutočne stalo.',	'697130fdbfca7-avatarFire.jpg'),
+(50,	'Láska',	'Film',	72,	'2016-03-21 00:00:00',	1,	'Aafsdfdsf',	'6971314b1fd06-heatedRivalry.jpg'),
+(51,	'Batman',	'Film',	71,	'2010-02-21 00:00:00',	20,	'Film opisuje začiatok legendy o tajomnom Batmanovi a zjavení Temného rytiera ako sily dobra v Gotham City.',	'697131867c40d-darkKnight.jpg'),
+(52,	'Spiderman 3',	'Film',	72,	'2007-01-21 00:00:00',	20,	'V treťom pokračovaní dobrodružstva slávneho komiksového hrdinu sa „pavúčí muž“, pod ktorého maskou sa ukrýva plachý študent Peter Parker',	'6971320dc3100-spiderman2.jpg'),
+(53,	'Spiderman',	'Film',	72,	'2002-01-21 00:00:00',	1,	'Peter Parker (Tobey Maguire) je dobrý a inteligentný chalan.',	'6971328de3ce7-spiderman2.jpg'),
+(54,	'Návrat Temného rytiera',	'Film',	74,	'2012-01-21 00:00:00',	20,	'Gotham sa zmieta v temnotách neistoty potom, čo bol jeho maskovaný ochranca uznaný vinným zo zločinov, ktoré boli pre dobro ľudu uložené na jeho bedrá.',	'697132fceb600-darkKnight.jpg'),
+(55,	'Forrest Gump',	'Film',	73,	'1994-01-21 00:00:00',	20,	'S Forrestom Gumpom (Tom Hanks) prežijeme tri vzrušujúce desiatky rokov - od prostého detstva, kedy malého Forresta..',	'6971336f5e613-heatedRivalry.jpg'),
+(56,	'Zelená míľa',	'Film',	74,	'1999-02-21 00:00:00',	20,	'V roku 1935 pracoval Paul Edgecomb ako vrchný dozorca v celách smrti jednej lousianskej väznici, kam priviedli nového odsúdenca',	'697133d48294b-it.jpg');
+
+-- 2026-01-21 20:21:05
