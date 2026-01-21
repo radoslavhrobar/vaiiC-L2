@@ -49,7 +49,7 @@ use App\Helpers\Role;
                     </div>
                     <?php if ($isAdmin && $d['role'] !== Role::Admin->name): ?>
                         <form method="post" action="<?= $link->url('auth.delete') ?>"
-                              onsubmit="return confirm('Odstrániť používateľa <?= htmlspecialchars($d['username'], ENT_QUOTES, 'UTF-8') ?>?');">
+                              onsubmit="return confirm('Odstrániť používateľa <?= addslashes(htmlspecialchars($d['username'], ENT_QUOTES, 'UTF-8')) ?>?');">
                             <input type="hidden" name="id" value="<?= (int)$d['id'] ?>">
                             <button type="submit" class="bg-danger btn-delete">Odstrániť</button>
                         </form>

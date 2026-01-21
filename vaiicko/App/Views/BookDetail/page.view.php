@@ -11,30 +11,32 @@
 ?>
 <div class="row baseInfoRow p-4 rounded my-3 align-items-center">
     <div class="col-6 col-md-3 text-center order-1 order-md-1 mb-3 mb-md-0">
-        <img src="<?= $link->asset('uploads/works/' . $work->getImage()) ?>"
+        <img src="<?= $link->asset('uploads/works/' . htmlspecialchars($work->getImage(), ENT_QUOTES, 'UTF-8')) ?>"
              class="imagePage rounded"
              alt="Plagát diela">
     </div>
     <div class="col-12 col-md-6 order-3 order-md-2">
         <h3 class="fw-bold">
-            <?= $work->getName() ?>
-            <span class="text-secondary">(<?= $work->getType() ?>)</span>
+            <?= htmlspecialchars($work->getName(), ENT_QUOTES, 'UTF-8') ?>
+            <span class="text-secondary">(<?= htmlspecialchars($work->getType(), ENT_QUOTES, 'UTF-8') ?>)</span>
         </h3>
         <div class="text-secondary mb-2">
-            <?= $countryByWorkId->getName()  ?> • <?= (new DateTime($work->getDateOfIssue()))->format('Y') ?> • <?= $genreByWorkId->getName()  ?>
+            <?= htmlspecialchars($countryByWorkId->getName(), ENT_QUOTES, 'UTF-8') ?> •
+            <?= (new DateTime($work->getDateOfIssue()))->format('Y') ?> •
+            <?= htmlspecialchars($genreByWorkId->getName(), ENT_QUOTES, 'UTF-8') ?>
         </div>
         <div class="workInfoList">
             <div class="mb-1">
                 Počet strán:
-                <span class="fw-bold"> <?= $bookDetail->getNumOfPages() ?>
+                <span class="fw-bold"><?= (int)$bookDetail->getNumOfPages() ?></span>
             </div>
             <div class="mb-1">
                 Vydavateľstvo:
-                <span class="fw-bold"> <?= $bookDetail->getPublishers() ?>
+                <span class="fw-bold"><?= htmlspecialchars($bookDetail->getPublishers(), ENT_QUOTES, 'UTF-8') ?></span>
             </div>
             <div class="mb-1">
                 Autor:
-                <span class="fw-bold"> <?= $bookDetail->getAuthor() ?>
+                <span class="fw-bold"><?= htmlspecialchars($bookDetail->getAuthor(), ENT_QUOTES, 'UTF-8') ?></span>
             </div>
         </div>
     </div>
@@ -49,28 +51,33 @@
                 )
             )
         ?>">
-            <?= $avgRating != 0 ? $avgRating/5*100 : '? ' ?>%
+            <?= $avgRating != 0 ? ($avgRating / 5 * 100) : '? ' ?>%
         </div>
         <div class="text-secondary fw-bold mt-2">
             <?= count($ratings) ?> hodnotení
         </div>
         <div class="text-secondary fw-bold mt-2">
-            <span id="favoriteCount" ><?= $favCount ?></span> ❤️
+            <span id="favoriteCount"><?= (int)$favCount ?></span> ❤️
         </div>
     </div>
 </div>
+
 <?php require __DIR__ . '/../Work/pageTemplate.view.php' ?>
+
 <?php if ($auth->isLogged() && $auth->getUser()->getRole() === 'Admin'): ?>
     <div class="d-flex gap-4 mb-4 justify-content-center align-items-center">
         <div class="text-center">
-            <button onclick="window.location.href='<?= $link->url("bookDetail.edit", ['id' => $work->getId()]) ?>'" type="submit" class="btn-brown">
+            <button onclick="window.location.href='<?= $link->url("bookDetail.edit", ['id' => $work->getId()]) ?>'"
+                    type="submit"
+                    class="btn-brown">
                 Upraviť detaily knihy
+            </button>
         </div>
         <div class="text-center">
             <button
                     type="button"
                     class="bg-danger btn-delete"
-                    onclick="return confirm('Odstrániť knihu <?= addslashes($work->getName()) ?>?')
+                    onclick="return confirm('Odstrániť knihu <?= addslashes(htmlspecialchars($work->getName(), ENT_QUOTES, 'UTF-8')) ?>?')
                             && (window.location.href='<?= $link->url("bookDetail.delete", ['id' => $work->getId()]) ?>');">
                 Odstrániť knihu
             </button>

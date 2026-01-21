@@ -9,7 +9,8 @@
 
 <div class="row">
     <div class="text-center mt-2">
-        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
+        <strong class="<?= isset($color) ? "text-" . htmlspecialchars($color, ENT_QUOTES, 'UTF-8') : '' ?>">
+            <?= htmlspecialchars($text ?? '', ENT_QUOTES, 'UTF-8') ?></strong>
     </div>
     <div class="col-md-5">
         <div id="carouselExample" class="carousel slide main-carousel">
@@ -36,15 +37,15 @@
         <div class="card registration-info">
             <div class="card-body">
                 <h4 class="card-title mb-4">
-                        <?php if ($auth->isLogged()) : ?>
-                            <i class="bi bi-arrow-right-square"></i>
-                            <span class="logged-in-info">Prihlásený ako: <?= $auth->getUser()->getUsername() ?></span>
-                        <?php else : ?>
-                            <a href="<?= $link->url("auth.registration") ?>" class="text-decoration-none">
-                                <i class="bi bi-exclamation-circle-fill"></i>
-                                Registruj sa na C&L!
-                            </a>
-                        <?php endif; ?>
+                    <?php if ($auth->isLogged()) : ?>
+                        <i class="bi bi-arrow-right-square"></i>
+                        <span class="logged-in-info">Prihlásený ako: <?= htmlspecialchars($auth->getUser()->getUsername(), ENT_QUOTES, 'UTF-8') ?></span>
+                    <?php else : ?>
+                        <a href="<?= $link->url("auth.registration") ?>" class="text-decoration-none">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            Registruj sa na C&L!
+                        </a>
+                    <?php endif; ?>
                 </h4>
 
                 <ul class="list-unstyled mb-4">
@@ -57,7 +58,7 @@
                         <i class= "bi-megaphone me-2"></i>
                         Pridávaj recenzie k dielam, ktoré ťa zaujali
                     </li>
-                    <li >
+                    <li>
                         <i class="bi-person me-2"></i>
                         Preskúmavaj profily iných používateľov
                     </li>
@@ -74,10 +75,13 @@
                         </h5>
                         <?php foreach ($best as $work): ?>
                             <div class="d-flex align-items-center justify-content-center mb-3 gap-3">
-                                <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded imageRankings" alt="Plagát">
+                                <img src="<?= $link->asset('uploads/works/' . htmlspecialchars($work['image'], ENT_QUOTES, 'UTF-8')) ?>" class="rounded imageRankings" alt="Plagát">
                                 <div class="text-center top3 d-flex flex-column gap-1">
-                                    <div class="fw-bold text-center"><a class="listLink" href="<?= $work['type'] === 'Film' ? $link->url("movieDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Kniha' ? $link->url("bookDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $work['id']]) : '#')); ?>">
-                                            <?= $work['name'] ?></a></div>
+                                    <div class="fw-bold text-center">
+                                        <a class="listLink" href="<?= $work['type'] === 'Film' ? $link->url("movieDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Kniha' ? $link->url("bookDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $work['id']]) : '#')); ?>">
+                                            <?= htmlspecialchars($work['name'], ENT_QUOTES, 'UTF-8') ?>
+                                        </a>
+                                    </div>
                                     <div class="text-white px-3 py-2 rounded fs-4 fw-bold text-center <?= $work['avg_rating'] >= 4.5
                                         ? 'first'
                                         : ($work['avg_rating'] >= 3.5
@@ -88,10 +92,10 @@
                                             )
                                         )
                                     ?>">
-                                            <?= $work['avg_rating'] !== null ? $work['avg_rating'] / 5 * 100 . '%' : '? %' ?>
+                                        <?= $work['avg_rating'] !== null ? ($work['avg_rating'] / 5 * 100) . '%' : '? %' ?>
                                     </div>
                                     <div class="text-center text-danger fw-bold">
-                                        <?= $work['rating_count'] ?? '0' ?> hodnotení
+                                        <?= (int)($work['rating_count'] ?? 0) ?> hodnotení
                                     </div>
                                 </div>
                             </div>
@@ -108,13 +112,16 @@
                         </h5>
                         <?php foreach ($favs as $work): ?>
                             <div class="d-flex align-items-center justify-content-center mb-3 gap-md-3">
-                                <img src="<?= $link->asset('uploads/works/' . $work['image']) ?>" class="rounded imageRankings" alt="Plagát">
+                                <img src="<?= $link->asset('uploads/works/' . htmlspecialchars($work['image'], ENT_QUOTES, 'UTF-8')) ?>" class="rounded imageRankings" alt="Plagát">
                                 <div class="text-center top3 d-flex flex-column gap-1">
-                                    <div class="fw-bold text-center"><a class="listLink" href="<?= $work['type'] === 'Film' ? $link->url("movieDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Kniha' ? $link->url("bookDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $work['id']]) : '#')); ?>">
-                                            <?= $work['name'] ?></a></div>
+                                    <div class="fw-bold text-center">
+                                        <a class="listLink" href="<?= $work['type'] === 'Film' ? $link->url("movieDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Kniha' ? $link->url("bookDetail.page", ['id' => $work['id']]) : ($work['type'] === 'Seriál' ? $link->url("seriesDetail.page", ['id' => $work['id']]) : '#')); ?>">
+                                            <?= htmlspecialchars($work['name'], ENT_QUOTES, 'UTF-8') ?>
+                                        </a>
+                                    </div>
                                     <div class="specialBackgroundColor text-white px-3 py-2 rounded">
                                         <div class="fs-4 text-center fw-bold">
-                                            <?= $work['favorites_count'] ?? '0' ?>❤️
+                                            <?= (int)($work['favorites_count'] ?? 0) ?> ❤️
                                         </div>
                                     </div>
                                 </div>

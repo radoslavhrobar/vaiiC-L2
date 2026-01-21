@@ -12,21 +12,21 @@
         <label class="col-sm-3" for="movieLength">Dĺžka filmu (minúty):
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="number" min="1" max="600" name="movieLength" id="movieLength" value="<?= $movieDetail->getLength() ?>" required>
+        <input class="col-sm-6" type="number" min="1" max="600" name="movieLength" id="movieLength" value="<?= (int)$movieDetail->getLength() ?>" required>
         <strong id="lengthMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="prodCompany">Produkčná spoločnosť:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="text" name="prodCompany" id="prodCompany" value="<?= $movieDetail->getProdCompany() ?>">
+        <input class="col-sm-6" type="text" name="prodCompany" id="prodCompany" value="<?= htmlspecialchars($movieDetail->getProdCompany(), ENT_QUOTES, 'UTF-8') ?>">
         <strong id="prodCompanyMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="director">Režisér:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="text" name="director" id="director" value="<?= $movieDetail->getDirector() ?>">
+        <input class="col-sm-6" type="text" name="director" id="director" value="<?= htmlspecialchars($movieDetail->getDirector(), ENT_QUOTES, 'UTF-8') ?>">
         <strong id="directorMessage"></strong>
     </div>
     <?php require __DIR__ . '/../Work/errors.view.php' ?>

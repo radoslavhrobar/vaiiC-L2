@@ -6,10 +6,13 @@
 
 <?php if (isset($error)): ?>
     <div class="text-center">
-        <strong class="text-danger"><?= $error ?></strong>
+        <strong class="text-danger"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></strong>
     </div>
 <?php else: ?>
     <div class="text-center">
-        <strong class="<?= isset($color) ? "text-$color" : '' ?>"><?= $text ?? '' ?></strong>
+        <strong class="<?= isset($color) ? "text-" . htmlspecialchars($color, ENT_QUOTES, 'UTF-8') : '' ?>">
+            <?= isset($text) ? htmlspecialchars($text, ENT_QUOTES, 'UTF-8') : '' ?>
+        </strong>
     </div>
 <?php endif; ?>
+

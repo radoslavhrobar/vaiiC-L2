@@ -11,38 +11,42 @@
     <input class="col-sm-6" type="text" name="workName" id="workName" autofocus>
     <strong id="workNameMessage"></strong>
 </div>
+
 <div class="row">
     <label class="col-sm-3" for="genreTemplate">Žáner:
         <span class="imp">*</span>
     </label>
     <select class="col-sm-6" name="genre" id="genreTemplate">
         <?php foreach ($genres as $genre): ?>
-            <option value="<?= $genre->getId() ?>">
-                <?= $genre->getName() ?>
+            <option value="<?= (int)$genre->getId() ?>">
+                <?= htmlspecialchars($genre->getName(), ENT_QUOTES, 'UTF-8') ?>
             </option>
         <?php endforeach; ?>
     </select>
 </div>
+
 <div class="row">
     <label class="col-sm-3" for="dateOfIssue">Dátum vydania:
         <span class="imp">*</span>
     </label>
-    <input class="col-sm-6" type="date" min="<?= "$limit-01-01" ?>" max="<?= date('Y-m-d') ?>" name="dateOfIssue" id="dateOfIssue" required>
+    <input class="col-sm-6" type="date" min="<?= htmlspecialchars($limit, ENT_QUOTES, 'UTF-8') ?>-01-01" max="<?= date('Y-m-d') ?>" name="dateOfIssue" id="dateOfIssue" required>
     <strong id="dateOfIssueMessage"></strong>
 </div>
+
 <div class="row">
     <label class="col-sm-3" for="placeOfIssue">Miesto vydania:
         <span class="imp">*</span>
     </label>
     <select class="col-sm-6" name="placeOfIssue" id="placeOfIssue">
         <?php foreach ($countries as $country): ?>
-            <option value="<?= $country->getId() ?>">
-                <?= $country->getName() ?>
+            <option value="<?= (int)$country->getId() ?>">
+                <?= htmlspecialchars($country->getName(), ENT_QUOTES, 'UTF-8') ?>
             </option>
         <?php endforeach; ?>
     </select>
     <strong id="placeOfIssueMessage"></strong>
 </div>
+
 <div class="row">
     <label class="col-sm-3" for="description">Popis:
         <span class="imp">*</span>
@@ -50,6 +54,7 @@
     <textarea class="col-sm-6" rows="4" name="description" id="description"></textarea>
     <strong id="descriptionMessage"></strong>
 </div>
+
 <div class="row">
     <label class="col-sm-3" for="workImage">Náhľad:
         <span class="imp">*</span>

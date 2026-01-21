@@ -357,9 +357,9 @@ class AuthController extends BaseController
             !$this->checkPersonal($data['name']) ||  !$this->checkPersonal($data['surname']) || !$this->checkGender($data['gender'])) {
             $check = false;
         }
-        if (isset($data['currentPassword'])) {
-            $users = User::getAll(whereClause: '`password` = ?', whereParams: [$data['currentPassword']]);
-            if (!empty($data['password']) && (empty($users) || !$this->checkForId($users, $data['id']))) {
+        if (!empty($data['currentPassword'])) {
+            $user = User::getOne((int)$data['id']);
+            if (!password_verify($data['currentPassword'], $user->getPassword()) && !empty($data['password'])) {
                 $check = false;
             }
         }

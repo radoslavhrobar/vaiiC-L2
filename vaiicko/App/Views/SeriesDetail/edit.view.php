@@ -12,28 +12,28 @@
         <label class="col-sm-3" for="numOfSeasons">Počet sezón:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="number" min="1" max="50" name="numOfSeasons" id="numOfSeasons" value="<?= $seriesDetail->getNumOfSeasons() ?>" required>
+        <input class="col-sm-6" type="number" min="1" max="50" name="numOfSeasons" id="numOfSeasons" value="<?= (int)$seriesDetail->getNumOfSeasons() ?>" required>
         <strong id="numOfSeasonsMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="numOfEpisodes">Počet epizód:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="number" min="1" max="3000" name="numOfEpisodes" id="numOfEpisodes" value="<?= $seriesDetail->getNumOfEpisodes() ?>" required>
+        <input class="col-sm-6" type="number" min="1" max="3000" name="numOfEpisodes" id="numOfEpisodes" value="<?= (int)$seriesDetail->getNumOfEpisodes() ?>" required>
         <strong id="numOfEpisodesMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="prodCompany">Produkčná spoločnosť:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="text" name="prodCompany" id="prodCompany" value="<?= $seriesDetail->getProdCompany() ?>">
+        <input class="col-sm-6" type="text" name="prodCompany" id="prodCompany" value="<?= htmlspecialchars($seriesDetail->getProdCompany(), ENT_QUOTES, 'UTF-8') ?>">
         <strong id="prodCompanyMessage"></strong>
     </div>
     <div class="row">
         <label class="col-sm-3" for="director">Režisér:
             <span class="imp">*</span>
         </label>
-        <input class="col-sm-6" type="text" name="director" id="director" value="<?= $seriesDetail->getDirector() ?>">
+        <input class="col-sm-6" type="text" name="director" id="director" value="<?= htmlspecialchars($seriesDetail->getDirector(), ENT_QUOTES, 'UTF-8') ?>">
         <strong id="directorMessage"></strong>
     </div>
     <?php require __DIR__ . '/../Work/errors.view.php' ?>
@@ -42,4 +42,3 @@
     </div>
 </form>
 <script src="<?= $link->asset('js/works.js') ?>"></script>
-
